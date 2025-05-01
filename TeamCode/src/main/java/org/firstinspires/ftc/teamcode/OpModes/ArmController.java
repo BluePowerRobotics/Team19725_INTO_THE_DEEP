@@ -45,7 +45,7 @@ public class ArmController {
     boolean bhasbeenpressed = false, cliplock = false;
     boolean armup = false;
     boolean ahasbeenpressed = false;
-    boolean gp2yhasbeenpressed = false;
+    boolean y2hasbeenpressed = false;
     double servo_position = 0.9;
 
     double motorTime = 0;
@@ -88,6 +88,7 @@ public class ArmController {
         clipUnlockPos=0.625;
         clipUpPos=0.245;
         clipDownPos=0.675;
+        clipPosition = 0;
         armUpPos=0.1;
         armPosMax=1;
         armPosMin=0.7;
@@ -116,7 +117,7 @@ public class ArmController {
         }
         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        armLenthControl();
+        //armLenthControl();
         armCalculator();
         armDown();
         //armMotor.setMode(DcMotor.RunMode.Run_WITHOUT_ENCODER);
@@ -171,14 +172,14 @@ public class ArmController {
         }
         
         if (gamepad2.y){
-            if (!gp2yhasbeenpressed){
+            if (!y2hasbeenpressed){
                 clipPosition +=0.25;
-                gp2yhasbeenpressed = true;
+                y2hasbeenpressed = true;
             }else{
-                gp2yhasbeenpressed = true;
+                y2hasbeenpressed = true;
             }
         }else{
-            gp2yhasbeenpressed = false;
+            y2hasbeenpressed = false;
         }
         if (clipPosition>=1) clipPosition -= 1;
     }
@@ -241,11 +242,11 @@ public class ArmController {
         //telemetry.addData("armPos",armMotor.getCurrentPosition());
         motorTime = System.currentTimeMillis();
     }
-    double clipHeight = 12;
+    double clipHeight = 10;//12
     double clipHeightError = 0;
     void armCalculator(){
-        if(cliplock && clipLockTime+500>=System.currentTimeMillis()) clipHeightError=8;//servo_position+=0.12;
-        else if(gamepad2.x)clipHeightError=8;//servo_position+=0.12;
+        if(cliplock && clipLockTime+500>=System.currentTimeMillis()) clipHeightError=10;//servo_position+=0.12;
+        else if(gamepad2.x)clipHeightError=10;//servo_position+=0.12;//8
         else clipHeightError = 0;
         double L = 30.5 + (motorNowLength / motorLength) * 32.0;
         double argument = -(clipHeight+clipHeightError) / L;

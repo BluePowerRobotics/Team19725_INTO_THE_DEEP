@@ -2,19 +2,14 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 
 //import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
-import android.sax.StartElementListener;
-
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.qualcomm.robotcore.hardware.Blinker;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.Gyroscope;
 import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -44,23 +39,24 @@ public class Arm {
     
     //ArmController
     
-    boolean bhasbeenpressed = false, cliplock = false;
+    boolean bhasbeenpressed = false, clipLock = false;
     boolean armup = false;
     boolean ahasbeenpressed = false;
-    double servo_position = 0.9;
+    double servo_position;
 
-    double motorTime = 0;
-    double motorLength=100000;
-    double motorNowLength = 0;
-    double motorPower = 0;
+    double motorTime;
+    double motorLength;
+    double motorNowLength;
+    double motorPower;
     
-    double clipLockPos=0.7;
-    double clipUnlockPos=1;
-    double clipUpPos=0.3;
-    double clipDownPos=0.675;
-    double armUpPos=0;
-    double armPosMax=1;
-    double armPosMin=0.7;
+    double clipLockPos;
+    double clipUnlockPos;
+    double clipUpPos;
+    double clipDownPos;
+    double clipPosition;
+    double armUpPos;
+    double armPosMax;
+    double armPosMin;
     double[] armMotorPosition;
     Telemetry telemetry;
     public Arm(HardwareMap hardwaremaprc, Telemetry telemetryrc){
@@ -74,7 +70,7 @@ public class Arm {
         servoe3 = hardwaremap.get(Servo.class, "servoe3");
         servoe4 = hardwaremap.get(Servo.class, "servoe4");
         servoe5 = hardwaremap.get(Servo.class, "servoe5");
-        cliplock = false;
+        clipLock = false;
         armup = false;
         servo_position = 0.9;//default position when arm is down.
         
@@ -180,10 +176,11 @@ public class Arm {
                 motorTime = t;
                 armMotor = hardwaremap.get(DcMotor.class, "armMotor");
                 armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                servoe2 = hardwaremap.get(Servo.class, "servoe2");
                 servoe3 = hardwaremap.get(Servo.class, "servoe3");
                 servoe4 = hardwaremap.get(Servo.class, "servoe4");
                 servoe5 = hardwaremap.get(Servo.class, "servoe5");
-                cliplock = false;
+                clipLock = false;
                 armup = false;
                 servo_position = 0.9;//default position when arm is down.
 
@@ -192,10 +189,11 @@ public class Arm {
                 motorNowLength = 0;
                 motorPower = 0;
 
-                clipLockPos=0.72;
-                clipUnlockPos=1;
+                clipLockPos=0.345;
+                clipUnlockPos=0.625;
                 clipUpPos=0.245;
                 clipDownPos=0.675;
+                clipPosition=0;
                 armUpPos=0.1;
                 armPosMax=1;
                 armPosMin=0.7;
@@ -233,6 +231,7 @@ public class Arm {
             armCalculator();
             armDown();
             servoe5.setPosition(clipLockPos);
+            clipLock = true;
             //armMotor.setMode(DcMotor.RunMode.Run_WITHOUT_ENCODER);
             telemetry.addData("Finished", armMotor.getCurrentPosition());
             telemetry.update();
@@ -251,14 +250,18 @@ public class Arm {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
             if (!initialized) {
-                armUpTime = t +1500;
+                clipPosition=0;
+                servoe2.setPosition(clipPosition);
+                servoe5.setPosition(clipLockPos);
+                clipLock = true;
+                armUpTime = t +1600;
                 armMotor.setTargetPosition(0);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(1);
                 initialized = true;
             }
             servoe3.setPosition(armUpPos);//一级舵机竖直
-            servoe4.setPosition(clipUpPos);//二级舵机向后
+            servoe4.setPosition(0.9);//二级舵机收起
             //servoe5.setPosition(clipLockPos);
             if(armUpTime>=System.currentTimeMillis()){
                 armMotor.setTargetPosition(0);
@@ -268,6 +271,7 @@ public class Arm {
 
                 return true;
             }else{
+                servoe4.setPosition(clipUpPos);//二级舵机向后
                 armMotor.setTargetPosition(540);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 //armMotor.setPower(1);
@@ -277,7 +281,7 @@ public class Arm {
             }
             if(armMotor.getCurrentPosition()-540 < 5 && armMotor.getCurrentPosition()-540 > -5){
                 servoe5.setPosition(clipUnlockPos);
-
+                clipLock = false;
                 if (!finished) {
 
                     finishtime = System.currentTimeMillis() + 1000;
@@ -302,6 +306,47 @@ public class Arm {
         return new outPut();
     }
 
+    public int targetArmLength;
+    public class inTake implements Action{
+
+
+        private boolean initialized = false;
+        private boolean startToInTake = false;
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet){
+            if(!initialized) {
+                servoe5.setPosition(clipUnlockPos);
+                clipLock = false;
+                armup = false;
+                servoe3.setPosition(servo_position);//一级舵机地面
+                servoe4.setPosition(clipDownPos);//二级舵机向下
+            }
+            armMotor.setTargetPosition(targetArmLength);
+            armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            armCalculator();
+
+            if((!startToInTake) && armMotor.getCurrentPosition()-targetArmLength < 5 && armMotor.getCurrentPosition()-targetArmLength > -5){
+                startToInTake = true;
+                clipLock = true;
+                clipLockTime = System.currentTimeMillis()+500;
+            } else if (startToInTake) {
+                armCalculator();
+                if(clipLock && clipLockTime<=System.currentTimeMillis()) servoe5.setPosition(clipLockPos);
+                else servoe5.setPosition(clipUnlockPos);
+            }
+            if(clipLock && clipLockTime+600<=System.currentTimeMillis()){
+                return false;//finished
+            }else{
+                return true;
+            }
+        }
+    }
+    public Action inTake(int targetInTakeLength,double targetClipPosition){
+        targetArmLength = targetInTakeLength;
+        clipPosition = targetClipPosition;
+        return new inTake();
+    }
+
     void armDown(){
         armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         servoe3.setPosition(servo_position);//一级舵机地面
@@ -322,7 +367,7 @@ public class Arm {
     
     double clipLockTime=0;
     void clipControl(){
-        if(cliplock && clipLockTime<=System.currentTimeMillis()) servoe5.setPosition(clipLockPos);
+        if(clipLock && clipLockTime<=System.currentTimeMillis()) servoe5.setPosition(clipLockPos);
         else servoe5.setPosition(clipUnlockPos);
     }
     
@@ -344,13 +389,17 @@ public class Arm {
         //telemetry.addData("armPos",armMotor.getCurrentPosition());
         motorTime = System.currentTimeMillis();
     }
-    
+
+    double clipHeight = 10;//12
+    double clipHeightError = 0;
     void armCalculator(){
+        if(clipLock && clipLockTime+500>=System.currentTimeMillis()) clipHeightError=10;//servo_position+=0.12;
+        else clipHeightError = 0;
         double L = 30.5 + (motorNowLength / motorLength) * 32.0;
-        double argument = -18.0 / L;
+        double argument = -(clipHeight+clipHeightError) / L;
         servo_position = Math.toDegrees(Math.acos(argument)) / 135.0 /*- 0.1*/;
-        if(cliplock && clipLockTime+500>=System.currentTimeMillis()) servo_position+=0.12;
-        clipDownPos = (3*0.29+2-1.5*(servo_position-0.2))/3;
+
+        clipDownPos = (3*0.3+2.2-1.5*(servo_position-0.1))/3;
     }
     
 //    public void armController(){
