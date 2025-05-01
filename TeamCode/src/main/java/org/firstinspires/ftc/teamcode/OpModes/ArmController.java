@@ -1,24 +1,41 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
-//import com.qualcomm.robotcore.hardware.Blinker;
+import com.qualcomm.robotcore.hardware.Blinker;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-//import com.qualcomm.robotcore.hardware.HardwareDevice;
+import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.DcMotor;
-//import com.qualcomm.robotcore.hardware.Gyroscope;
-//import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Gyroscope;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 public class ArmController {
-
+    private Blinker control_Hub;
+    private Blinker expansion_Hub_2;
+    private HardwareDevice webcam_1;
     private DcMotor armMotor;
-
+    private DcMotor armTest;
+    private Gyroscope eimu;
+    private IMU imu;
+    private DcMotor leftBack;
+    private DcMotor leftFront;
+    private DcMotor rightBack;
+    private DcMotor rightFront;
+    private Servo servoe0;
+    private Servo servoe1;
+    private Servo servoe2;
     private Servo servoe3;
     private Servo servoe4;
     private Servo servoe5;
-
+    private Servo servos0;
+    private Servo servos1;
+    private Servo servos2;
+    private Servo servos3;
+    private Servo servos4;
+    private Servo servos5;
     private HardwareMap hardwaremap;
     private Gamepad gamepad1;
+    private Gamepad gamepad2;
     // todo: write your code here
     
     double t = 0;
@@ -28,6 +45,7 @@ public class ArmController {
     boolean bhasbeenpressed = false, cliplock = false;
     boolean armup = false;
     boolean ahasbeenpressed = false;
+    boolean gp2yhasbeenpressed = false;
     double servo_position = 0.9;
 
     double motorTime = 0;
@@ -37,22 +55,26 @@ public class ArmController {
     
     double clipLockPos=0.7;
     double clipUnlockPos=1;
+    double clipPosition = 0;
     double clipUpPos=0.3;
     double clipDownPos=0.675;
     double armUpPos=0;
     double armPosMax=1;
     double armPosMin=0.7;
+    double[] armMotorPosition;
     
-    void initArm(HardwareMap hardwaremaprc, Gamepad gamepadrc){
+    void initArm(HardwareMap hardwaremaprc,Gamepad gamepadrc,Gamepad gamepadrc2){
         t=System.currentTimeMillis();//获取当前时间
         motorTime = t;
         gamepad1 = gamepadrc;
+        gamepad2 = gamepadrc2;
         hardwaremap = hardwaremaprc;
         armMotor = hardwaremap.get(DcMotor.class, "armMotor");
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         servoe3 = hardwaremap.get(Servo.class, "servoe3");
         servoe4 = hardwaremap.get(Servo.class, "servoe4");
         servoe5 = hardwaremap.get(Servo.class, "servoe5");
+        servoe2 = hardwaremap.get(Servo.class, "servoe2");
         cliplock = false;
         armup = false;
         servo_position = 0.9;//default position when arm is down.
@@ -62,10 +84,10 @@ public class ArmController {
         motorNowLength = 0;
         motorPower = 0;
         
-        clipLockPos=0.72;
-        clipUnlockPos=1;
+        clipLockPos=0.345;
+        clipUnlockPos=0.625;
         clipUpPos=0.245;
-        clipDownPos=0.715;
+        clipDownPos=0.675;
         armUpPos=0.1;
         armPosMax=1;
         armPosMin=0.7;
@@ -94,7 +116,7 @@ public class ArmController {
         }
         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //armLengthControl();
+        armLenthControl();
         armCalculator();
         armDown();
         //armMotor.setMode(DcMotor.RunMode.Run_WITHOUT_ENCODER);
@@ -105,7 +127,7 @@ public class ArmController {
     
     void gampadArmReceiver(){
         //clip
-        if (gamepad1.b){
+        if (gamepad1.b || gamepad2.b){
             if (!bhasbeenpressed){
                 if (!cliplock){
                     cliplock = true;
@@ -128,45 +150,58 @@ public class ArmController {
             servo_position -=0.005;
         }*/
         //机械臂模式选择
-        if (gamepad1.a){
+        if (gamepad1.a || gamepad2.a){
             if (!ahasbeenpressed){
-                    if(armup) {
-                        armup=false;
-                        armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                    }else {
-                        armup = true;
-                        armUpTime = t +1500;
-                        armMotor.setTargetPosition(0);
-                        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                        //armMotor.setPower(1);
-                    }
-                    ahasbeenpressed = true;
+                if(armup) {
+                    armup=false;
+                    clipPosition = 0;
+                    armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                }else {
+                    armup = true;
+                    clipPosition = 0;
+                    armUpTime = t +1600;
+                    armMotor.setTargetPosition(0);
+                    armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    armMotor.setPower(1);
+                }
+                ahasbeenpressed = true;
             }
-
-
-
         }else{
             ahasbeenpressed = false;
         }
+        
+        if (gamepad2.y){
+            if (!gp2yhasbeenpressed){
+                clipPosition +=0.25;
+                gp2yhasbeenpressed = true;
+            }else{
+                gp2yhasbeenpressed = true;
+            }
+        }else{
+            gp2yhasbeenpressed = false;
+        }
+        if (clipPosition>=1) clipPosition -= 1;
     }
     
     double armUpTime=0;
     void armUp(){
         
         servoe3.setPosition(armUpPos);//一级舵机竖直
-        servoe4.setPosition(clipUpPos);//二级舵机向后
+        
         if(armUpTime>=System.currentTimeMillis()){
+            servoe4.setPosition(0.9);//二级舵机收起
             armMotor.setTargetPosition(0);
             armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             //armMotor.setPower(1);
         }else{
+            servoe4.setPosition(clipUpPos);//二级舵机向后
             armMotor.setTargetPosition(540);
             armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             //armMotor.setPower(1);
         }
     }
     void armDown(){
-        //armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         servoe3.setPosition(servo_position);//一级舵机地面
         servoe4.setPosition(clipDownPos);//二级舵机向下
     }
@@ -187,15 +222,16 @@ public class ArmController {
     void clipControl(){
         if(cliplock && clipLockTime<=System.currentTimeMillis()) servoe5.setPosition(clipLockPos);
         else servoe5.setPosition(clipUnlockPos);
+        servoe2.setPosition(clipPosition);
     }
     
     
-    public void armLengthControl(){
+    public void armLenthControl(){
         if(!armup){
             if(gamepad1.left_trigger >=0.5 && gamepad1.right_trigger <0.5 && motorNowLength>0) motorPower = -0.5;
             else if(gamepad1.left_trigger < 0.5 && gamepad1.right_trigger >=0.5 && motorNowLength<motorLength) motorPower = 0.5;
             else motorPower = 0;
-            //armMotor.setPower(motorPower);
+            armMotor.setPower(motorPower);
         }
         /*if (motorPower!=0){
             motorNowLength += motorPower*(System.currentTimeMillis()-motorTime);
@@ -205,20 +241,24 @@ public class ArmController {
         //telemetry.addData("armPos",armMotor.getCurrentPosition());
         motorTime = System.currentTimeMillis();
     }
-    
+    double clipHeight = 12;
+    double clipHeightError = 0;
     void armCalculator(){
+        if(cliplock && clipLockTime+500>=System.currentTimeMillis()) clipHeightError=8;//servo_position+=0.12;
+        else if(gamepad2.x)clipHeightError=8;//servo_position+=0.12;
+        else clipHeightError = 0;
         double L = 30.5 + (motorNowLength / motorLength) * 32.0;
-        double argument = -18.0 / L;
+        double argument = -(clipHeight+clipHeightError) / L;
         servo_position = Math.toDegrees(Math.acos(argument)) / 135.0 /*- 0.1*/;
-        if(cliplock && clipLockTime+500>=System.currentTimeMillis()) servo_position+=0.12;
-        clipDownPos = (3*0.29+2-1.5*(servo_position-0.2))/3;
+        
+        clipDownPos = (3*0.3+2.2-1.5*(servo_position-0.1))/3;
     }
     
     public void armController(){
         t=System.currentTimeMillis();//获取当前时间
         motorTime = t;
         gampadArmReceiver();
-        armLengthControl();
+        armLenthControl();
         armCalculator();
         if (armup){
             armUp();

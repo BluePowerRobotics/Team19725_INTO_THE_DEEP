@@ -1,3 +1,5 @@
+# Team19725_INTO_THE_DEEP
+
 This is the project of FTC team 19725. 
 
 We use the team code in this project to finish the competition.
@@ -6,7 +8,7 @@ We use the team code in this project to finish the competition.
 
 我们使用这个项目中的team code来参加比赛.
 
-
+ 
 
 **Who we are**
 
@@ -20,7 +22,7 @@ We have many team memebers. They all have something they are good at.
 
 我们有许多队员,他们各有所长.
 
-
+ 
 
 **How to use this project**
 
@@ -42,7 +44,7 @@ After that, you can change the code in the project and use ADB to run the new co
 
 在此之后,您就可以更改项目代码,并使用ADB向您的Control Hub或Android设备推送您的代码了.
 
-
+ 
 
 **About this project**
 
