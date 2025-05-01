@@ -52,19 +52,35 @@ public class BlueSideTestAuto extends LinearOpMode {
         //@Override
         public void runOpMode() {
             Pose2d initialPose = new Pose2d(-24.15, -62.75, Math.toRadians(90.00));
+            Pose2d initialPosetest1 = new Pose2d(-48.00, -24.00, Math.toRadians(90.00));
+            Pose2d initialPosetest2 = new Pose2d(-24.00, -48.00, Math.toRadians(90.00));
             //telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
             odo = hardwareMap.get(GoBildaPinpointDriver.class,"pinpoint");
             //todo
-            //    111
-            //    111
-            MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
+            //    调整出发点位置！！！
+
+            MecanumDrive drive = new MecanumDrive(hardwareMap, initialPosetest1);
 
             //telemetry.addData("设置tele", 1);
             //drive.settele(telemetry);
             //Claw claw = new Claw(hardwareMap);
             Arm armController = new Arm(hardwareMap,telemetry);
 
+            //test1
+            TrajectoryActionBuilder test1 = drive.actionBuilder(new Pose2d(-48.00, -24.00, Math.toRadians(90.00)))
+                    .splineTo(new Vector2d(-48.00, 24.00), Math.toRadians(90));
+            Action CloseOuttest1 = test1.endTrajectory().fresh()
+                    .build();
+            Action Actiontest1 = test1.build();
 
+
+            //test2
+            TrajectoryActionBuilder test2 = drive.actionBuilder(new Pose2d(-24.00, -48.00, Math.toRadians(90.00)))
+                    .splineTo(new Vector2d(0.11, -37.31), Math.toRadians(0.00))
+                    .splineTo(new Vector2d(24.00, -48.00), Math.toRadians(270.00));
+            Action CloseOuttest2 = test2.endTrajectory().fresh()
+                    .build();
+            Action Actiontest2 = test2.build();
 
 
             //绕场一周
@@ -123,17 +139,18 @@ public class BlueSideTestAuto extends LinearOpMode {
 
 
             // actions that need to happen on init; for instance, a claw tightening.
+            //todo 初始化机器
             //Actions.runBlocking(claw.closeClaw());
 
 
             while (!isStopRequested() && !opModeIsActive()) {
                 int position = visionOutputPosition;
-                telemetry.addData("Position during Init", position);
+                telemetry.addData("Position during Init", "test1");
                 telemetry.update();
             }
 
             int startPosition = visionOutputPosition;
-            telemetry.addData("Starting Position", startPosition);
+            telemetry.addData("Starting Position", "test1");
             telemetry.update();
             waitForStart();
 
@@ -147,11 +164,15 @@ public class BlueSideTestAuto extends LinearOpMode {
 //                                armController.initArm()
 //                        )
 
-
                         new SequentialAction(
-                            ActionTapround,
-                            CloseOutTapround
+                                Actiontest1,
+                                CloseOuttest1
                         )
+
+//                    new SequentialAction(
+//                            Actiontest2,
+//                            CloseOuttest2
+//                    )
                 )
             );
         }
