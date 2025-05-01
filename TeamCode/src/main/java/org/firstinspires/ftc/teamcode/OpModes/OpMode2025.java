@@ -26,8 +26,7 @@ import org.firstinspires.ftc.teamcode.messages.PoseMessage;
 @TeleOp
 public class OpMode2025 extends LinearOpMode {
 
-    //zhzdaociyiyou
-    //xiexie
+
     FlightRecorder recorder;
     GoBildaPinpointDriver odo;
     MecanumDrive drive;
