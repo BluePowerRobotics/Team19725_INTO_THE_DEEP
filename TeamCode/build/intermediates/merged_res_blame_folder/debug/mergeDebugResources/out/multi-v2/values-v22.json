@@ -4,7 +4,7 @@
             "outputFile": "org.firstinspires.ftc.teamcode.TeamCode-mergeDebugResources-17:/values-v22/values-v22.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\Study\\.gradle\\caches\\8.9\\transforms\\9679d4d1e30490d5bcbdd98dfaf30994\\transformed\\appcompat-1.2.0\\res\\values-v22\\values-v22.xml",
+                    "source": "/Users/gaoyiwei/.gradle/caches/8.9/transforms/9679d4d1e30490d5bcbdd98dfaf30994/transformed/appcompat-1.2.0/res/values-v22/values-v22.xml",
                     "from": {
                         "startLines": "2,3,4,9",
                         "startColumns": "4,4,4,4",
