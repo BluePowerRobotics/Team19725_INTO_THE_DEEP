@@ -80,5 +80,6 @@ lint/outputs/
 lint/tmp/
 # lint/reports/
 
-
+/FtcRobotController/build/*
+/TeamCode/build/*
 /.idea
