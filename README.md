@@ -50,8 +50,5 @@ It is based on **roadrunner-quickstart**. (You can also find it on *GitHub*.)
 
 这个项目适配于FTC *into the deep*赛季.
 
-它是一个基于[**road-runner-quickstart**](https://github.com/acmerobotics/road-runner-quickstart)的项目(你同样可以在GitHub上找到它.).
+它是一个基于[**road-runner-quickstart**](https://github.com/acmerobotics/road-runner-quickstart)的项目(你同样可以在GitHub上找到它.).    
 
-
-ZHZ到此一游
-GYW到此二游
