@@ -85,7 +85,8 @@ public class OpMode2025 extends LinearOpMode {
         }
         else{
             kpad = 1;
-        }
+        }//唐氏小按键
+        //使用按键防抖代替
         double realx = gamepad1.left_stick_y * kpad;
         double realy = gamepad1.left_stick_x * kpad;//*****已经转换过X,Y轴，并写过负号
         //double nowx = -realy * Math.sin(Math.toRadians((pos.getHeading(AngleUnit.DEGREES)) - angledeg0))   +     realx * Math.cos(Math.toRadians((pos.getHeading(AngleUnit.DEGREES)) - angledeg0));;
