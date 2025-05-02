@@ -44,7 +44,7 @@ After that, you can change the code in the project and use ADB to run the new co
 
 This project is designed for the FTC season *INTO THE DEEP*.
 
-It is based on **roadrunner-quickstart**. (You can also find it on *GitHub*.)
+It is based on [**road-runner-quickstart**](https://github.com/acmerobotics/road-runner-quickstart). (You can also find it on *GitHub*.)
 
 ## 关于该项目
 
