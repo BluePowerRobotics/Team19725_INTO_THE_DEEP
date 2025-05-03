@@ -31,6 +31,7 @@ public class OpMode2025 extends LinearOpMode {
     GoBildaPinpointDriver odo;
     MecanumDrive drive;
     //boolean ifchanged = false;
+    boolean ltispressed = false;
     boolean ifslow = false;
     double kpad;
     ColorLocator colorLocator;
@@ -74,11 +75,19 @@ public class OpMode2025 extends LinearOpMode {
     }
 
     private void move(){
+
         if(gamepad1.left_bumper){
-            ifslow = true;
-        }
-        else if(gamepad1.right_bumper){
-            ifslow = false;
+            if(!ltispressed){
+                if(ifslow){
+                    ifslow = false;
+                }
+                else{
+                    ifslow = true;
+                }
+                ltispressed = true;
+            }
+        }else{
+            ltispressed = false;
         }
         if(ifslow){
             kpad = 0.3;
