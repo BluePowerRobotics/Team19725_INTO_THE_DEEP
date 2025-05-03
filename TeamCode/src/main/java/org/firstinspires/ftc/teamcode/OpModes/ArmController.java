@@ -36,6 +36,14 @@ public class ArmController {
     private HardwareMap hardwaremap;
     private Gamepad gamepad1;
     private Gamepad gamepad2;
+
+    private static final int HIGHBLANKET =0;
+    private static final int LOWBLANKET = 1;
+    private static final int HIGHRAILING =2;
+    private static final int LOWRAILING = 3;
+
+    public int MODE = 0;
+
     // todo: write your code here
     
     double t = 0;
@@ -62,6 +70,9 @@ public class ArmController {
     double armPosMax=1;
     double armPosMin=0.7;
     double[] armMotorPosition;
+
+    int armUpSpendHalfMS;
+    int armUpLength;
     
     void initArm(HardwareMap hardwaremaprc,Gamepad gamepadrc,Gamepad gamepadrc2){
         t=System.currentTimeMillis();//获取当前时间
@@ -77,21 +88,41 @@ public class ArmController {
         servoe2 = hardwaremap.get(Servo.class, "servoe2");
         cliplock = false;
         armup = false;
-        servo_position = 0.9;//default position when arm is down.
+        servo_position = 0.9;//default position when arm is down.calculated,useless
         
         motorTime = 0;
         motorLength=600;
         motorNowLength = 0;
         motorPower = 0;
         
-        clipLockPos=0.345;
-        clipUnlockPos=0.625;
-        clipUpPos=0.245;
-        clipDownPos=0.675;
-        clipPosition = 0;
-        armUpPos=0.1;
-        armPosMax=1;
-        armPosMin=0.7;
+        clipLockPos=0.345;//0123
+        clipUnlockPos=0.625;//0123
+        clipUpPos=0.245;//0,1
+        clipDownPos=0.675;//calculated,useless
+        clipPosition = 0;//0123
+        armUpPos=0.1;//0,1
+        armPosMax=1;//useless
+        armPosMin=0.7;//useless
+
+        if (MODE == HIGHBLANKET || MODE == LOWBLANKET) {
+            armUpSpendHalfMS = 1600;
+            if (MODE==HIGHBLANKET){
+                armUpLength=540;
+            }else{
+                armUpLength=0;
+            }
+        }
+        else if (MODE == HIGHRAILING || MODE == LOWRAILING) {
+            armUpSpendHalfMS = 800;
+            armUpLength=540;
+            clipUpPos=0.9;
+            if (MODE==HIGHRAILING){
+                armUpPos = 0.4;
+            }else{
+                armUpPos = 0.5;
+            }
+
+        }
         
         //armUp
         servoe3.setPosition(armUpPos);//一级舵机竖直
@@ -196,7 +227,7 @@ public class ArmController {
             //armMotor.setPower(1);
         }else{
             servoe4.setPosition(clipUpPos);//二级舵机向后
-            armMotor.setTargetPosition(540);
+            armMotor.setTargetPosition(armUpLength);
             armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             //armMotor.setPower(1);
         }
