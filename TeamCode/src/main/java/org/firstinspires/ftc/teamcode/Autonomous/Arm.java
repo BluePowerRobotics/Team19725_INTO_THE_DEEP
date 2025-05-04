@@ -86,7 +86,7 @@ public class Arm {
         armUpPos=0.1;
         armPosMax=1;
         armPosMin=0.7;
-        
+    }
     
     double armUpTime=0;
 
