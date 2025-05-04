@@ -59,9 +59,9 @@ public class Arm {
     double armPosMin;
     double[] armMotorPosition;
     Telemetry telemetry;
-    public Arm(HardwareMap hardwaremaprc, Telemetry telemetryrc){
+    public Arm(HardwareMap hardwaremaprc, Telemetry telemetryrc) {
         telemetry = telemetryrc;
-        t=System.currentTimeMillis();//获取当前时间
+        t = System.currentTimeMillis();//获取当前时间
         motorTime = t;
 
         hardwaremap = hardwaremaprc;
@@ -73,12 +73,12 @@ public class Arm {
         clipLock = false;
         armup = false;
         servo_position = 0.9;//default position when arm is down.
-        
+
         motorTime = 0;
-        motorLength=600;
+        motorLength = 600;
         motorNowLength = 0;
         motorPower = 0;
-        
+
         clipLockPos=0.72;
         clipUnlockPos=1;
         clipUpPos=0.245;
@@ -87,6 +87,7 @@ public class Arm {
         armPosMax=1;
         armPosMin=0.7;
     }
+
     
     double armUpTime=0;
 
