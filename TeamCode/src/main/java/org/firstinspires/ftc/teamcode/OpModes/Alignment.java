@@ -29,23 +29,12 @@
 
 package org.firstinspires.ftc.teamcode.OpModes;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-
-import android.util.Size;
-import org.firstinspires.ftc.vision.opencv.ImageRegion;
-
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
-import org.firstinspires.ftc.vision.opencv.ColorRange;
-import org.opencv.core.RotatedRect;
-
-import java.util.List;
 
 
 /*
@@ -76,64 +65,6 @@ public class Alignment extends LinearOpMode {
     public ColorLocator colorLocator;
     public VisionPortal portal;
 
-
-
-
-    //////////
-//    public ColorLocator(WebcamName cam1, boolean ifblue){
-//        if(ifblue){
-//            colorLocator = new ColorBlobLocatorProcessor.Builder()
-//                    .setTargetColorRange(ColorRange.BLUE)         // use a predefined color match
-//                    .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
-//                    .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 1, 1, -1))  // ROI:全屏
-//                    .setDrawContours(true)                        // Show contours on the Stream Preview
-//                    .setBlurSize(5)                               // Smooth the transitions between different colors in image
-//                    .build();
-//        }
-//        else{
-//            colorLocator = new ColorBlobLocatorProcessor.Builder()
-//                    .setTargetColorRange(ColorRange.RED)
-//                    .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)
-//                    .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 1, 1, -1))
-//                    .setDrawContours(true)
-//                    .setBlurSize(5)
-//                    .build();
-//        }
-//        portal = new VisionPortal.Builder()
-//                .addProcessor(colorLocator)
-//                .setCameraResolution(new Size(320, 240))
-//                .setCamera(cam1)
-//                .build();
-//
-//
-//    }
-//    ////////
-//
-//
-//
-//
-//    public ColorReturn LocateAll()
-//    {
-//        List<ColorBlobLocatorProcessor.Blob> blobs = colorLocator.getBlobs();
-//        ColorBlobLocatorProcessor.Util.filterByArea(50, 20000, blobs);
-//        org.opencv.core.Size myBoxFitSize;
-//        for(ColorBlobLocatorProcessor.Blob b : blobs){
-//            RotatedRect boxFit = b.getBoxFit();
-//            myBoxFitSize = boxFit.size;
-//            ColorReturn LocateAll = new ColorReturn(boxFit.center.x,boxFit.center.y,myBoxFitSize.width,myBoxFitSize.height,boxFit.angle);
-//            //telemetry.addData("x:",boxFit.center.x);
-//            //telemetry.addData("y:",boxFit.center.y);
-//            //telemetry.addData("######################################");
-//            //telemetry.update();
-//            return (LocateAll);
-//        }
-//        //
-//        //telemetry.update();
-//        ColorReturn LocateError = new ColorReturn(999999,999999,999999,999999,999999);
-//        return(LocateError);
-//        //sleep(50);
-//    }
-
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
@@ -150,7 +81,7 @@ public class Alignment extends LinearOpMode {
         leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        
+
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
