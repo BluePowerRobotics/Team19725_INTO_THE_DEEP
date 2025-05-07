@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.RoadRunner.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.RoadRunner.TwoDeadWheelLocalizer;
 
 public final class ManualFeedbackTuner_heading extends LinearOpMode {
-    public static double DISTANCE = 64;
+    public static double DISTANCE = 48;
     public static double TIME = 0;
 
     @Override
