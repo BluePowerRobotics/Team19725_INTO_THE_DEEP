@@ -35,10 +35,13 @@ public class OpMode2025 extends LinearOpMode {
     boolean rbispressed = false;
     boolean ifslow = false;
     boolean ifgyw = false;
+
+    boolean ifblue = true;
     double kpad;
     ColorLocator colorLocator;
     ChassisController ChassisController=new ChassisController();//构建class实例
     ArmController ArmController = new ArmController();
+    Alignment AutoFollow;
     public double t = 0;//当前时间
     public double move_x_l;
     public double move_y_l;
@@ -61,10 +64,10 @@ public class OpMode2025 extends LinearOpMode {
 
         ChassisController.initChassis(hardwareMap,gamepad1);
         ArmController.initArm(hardwareMap,gamepad1,gamepad2);
+        AutoFollow.init(drive, hardwareMap, ifblue);
 
 
 
-        boolean ifblue = true;
         colorLocator = new ColorLocator(hardwareMap.get(WebcamName.class, "Webcam 1"), ifblue);
 
 
@@ -191,6 +194,10 @@ public class OpMode2025 extends LinearOpMode {
                 FlightRecorder.write("Pose", new PoseMessage(
                         drive.localizer.getPose()));
 
+
+                if(gamepad2.x){
+                    AutoFollow.follow();
+                }
             }
             //File log = new File(Environment.getExternalStorageDirectory(), "FIRST/roadrunner/logs");
         }

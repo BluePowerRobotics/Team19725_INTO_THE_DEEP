@@ -328,7 +328,9 @@ public class Arm {
         // telemetry.addData("armPos",armMotor.getCurrentPosition());
         motorTime = System.currentTimeMillis();
     }
-
+    //todo
+    // 设置没下夹子的平时高度：clipHeight
+    //  设置下架子与没下夹子的高度差值：339行clipHeightError    新的高度为clipHeight - clipHeightError
     double clipHeight = 10;// 12
     double clipHeightError = 0;
 
