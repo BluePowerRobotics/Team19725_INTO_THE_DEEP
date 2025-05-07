@@ -271,7 +271,7 @@ public class ChassisController {
         return locked_thita;
     }
 
-    public void chassisController(double r, double y, double x) {
+    public void chassisController(double r, double y, double x, double speed) {
         freshThita();
         if (gamepad1.y) {
             if (!yhasbeenpressed) {
@@ -326,7 +326,7 @@ public class ChassisController {
         if (!noheadmode) {
             move(r, y, x);
         } else {
-            noheadmove(r, y, x, 1);
+            noheadmove(r, y, x, speed);
         }
     }
 }

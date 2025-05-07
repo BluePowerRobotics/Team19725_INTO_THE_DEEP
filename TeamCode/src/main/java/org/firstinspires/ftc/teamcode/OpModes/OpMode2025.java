@@ -31,8 +31,10 @@ public class OpMode2025 extends LinearOpMode {
     GoBildaPinpointDriver odo;
     MecanumDrive drive;
     //boolean ifchanged = false;
-    boolean ltispressed = false;
+    boolean lbispressed = false;
+    boolean rbispressed = false;
     boolean ifslow = false;
+    boolean ifgyw = false;
     double kpad;
     ColorLocator colorLocator;
     ChassisController ChassisController=new ChassisController();//构建class实例
@@ -75,19 +77,31 @@ public class OpMode2025 extends LinearOpMode {
     }
 
     private void move(){
-
+        if(gamepad1.right_bumper){
+            if(!rbispressed){
+                if(ifgyw){
+                    ifgyw = false;
+                }
+                else{
+                    ifgyw = true;
+                }
+                rbispressed = true;
+            }
+        }else{
+            rbispressed = false;
+        }
         if(gamepad1.left_bumper){
-            if(!ltispressed){
+            if(!lbispressed){
                 if(ifslow){
                     ifslow = false;
                 }
                 else{
                     ifslow = true;
                 }
-                ltispressed = true;
+                lbispressed = true;
             }
         }else{
-            ltispressed = false;
+            lbispressed = false;
         }
         if(ifslow){
             kpad = 0.3;
@@ -96,17 +110,26 @@ public class OpMode2025 extends LinearOpMode {
             kpad = 1;
         }//唐氏小按键
         //使用按键防抖代替
-        double realx = gamepad1.left_stick_y * kpad;
-        double realy = gamepad1.left_stick_x * kpad;//*****已经转换过X,Y轴，并写过负号
-        //double nowx = -realy * Math.sin(Math.toRadians((pos.getHeading(AngleUnit.DEGREES)) - angledeg0))   +     realx * Math.cos(Math.toRadians((pos.getHeading(AngleUnit.DEGREES)) - angledeg0));;
-        //double nowy = realy * Math.cos(Math.toRadians((pos.getHeading(AngleUnit.DEGREES)) - angledeg0))    -     realx * Math.sin(Math.toRadians((pos.getHeading(AngleUnit.DEGREES)) - angledeg0));;
-        drive.setDrivePowers(new PoseVelocity2d(
-                new Vector2d(
-                        realx,
-                        realy
-                ),
-                gamepad1.right_stick_x * kpad
-        ));
+        if(!ifgyw){
+            double realx = gamepad1.left_stick_y * kpad;
+            double realy = gamepad1.left_stick_x * kpad;//*****已经转换过X,Y轴，并写过负号
+            //double nowx = -realy * Math.sin(Math.toRadians((pos.getHeading(AngleUnit.DEGREES)) - angledeg0))   +     realx * Math.cos(Math.toRadians((pos.getHeading(AngleUnit.DEGREES)) - angledeg0));;
+            //double nowy = realy * Math.cos(Math.toRadians((pos.getHeading(AngleUnit.DEGREES)) - angledeg0))    -     realx * Math.sin(Math.toRadians((pos.getHeading(AngleUnit.DEGREES)) - angledeg0));;
+            drive.setDrivePowers(new PoseVelocity2d(
+                    new Vector2d(
+                            realx,
+                            realy
+                    ),
+                    gamepad1.right_stick_x * kpad
+            ));
+        }
+        else{
+            move_x_l = gamepad1.left_stick_x + gamepad2.left_stick_x;
+            move_y_l = gamepad1.left_stick_y + gamepad2.left_stick_y;
+            move_x_r = gamepad1.right_stick_x + gamepad2.right_stick_x;
+            move_y_r = gamepad1.right_stick_y + gamepad2.right_stick_y;
+            ChassisController.chassisController(move_x_l, -move_x_r, move_y_l + move_y_r, kpad);
+        }
         drive.updatePoseEstimate();
     }
     private void teleprint(){
@@ -132,6 +155,7 @@ public class OpMode2025 extends LinearOpMode {
         telemetry.addData("X", colorLocator.LocateAll().x);
         telemetry.addData("Y", colorLocator.LocateAll().y);
         telemetry.addData("ifslow", ifslow);
+        telemetry.addData("ifgyw", ifgyw);
         telemetry.update();
 
         TelemetryPacket packet = new TelemetryPacket();
