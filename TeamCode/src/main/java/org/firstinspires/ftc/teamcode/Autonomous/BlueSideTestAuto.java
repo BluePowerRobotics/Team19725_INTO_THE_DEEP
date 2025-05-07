@@ -52,7 +52,7 @@ public class BlueSideTestAuto extends LinearOpMode {
         //@Override
         public void runOpMode() {
             Pose2d initialPose = new Pose2d(-24.15, -62.75, Math.toRadians(90.00));
-            Pose2d initialPosetest1 = new Pose2d(-48.00, -24.00, Math.toRadians(90.00));
+            Pose2d initialPosetest1 = new Pose2d(-24.15, -62.75, Math.toRadians(90.00));
             Pose2d initialPosetest2 = new Pose2d(-24.00, -48.00, Math.toRadians(90.00));
             //telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
             odo = hardwareMap.get(GoBildaPinpointDriver.class,"pinpoint");
@@ -165,8 +165,8 @@ public class BlueSideTestAuto extends LinearOpMode {
 //                        )
 
                         new SequentialAction(
-                                Actiontest1,
-                                CloseOuttest1
+                                ActionTapround,
+                                CloseOutTapround
                         )
 
 //                    new SequentialAction(
