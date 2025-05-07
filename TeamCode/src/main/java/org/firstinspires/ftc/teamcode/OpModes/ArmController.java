@@ -269,6 +269,10 @@ public class ArmController {
                 motorPower = -0.5;
             else if (gamepad1.left_trigger < 0.5 && gamepad1.right_trigger >= 0.5 && motorNowLength < motorLength)
                 motorPower = 0.5;
+            else if (gamepad2.left_trigger >= 0.5 && gamepad2.right_trigger < 0.5 && motorNowLength > 0)
+                motorPower = -0.5;
+            else if (gamepad2.left_trigger < 0.5 && gamepad2.right_trigger >= 0.5 && motorNowLength < motorLength)
+                motorPower = 0.5;
             else
                 motorPower = 0;
             armMotor.setPower(motorPower);
