@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.RoadRunner.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.RoadRunner.TwoDeadWheelLocalizer;
 
 public final class ManualFeedbackTuner_heading extends LinearOpMode {
-    public static double DEGREE= 48;
+    public static double DEGREE= 3.1415926;
     public static double TIME = 1;
 
     @Override

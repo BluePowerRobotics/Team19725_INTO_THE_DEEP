@@ -54,14 +54,14 @@ public class BlueSideTestAuto extends LinearOpMode {
         public void runOpMode() {
             Pose2d initialPoseLeft = new Pose2d(-24.15, -62.75, Math.toRadians(90.00));
             Pose2d initialPosetest1 = new Pose2d(-24.15, -62.75, Math.toRadians(90.00));
-            Pose2d initialPosetmp = new Pose2d(-23.85, -48.04, Math.toRadians(180.00));
+            Pose2d initialPosetmp = new Pose2d(0.23, -60.26, Math.toRadians(90.00));
             Pose2d initialPosetest2 = new Pose2d(-24.00, -48.00, Math.toRadians(90.00));
             //telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
             odo = hardwareMap.get(GoBildaPinpointDriver.class,"pinpoint");
             //todo
             //    调整出发点位置！！！
 
-            MecanumDrive drive = new MecanumDrive(hardwareMap, initialPosetest2);
+            MecanumDrive drive = new MecanumDrive(hardwareMap, initialPosetmp);
 
             //telemetry.addData("设置tele", 1);
             //drive.settele(telemetry);
@@ -131,7 +131,13 @@ public class BlueSideTestAuto extends LinearOpMode {
 //                    CloseOutTapround
 //            )
 
-
+            TrajectoryActionBuilder cliptest = drive.actionBuilder(new Pose2d(0.23, -60.26, Math.toRadians(90.00)))
+                    .splineTo(new Vector2d(-48.08, -36.11), Math.toRadians(180.00))
+                    .splineTo(new Vector2d(-38.60, -55.52), Math.toRadians(226.47))
+                    .splineTo(new Vector2d(-57.78, -56.88), Math.toRadians(141.34));
+            Action CloseOutcliptest = cliptest.endTrajectory().fresh()
+                    .build();
+            Action Actioncliptest = cliptest.build();
 
 
 
@@ -188,31 +194,31 @@ public class BlueSideTestAuto extends LinearOpMode {
 
 
 
-//            Actions.runBlocking(
-//                new SequentialAction(
-//
-//                        armController.initArm(),
-//
-//                        new SequentialAction(
-//                                ActionRound2,
-//                                CloseOutRound2
-//                        ),
-//                        armController.inTake(200,0)
-//
-////                    new SequentialAction(
-////                            Actiontest2,
-////                            CloseOuttest2
-////                    )
-//                )
-//            );
-
-
             Actions.runBlocking(
-                    new SequentialAction(
-                            armController.initArm(),
-                            armController.outPut(),
-                            armController.inTake(200, 0)
-                    )
+                new SequentialAction(
+
+                        //armController.initArm(),
+
+                        new SequentialAction(
+                                Actioncliptest,
+                                CloseOutcliptest
+                        ),
+                        armController.inTake(200,0)
+
+//                    new SequentialAction(
+//                            Actiontest2,
+//                            CloseOuttest2
+//                    )
+                )
             );
+
+
+//            Actions.runBlocking(
+//                    new SequentialAction(
+//                            armController.initArm(),
+//                            armController.outPut(),
+//                            armController.inTake(200, 0)
+//                    )
+//            );
         }
     }

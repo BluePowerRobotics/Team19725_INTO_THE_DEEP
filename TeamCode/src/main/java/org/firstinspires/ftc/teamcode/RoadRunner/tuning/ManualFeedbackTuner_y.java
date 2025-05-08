@@ -29,15 +29,15 @@ public final class ManualFeedbackTuner_y extends LinearOpMode {
             }
             waitForStart();
 
-            while (opModeIsActive()) {
+            //while (opModeIsActive()) {
                 Actions.runBlocking(
                     drive.actionBuilder(new Pose2d(0, 0, 0))
                             .strafeTo(new Vector2d(0,DISTANCE))
-                            .waitSeconds(1)
-                            .strafeTo(new Vector2d(0,-DISTANCE))
-                            .waitSeconds(1)
+//                            .waitSeconds(1)
+//                            .strafeTo(new Vector2d(0,-DISTANCE))
+//                            .waitSeconds(1)
                             .build());
-            }
+            //}
         } else if (TuningOpModes.DRIVE_CLASS.equals(TankDrive.class)) {
             TankDrive drive = new TankDrive(hardwareMap, new Pose2d(0, 0, 0));
 
