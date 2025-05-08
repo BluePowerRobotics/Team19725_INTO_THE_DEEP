@@ -13,6 +13,7 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.OpModes.ArmController;
 import org.firstinspires.ftc.teamcode.RoadRunner.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 
@@ -53,18 +54,27 @@ public class BlueSideTestAuto extends LinearOpMode {
         public void runOpMode() {
             Pose2d initialPose = new Pose2d(-24.15, -62.75, Math.toRadians(90.00));
             Pose2d initialPosetest1 = new Pose2d(-24.15, -62.75, Math.toRadians(90.00));
+            Pose2d initialPosetmp = new Pose2d(-23.85, -48.04, Math.toRadians(180.00));
             Pose2d initialPosetest2 = new Pose2d(-24.00, -48.00, Math.toRadians(90.00));
             //telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
             odo = hardwareMap.get(GoBildaPinpointDriver.class,"pinpoint");
             //todo
             //    调整出发点位置！！！
 
-            MecanumDrive drive = new MecanumDrive(hardwareMap, initialPosetest1);
+            MecanumDrive drive = new MecanumDrive(hardwareMap, initialPosetest2);
 
             //telemetry.addData("设置tele", 1);
             //drive.settele(telemetry);
             //Claw claw = new Claw(hardwareMap);
             Arm armController = new Arm(hardwareMap,telemetry);
+
+
+            TrajectoryActionBuilder clip = drive.actionBuilder(new Pose2d(-23.85, -48.04, Math.toRadians(180.00)))
+                    .splineTo(new Vector2d(-48.04, -34.80), Math.toRadians(180.75));
+            Action CloseOutclip = clip.endTrajectory().fresh()
+                    .build();
+            Action Actionclip = clip.build();
+
 
             //test1
             TrajectoryActionBuilder test1 = drive.actionBuilder(new Pose2d(-48.00, -24.00, Math.toRadians(90.00)))
@@ -95,6 +105,26 @@ public class BlueSideTestAuto extends LinearOpMode {
             Action CloseOutTapround = Tapround.endTrajectory().fresh()
                     .build();
             Action ActionTapround = Tapround.build();
+
+
+            TrajectoryActionBuilder Round2 = drive.actionBuilder(new Pose2d(-24.15, -48.08, Math.toRadians(180.00)))
+                    .splineTo(new Vector2d(-48.08, -23.92), Math.toRadians(90.63))
+                    .splineTo(new Vector2d(-47.85, 23.92), Math.toRadians(89.73))
+                    .splineTo(new Vector2d(-23.70, 47.85), Math.toRadians(0.00))
+                    .splineTo(new Vector2d(23.70, 47.40), Math.toRadians(-0.55))
+                    .splineTo(new Vector2d(48.08, 23.70), Math.toRadians(-88.94))
+                    .splineTo(new Vector2d(48.08, -24.60), Math.toRadians(270.00))
+                    .splineTo(new Vector2d(23.70, -48.08), Math.toRadians(179.53))
+                    .splineTo(new Vector2d(-24.15, -48.30), Math.toRadians(181.51));
+            Action CloseOutRound2 = Round2.endTrajectory().fresh()
+                    .build();
+            Action ActionRound2 = Round2.build();
+
+
+//            new SequentialAction(
+//                    ActionRound2,
+//                    CloseOutRound2
+//            )
 
 //            new SequentialAction(
 //                    ActionTapround,
@@ -158,22 +188,31 @@ public class BlueSideTestAuto extends LinearOpMode {
 
 
 
-            Actions.runBlocking(
-                new SequentialAction(
+//            Actions.runBlocking(
+//                new SequentialAction(
+//
+//                        armController.initArm(),
+//
 //                        new SequentialAction(
-//                                armController.initArm()
-//                        )
+//                                ActionRound2,
+//                                CloseOutRound2
+//                        ),
+//                        armController.inTake(200,0)
+//
+////                    new SequentialAction(
+////                            Actiontest2,
+////                            CloseOuttest2
+////                    )
+//                )
+//            );
 
-                        new SequentialAction(
-                                ActionTapround,
-                                CloseOutTapround
-                        )
 
-//                    new SequentialAction(
-//                            Actiontest2,
-//                            CloseOuttest2
-//                    )
-                )
+            Actions.runBlocking(
+                    new SequentialAction(
+                            armController.initArm(),
+                            armController.outPut(),
+                            armController.inTake(200, 0)
+                    )
             );
         }
     }
