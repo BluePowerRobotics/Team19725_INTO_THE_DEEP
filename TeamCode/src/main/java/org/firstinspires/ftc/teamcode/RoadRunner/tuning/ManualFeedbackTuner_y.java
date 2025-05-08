@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.RoadRunner.tuning;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -31,8 +32,10 @@ public final class ManualFeedbackTuner_y extends LinearOpMode {
             while (opModeIsActive()) {
                 Actions.runBlocking(
                     drive.actionBuilder(new Pose2d(0, 0, 0))
-                            .lineToY(DISTANCE)
-                            .lineToY(0)
+                            .strafeTo(new Vector2d(0,DISTANCE))
+                            .waitSeconds(1)
+                            .strafeTo(new Vector2d(0,-DISTANCE))
+                            .waitSeconds(1)
                             .build());
             }
         } else if (TuningOpModes.DRIVE_CLASS.equals(TankDrive.class)) {

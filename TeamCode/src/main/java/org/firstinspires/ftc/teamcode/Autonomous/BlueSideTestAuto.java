@@ -52,7 +52,7 @@ public class BlueSideTestAuto extends LinearOpMode {
 
         //@Override
         public void runOpMode() {
-            Pose2d initialPose = new Pose2d(-24.15, -62.75, Math.toRadians(90.00));
+            Pose2d initialPoseLeft = new Pose2d(-24.15, -62.75, Math.toRadians(90.00));
             Pose2d initialPosetest1 = new Pose2d(-24.15, -62.75, Math.toRadians(90.00));
             Pose2d initialPosetmp = new Pose2d(-23.85, -48.04, Math.toRadians(180.00));
             Pose2d initialPosetest2 = new Pose2d(-24.00, -48.00, Math.toRadians(90.00));
@@ -145,7 +145,7 @@ public class BlueSideTestAuto extends LinearOpMode {
 
             // vision here that outputs position
             int visionOutputPosition = 4;
-            TrajectoryActionBuilder test = drive.actionBuilder(initialPose)
+            TrajectoryActionBuilder test = drive.actionBuilder(initialPoseLeft)
                     .splineToSplineHeading(new Pose2d(-42.66, -18.73, Math.toRadians(180.00)), Math.toRadians(114.92));
 
             Action trajectoryActionCloseOutTest = test.endTrajectory().fresh()
