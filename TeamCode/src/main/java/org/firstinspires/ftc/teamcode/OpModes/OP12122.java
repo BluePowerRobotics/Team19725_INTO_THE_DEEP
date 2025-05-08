@@ -1,7 +1,3 @@
-//move()为控制底盘麦轮转动的类（line104）
-//line50 一堆变量
-//line162 runOpMode 主程序
-//package FTC3RR8;
 package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;

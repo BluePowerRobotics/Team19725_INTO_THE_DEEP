@@ -83,3 +83,4 @@ lint/tmp/
 /FtcRobotController/build/*
 /TeamCode/build/*
 /.idea
+/.vscode
