@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 public class ColorReturn{
-    double x;
-    double y;
-    double width;
-    double height;
-    double angle;
+    public double x;
+    public double y;
+    public double width;
+    public double height;
+    public double angle;
     public ColorReturn(double a,double b,double c,double d, double e){
         x = a;
         y = b;

@@ -64,7 +64,7 @@ public class OpMode2025 extends LinearOpMode {
 
         ChassisController.initChassis(hardwareMap,gamepad1);
         ArmController.initArm(hardwareMap,gamepad1,gamepad2);
-        AutoFollow.init(drive, hardwareMap, ifblue);
+        //AutoFollow.init(drive, hardwareMap, ifblue);
 
 
 
@@ -196,7 +196,7 @@ public class OpMode2025 extends LinearOpMode {
 
 
                 if(gamepad2.x){
-                    AutoFollow.follow();
+                    //AutoFollow.follow();
                 }
             }
             //File log = new File(Environment.getExternalStorageDirectory(), "FIRST/roadrunner/logs");

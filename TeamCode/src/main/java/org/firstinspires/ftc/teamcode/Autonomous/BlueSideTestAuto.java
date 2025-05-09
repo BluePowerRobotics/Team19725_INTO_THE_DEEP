@@ -13,6 +13,7 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.OpModes.Alignment;
 import org.firstinspires.ftc.teamcode.OpModes.ArmController;
 import org.firstinspires.ftc.teamcode.RoadRunner.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
@@ -23,7 +24,7 @@ import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 @Autonomous(name = "Auto_2024", group = "Autonomous")
 public class BlueSideTestAuto extends LinearOpMode {
     GoBildaPinpointDriver odo;
-
+    boolean ifblue = true;
 
 
         public class addTele implements Action {
@@ -67,6 +68,7 @@ public class BlueSideTestAuto extends LinearOpMode {
             //drive.settele(telemetry);
             //Claw claw = new Claw(hardwareMap);
             Arm armController = new Arm(hardwareMap,telemetry);
+            AutoAlignment autofollow = new AutoAlignment(hardwareMap, drive, telemetry,ifblue);
 
 
             TrajectoryActionBuilder clip = drive.actionBuilder(new Pose2d(-23.85, -48.04, Math.toRadians(180.00)))
@@ -132,9 +134,11 @@ public class BlueSideTestAuto extends LinearOpMode {
 //            )
 
             TrajectoryActionBuilder cliptest = drive.actionBuilder(new Pose2d(0.23, -60.26, Math.toRadians(90.00)))
+                    .waitSeconds(1.0)
                     .splineTo(new Vector2d(-48.08, -36.11), Math.toRadians(180.00))
                     .splineTo(new Vector2d(-38.60, -55.52), Math.toRadians(226.47))
-                    .splineTo(new Vector2d(-57.78, -56.88), Math.toRadians(141.34));
+                    .splineTo(new Vector2d(-57.78, -56.88), Math.toRadians(141.34))
+                    .waitSeconds(1.0);
             Action CloseOutcliptest = cliptest.endTrajectory().fresh()
                     .build();
             Action Actioncliptest = cliptest.build();
@@ -192,18 +196,24 @@ public class BlueSideTestAuto extends LinearOpMode {
 
             if (isStopRequested()) return;
 
+            Actions.runBlocking(
+                    new SequentialAction(
+                            autofollow.follow()
+                    )
+            );
 
 
 //            Actions.runBlocking(
 //                new SequentialAction(
 //
-//                        //armController.initArm(),
+//                        armController.initArm(),
 //
 //                        new SequentialAction(
 //                                Actioncliptest,
+//
 //                                CloseOutcliptest
 //                        ),
-//                        armController.inTake(200,0)
+//                        armController.inTake(560,0)
 //
 ////                    new SequentialAction(
 ////                            Actiontest2,
@@ -213,12 +223,12 @@ public class BlueSideTestAuto extends LinearOpMode {
 //            );
 
 
-            Actions.runBlocking(
-                    new SequentialAction(
-                            armController.initArm(),
-                            armController.inTake(300, 0.5),
-                            armController.outPut()
-                    )
-            );
+//            Actions.runBlocking(
+//                    new SequentialAction(
+//                            armController.initArm(),
+//                            armController.inTake(300, 0.5),
+//                            armController.outPut()
+//                    )
+//            );
         }
     }
