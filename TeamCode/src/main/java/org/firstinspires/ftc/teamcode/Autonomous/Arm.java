@@ -84,19 +84,19 @@ public class Arm {
         clipUnlockPos = 1;
         clipUpPos = 0.245;
         clipDownPos = 0.715;
-        armUpPos = 0.1;
+        armUpPos = 0;
         armPosMax = 1;
         armPosMin = 0.7;
     }
 
     double armUpTime = 0;
-
+    boolean startToBack = false;
     public class initArm implements Action {
-        private boolean initiatized = false;
+        private boolean initialized = false;
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            if (!initiatized) {
+            if (!initialized) {
                 t = System.currentTimeMillis();// 获取当前时间
                 motorTime = t;
                 armMotor = hardwaremap.get(DcMotor.class, "armMotor");
@@ -110,7 +110,7 @@ public class Arm {
                 servo_position = 0.9;// default position when arm is down.
 
                 motorTime = 0;
-                motorLength = 600;
+                motorLength = 560;
                 motorNowLength = 0;
                 motorPower = 0;
 
@@ -129,25 +129,27 @@ public class Arm {
                 servoe5.setPosition(clipLockPos);
                 armMotor.setPower(1);
 
-                initiatized = true;
+                initialized = true;
             }
             if (System.currentTimeMillis() - t <= 2000) {
                 armMotor.setTargetPosition(560 * 2);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 telemetry.addData("Testing", armMotor.getCurrentPosition());
                 telemetry.update();
-                return false;
+                return true;
             }
-
-            armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            telemetry.addData("StartToBack", armMotor.getCurrentPosition());
-            telemetry.update();
+            if(!startToBack) {
+                armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                telemetry.addData("StartToBack", armMotor.getCurrentPosition());
+                telemetry.update();
+                startToBack = true;
+            }
             if (armMotor.getCurrentPosition() + motorLength > 5 || armMotor.getCurrentPosition() + motorLength < -5) {
                 armMotor.setTargetPosition(-(int) motorLength);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 telemetry.addData("Backing", armMotor.getCurrentPosition());
                 telemetry.update();
-                return false;
+                return true;
             }
             armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -159,7 +161,7 @@ public class Arm {
             // armMotor.setMode(DcMotor.RunMode.Run_WITHOUT_ENCODER);
             telemetry.addData("Finished", armMotor.getCurrentPosition());
             telemetry.update();
-            return true;
+            return false;
         }
 
     }
@@ -177,33 +179,38 @@ public class Arm {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
             if (!initialized) {
+                t= System.currentTimeMillis();
                 clipPosition = 0;
                 servoe2.setPosition(clipPosition);
                 servoe5.setPosition(clipLockPos);
                 clipLock = true;
+                armup=true;
                 armUpTime = t + 1600;
                 armMotor.setTargetPosition(0);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(1);
+                servoe3.setPosition(armUpPos);// 一级舵机竖直
+                servoe4.setPosition(0.9);// 二级舵机收起
+                telemetry.addData("outPut:initiating",armUpPos);
+                telemetry.update();
                 initialized = true;
             }
-            servoe3.setPosition(armUpPos);// 一级舵机竖直
-            servoe4.setPosition(0.9);// 二级舵机收起
+
             // servoe5.setPosition(clipLockPos);
             if (armUpTime >= System.currentTimeMillis()) {
                 armMotor.setTargetPosition(0);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 // armMotor.setPower(1);
-                telemetry.addData("goingshorter", armMotor.getCurrentPosition());
-
+                telemetry.addData("outPut:goingShorter", armMotor.getCurrentPosition());
+                telemetry.update();
                 return true;
             } else {
                 servoe4.setPosition(clipUpPos);// 二级舵机向后
                 armMotor.setTargetPosition(540);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 // armMotor.setPower(1);
-                telemetry.addData("goinglonger", armMotor.getCurrentPosition());
-
+                telemetry.addData("outPut:goingLonger", armMotor.getCurrentPosition());
+                telemetry.update();
             }
             if (armMotor.getCurrentPosition() - 540 < 5 && armMotor.getCurrentPosition() - 540 > -5) {
                 servoe5.setPosition(clipUnlockPos);
@@ -214,7 +221,7 @@ public class Arm {
                     finished = true;
                 }
 
-                telemetry.addData("unlocking", armMotor.getCurrentPosition());
+                telemetry.addData("outPut:unlocking", armMotor.getCurrentPosition());
                 telemetry.update();
             }
             if (finishtime != 0 && System.currentTimeMillis() >= finishtime) {
@@ -246,27 +253,43 @@ public class Arm {
                 armup = false;
                 servoe3.setPosition(servo_position);// 一级舵机地面
                 servoe4.setPosition(clipDownPos);// 二级舵机向下
+                servoe2.setPosition(clipPosition);
+                telemetry.addData("inTake:initiating",armup);
+                telemetry.update();
+                initialized =true;
             }
             armMotor.setTargetPosition(targetArmLength);
             armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             armCalculator();
-
+            telemetry.addData("inTake:run to target length",armMotor.getCurrentPosition());
+            telemetry.update();
             if ((!startToInTake) && armMotor.getCurrentPosition() - targetArmLength < 5
                     && armMotor.getCurrentPosition() - targetArmLength > -5) {
+                down = true;
                 startToInTake = true;
                 clipLock = true;
                 clipLockTime = System.currentTimeMillis() + 500;
+                armCalculator();
+                telemetry.addData("inTake:runned to target length",armMotor.getCurrentPosition());
+                telemetry.update();
             } else if (startToInTake) {
                 armCalculator();
                 if (clipLock && clipLockTime <= System.currentTimeMillis())
                     servoe5.setPosition(clipLockPos);
                 else
                     servoe5.setPosition(clipUnlockPos);
+                telemetry.addData("inTake:locking...",clipLock);
+                telemetry.update();
             }
             if (clipLock && clipLockTime + 600 <= System.currentTimeMillis()) {
+                telemetry.addData("inTake:finished",clipLock);
+                telemetry.update();
                 return false;// finished
             } else {
+                telemetry.addData("inTake:unfinished",clipLock);
+                telemetry.update();
                 return true;
+
             }
         }
     }
@@ -331,19 +354,19 @@ public class Arm {
     //todo
     // 设置没下夹子的平时高度：clipHeight
     //  设置下架子与没下夹子的高度差值：339行clipHeightError    新的高度为clipHeight - clipHeightError
-    double clipHeight = 10;// 12
+    double clipHeight = 8;// 10
     double clipHeightError = 0;
-
+    boolean down = false;
     void armCalculator() {
-        if (clipLock && clipLockTime + 500 >= System.currentTimeMillis())
+        if (down)
             clipHeightError = 10;// servo_position+=0.12;
         else
             clipHeightError = 0;
         double L = 30.5 + (motorNowLength / motorLength) * 32.0;
         double argument = -(clipHeight + clipHeightError) / L;
-        servo_position = Math.toDegrees(Math.acos(argument)) / 135.0 /*- 0.1*/;
+        servo_position = Math.toDegrees(Math.acos(argument)) / 135.0 - 0.1;
 
-        clipDownPos = (3 * 0.3 + 2.2 - 1.5 * (servo_position - 0.1)) / 3;
+        clipDownPos = (3 * 0.3 + 2.2 - 1.5 * (servo_position /*- 0.1*/)) / 3;
     }
 
     // public void armController(){

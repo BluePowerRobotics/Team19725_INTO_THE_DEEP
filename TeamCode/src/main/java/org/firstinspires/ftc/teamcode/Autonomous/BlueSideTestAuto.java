@@ -194,31 +194,31 @@ public class BlueSideTestAuto extends LinearOpMode {
 
 
 
-            Actions.runBlocking(
-                new SequentialAction(
-
-                        //armController.initArm(),
-
-                        new SequentialAction(
-                                Actioncliptest,
-                                CloseOutcliptest
-                        ),
-                        armController.inTake(200,0)
-
-//                    new SequentialAction(
-//                            Actiontest2,
-//                            CloseOuttest2
-//                    )
-                )
-            );
-
-
 //            Actions.runBlocking(
-//                    new SequentialAction(
-//                            armController.initArm(),
-//                            armController.outPut(),
-//                            armController.inTake(200, 0)
-//                    )
+//                new SequentialAction(
+//
+//                        //armController.initArm(),
+//
+//                        new SequentialAction(
+//                                Actioncliptest,
+//                                CloseOutcliptest
+//                        ),
+//                        armController.inTake(200,0)
+//
+////                    new SequentialAction(
+////                            Actiontest2,
+////                            CloseOuttest2
+////                    )
+//                )
 //            );
+
+
+            Actions.runBlocking(
+                    new SequentialAction(
+                            armController.initArm(),
+                            armController.inTake(300, 0.5),
+                            armController.outPut()
+                    )
+            );
         }
     }
