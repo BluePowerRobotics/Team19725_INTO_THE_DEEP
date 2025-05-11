@@ -367,6 +367,8 @@ public class Arm {
         servo_position = Math.toDegrees(Math.acos(argument)) / 135.0 - 0.1;
 
         clipDownPos = (3 * 0.3 + 2.2 - 1.5 * (servo_position /*- 0.1*/)) / 3;
+        servoe3.setPosition(servo_position);
+        servoe4.setPosition(clipDpwnPos);
     }
 
     // public void armController(){
