@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 
 @Config
-@Autonomous(name = "Auto_2024", group = "Autonomous")
+@Autonomous(name = "Auto_test", group = "Autonomous")
 public class BlueSideTestAuto extends LinearOpMode {
     GoBildaPinpointDriver odo;
     boolean ifblue = true;
