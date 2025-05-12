@@ -1,11 +1,9 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
-import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.Vector2d;
@@ -13,8 +11,6 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.OpModes.Alignment;
-import org.firstinspires.ftc.teamcode.OpModes.ArmController;
 import org.firstinspires.ftc.teamcode.RoadRunner.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 
@@ -22,7 +18,7 @@ import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 
 @Config
 @Autonomous(name = "Auto_test", group = "Autonomous")
-public class BlueSideTestAuto extends LinearOpMode {
+public class AutoTest extends LinearOpMode {
     GoBildaPinpointDriver odo;
     boolean ifblue = true;
 
@@ -144,7 +140,23 @@ public class BlueSideTestAuto extends LinearOpMode {
             Action Actioncliptest = cliptest.build();
 
 
+            TrajectoryActionBuilder straightclip = drive.actionBuilder(new Pose2d(0.23, -60.26, Math.toRadians(90.00)))
+                    .strafeToConstantHeading(new Vector2d(24,16.575))
+                    .waitSeconds(1.0)
+                    .turnTo(135)
+                    .strafeTo(new Vector2d(-58.99, -59.45));
+            ;
 
+
+            Action CloseOutstraightclip = cliptest.endTrajectory().fresh()
+                    .build();
+            Action Actionstraightclip = cliptest.build();
+
+
+
+
+            //setreversed
+            //
             TrajectoryActionBuilder tap5 = drive.actionBuilder(new Pose2d(-5.13, -70.40, Math.toRadians(90.00)))
                     .splineToSplineHeading(new Pose2d(-35.94, -24.08, Math.toRadians(180.00)), Math.toRadians(180.00))
                     .splineTo(new Vector2d(-47.17, -53.27), Math.toRadians(248.96))
@@ -196,11 +208,11 @@ public class BlueSideTestAuto extends LinearOpMode {
 
             if (isStopRequested()) return;
 
-            Actions.runBlocking(
-                    new SequentialAction(
-                            autofollow.follow()
-                    )
-            );
+//            Actions.runBlocking(
+//                    new SequentialAction(
+//                            autofollow.follow()
+//                    )
+//            );
 
 
 //            Actions.runBlocking(
@@ -223,12 +235,12 @@ public class BlueSideTestAuto extends LinearOpMode {
 //            );
 
 
-//            Actions.runBlocking(
-//                    new SequentialAction(
-//                            armController.initArm(),
-//                            armController.inTake(300, 0.5),
-//                            armController.outPut()
-//                    )
-//            );
+            Actions.runBlocking(
+                    new SequentialAction(
+                            Actioncliptest,
+
+                            CloseOutcliptest
+                    )
+            );
         }
     }

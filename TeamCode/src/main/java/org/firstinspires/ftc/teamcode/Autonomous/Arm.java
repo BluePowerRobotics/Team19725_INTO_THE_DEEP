@@ -359,7 +359,7 @@ public class Arm {
     boolean down = false;
     void armCalculator() {
         if (down)
-            clipHeightError = 10;// servo_position+=0.12;
+            clipHeightError = 6;// servo_position+=0.12;
         else
             clipHeightError = 0;
         double L = 30.5 + (motorNowLength / motorLength) * 32.0;
@@ -368,7 +368,7 @@ public class Arm {
 
         clipDownPos = (3 * 0.3 + 2.2 - 1.5 * (servo_position /*- 0.1*/)) / 3;
         servoe3.setPosition(servo_position);
-        servoe4.setPosition(clipDpwnPos);
+        servoe4.setPosition(clipDownPos);
     }
 
     // public void armController(){
