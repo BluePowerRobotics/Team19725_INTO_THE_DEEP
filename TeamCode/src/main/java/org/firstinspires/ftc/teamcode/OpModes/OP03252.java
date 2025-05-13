@@ -146,6 +146,7 @@ public class OP03252 extends LinearOpMode {
             move_y_l = gamepad1.left_stick_y + gamepad2.left_stick_y;
             move_x_r = gamepad1.right_stick_x + gamepad2.right_stick_x;
             move_y_r = gamepad1.right_stick_y + gamepad2.right_stick_y;
+            //r,y,x,speed
             ChassisController.chassisController(move_x_l, -move_x_r, move_y_l + move_y_r, 1);
             ArmController.armController();
 
