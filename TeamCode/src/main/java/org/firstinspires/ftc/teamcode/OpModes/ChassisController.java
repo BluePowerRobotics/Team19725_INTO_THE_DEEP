@@ -91,12 +91,14 @@ public class ChassisController {
     double py;
     double lock_thita;
 
+    public boolean climb = false;
+
     static RevHubOrientationOnRobot.LogoFacingDirection[] logoFacingDirections = RevHubOrientationOnRobot.LogoFacingDirection
             .values();
     static RevHubOrientationOnRobot.UsbFacingDirection[] usbFacingDirections = RevHubOrientationOnRobot.UsbFacingDirection
             .values();
     HardwareMap hardwareMap;
-    Gamepad gamepad1;
+    Gamepad gamepad1,gamepad2;
     IMU imu;
     YawPitchRollAngles orientation;
     static DcMotor leftFront, leftBack, rightBack, rightFront, armMotor;
@@ -110,9 +112,10 @@ public class ChassisController {
     public double thita = 0;
     public double angletime = 0;
 
-    public void initChassis(HardwareMap hardwareMaprc, Gamepad gamepadrc) {
+    public void initChassis(HardwareMap hardwareMaprc, Gamepad gamepad1rc, Gamepad gamepad2rc) {
         hardwareMap = hardwareMaprc;
-        gamepad1 = gamepadrc;
+        gamepad1 = gamepad1rc;
+        gamepad2 = gamepad2rc;
         imu = hardwareMap.get(IMU.class, "eimu");
         orientation = imu.getRobotYawPitchRollAngles();
 
@@ -323,7 +326,7 @@ public class ChassisController {
         else if (gamepad1.right_bumper)
             lock_thita = 0;
 
-        if (!noheadmode) {
+        if (!noheadmode||climb) {
             move(r, y, x);
         } else {
             noheadmove(r, y, x, speed);
