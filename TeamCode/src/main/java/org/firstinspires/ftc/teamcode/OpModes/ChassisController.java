@@ -32,6 +32,8 @@ package org.firstinspires.ftc.teamcode.OpModes;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.RoadRunner.GoBildaPinpointDriver;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -76,7 +78,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 //单独移动测试
 public class ChassisController {
-    HardwareMap HardwareMap;
+    GoBildaPinpointDriver odo;
     double leftFrontPower;
     double leftBackPower;
     double rightBackPower;
@@ -91,12 +93,14 @@ public class ChassisController {
     double py;
     double lock_thita;
 
+    public boolean climb = false;
+
     static RevHubOrientationOnRobot.LogoFacingDirection[] logoFacingDirections = RevHubOrientationOnRobot.LogoFacingDirection
             .values();
     static RevHubOrientationOnRobot.UsbFacingDirection[] usbFacingDirections = RevHubOrientationOnRobot.UsbFacingDirection
             .values();
     HardwareMap hardwareMap;
-    Gamepad gamepad1;
+    Gamepad gamepad1,gamepad2;
     IMU imu;
     YawPitchRollAngles orientation;
     static DcMotor leftFront, leftBack, rightBack, rightFront, armMotor;
@@ -110,9 +114,11 @@ public class ChassisController {
     public double thita = 0;
     public double angletime = 0;
 
-    public void initChassis(HardwareMap hardwareMaprc, Gamepad gamepadrc) {
+    public void initChassis(HardwareMap hardwareMaprc, Gamepad gamepad1rc, Gamepad gamepad2rc) {
+        initLocator();
         hardwareMap = hardwareMaprc;
-        gamepad1 = gamepadrc;
+        gamepad1 = gamepad1rc;
+        gamepad2 = gamepad2rc;
         imu = hardwareMap.get(IMU.class, "eimu");
         orientation = imu.getRobotYawPitchRollAngles();
 
@@ -191,22 +197,55 @@ public class ChassisController {
         rightFront.setPower(rightFrontPower);
 
     }
+    public double multiplyX = 0.01;
+    public double getNowX(){
+        return odo.getEncoderX()*multiplyX;
+    }
+    public double multiplyY = 0.01;
+    public double getNowY(){
+        return odo.getEncoderY()*multiplyY;
+    }
+    public void initLocator(){
+        odo = hardwareMap.get(GoBildaPinpointDriver.class,"pinpoint");
+        odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED, GoBildaPinpointDriver.EncoderDirection.FORWARD);
 
-    public void automove(double tx, double ty, double tr) {
+        odo.resetPosAndIMU();
+    }
+
+    public void runToLocation(double targetX, double targetY, double targetR,double pathError,double maxSpeed) {
         // x横向，y竖向，r旋转（-1~1），speed速
         // t目标，n目前
         // d距离
         // 半场1.78m，以m为单位
         // Math.sqrt()
-        double nx = 0;
-        double ny = 0;
-        double nr = 0;
-        double dx = tx - nx;// nx已被占用，需修改为当前位置数值
-        double dy = ty - ny;// 同上
-        double dr = tr - nr;//
+        double nowX = getNowX();
+        double nowY = getNowY();
+        double errorX = targetX - nowX;
+        double errorY = targetY - nowY;
+        double speed = Math.sqrt(errorX*errorX+errorY*errorY);
+        speed = Math.min(speed,maxSpeed);
+        double pathDegree,moveX,moveY;
+        if (errorX != 0 || errorY != 0) {
+            pathDegree = Math.toDegrees(Math.atan(Math.abs(errorY / errorX)));
+            if (errorY <= 0 && errorX > 0)
+                pathDegree = 360 - pathDegree;
+            if (errorY <= 0 && errorX <= 0)
+                pathDegree = 180 + pathDegree;
+            if (errorY > 0 && errorX <= 0)
+                pathDegree = 180 - pathDegree;
+
+            moveX = speed * Math.cos(Math.toRadians(pathDegree+pathError));
+            // if (getthita<=0) px = -px;
+            moveY = speed * Math.sin(Math.toRadians(pathDegree+pathError));
+        } else {
+            moveX = 0;
+            moveY = 0;
+        }
+        lock_thita = targetR;
         // double x=speed*dx/(Math.sqrt(dx*dx+dy*dy));
         // double y=speed*dy/(Math.sqrt(dx*dx+dy*dy));
-        noheadmove(dr, dy, dx, 2);
+        noheadmove(thitalock(), moveY, moveX, 2);
 
     }
 
@@ -321,9 +360,9 @@ public class ChassisController {
         if (gamepad1.left_bumper)
             lock_thita = 45;
         else if (gamepad1.right_bumper)
-            lock_thita = 0;
+            lock_thita = 90;
 
-        if (!noheadmode) {
+        if (!noheadmode||climb) {
             move(r, y, x);
         } else {
             noheadmove(r, y, x, speed);
