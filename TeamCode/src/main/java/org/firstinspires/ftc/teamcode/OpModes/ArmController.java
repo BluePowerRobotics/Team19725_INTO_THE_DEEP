@@ -337,7 +337,7 @@ public class ArmController {
     private Blinker control_Hub;
     private Blinker expansion_Hub_2;
     private HardwareDevice webcam_1;
-    private DcMotor armMotor;
+    public DcMotor armMotor;
     private DcMotor armTest;
     private Gyroscope eimu;
     private IMU imu;

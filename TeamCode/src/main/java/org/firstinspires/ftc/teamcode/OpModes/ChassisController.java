@@ -213,7 +213,7 @@ public class ChassisController {
         odo.resetPosAndIMU();
     }
 
-    public void automove(double targetX, double targetY, double targetR) {
+    public void runToLocation(double targetX, double targetY, double targetR,double pathError,double maxSpeed) {
         // x横向，y竖向，r旋转（-1~1），speed速
         // t目标，n目前
         // d距离
@@ -221,13 +221,31 @@ public class ChassisController {
         // Math.sqrt()
         double nowX = getNowX();
         double nowY = getNowY();
-        double nowR = thita;
-        double dx = targetX - nowX;// nx已被占用，需修改为当前位置数值
-        double dy = targetY - nowY;// 同上
-        double dr = targetR - nowR;//
+        double errorX = targetX - nowX;
+        double errorY = targetY - nowY;
+        double speed = Math.sqrt(errorX*errorX+errorY*errorY);
+        speed = Math.min(speed,maxSpeed);
+        double pathDegree,moveX,moveY;
+        if (errorX != 0 || errorY != 0) {
+            pathDegree = Math.toDegrees(Math.atan(Math.abs(errorY / errorX)));
+            if (errorY <= 0 && errorX > 0)
+                pathDegree = 360 - pathDegree;
+            if (errorY <= 0 && errorX <= 0)
+                pathDegree = 180 + pathDegree;
+            if (errorY > 0 && errorX <= 0)
+                pathDegree = 180 - pathDegree;
+
+            moveX = speed * Math.cos(Math.toRadians(pathDegree+pathError));
+            // if (getthita<=0) px = -px;
+            moveY = speed * Math.sin(Math.toRadians(pathDegree+pathError));
+        } else {
+            moveX = 0;
+            moveY = 0;
+        }
+        lock_thita = targetR;
         // double x=speed*dx/(Math.sqrt(dx*dx+dy*dy));
         // double y=speed*dy/(Math.sqrt(dx*dx+dy*dy));
-        noheadmove(dr, dy, dx, 2);
+        noheadmove(thitalock(), moveY, moveX, 2);
 
     }
 
@@ -342,7 +360,7 @@ public class ChassisController {
         if (gamepad1.left_bumper)
             lock_thita = 45;
         else if (gamepad1.right_bumper)
-            lock_thita = 0;
+            lock_thita = 90;
 
         if (!noheadmode||climb) {
             move(r, y, x);
