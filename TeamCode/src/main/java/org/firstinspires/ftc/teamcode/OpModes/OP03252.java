@@ -134,7 +134,7 @@ public class OP03252 extends LinearOpMode {
     public void runOpMode() {
         inithardware();
         ChassisController.initChassis(hardwareMap, gamepad1);
-        ArmController.initArm(hardwareMap, gamepad1, gamepad2);
+        ArmController.initArm(hardwareMap, gamepad1, gamepad2,telemetry);
         waitForStart();
         while (opModeIsActive()) {
             /*
