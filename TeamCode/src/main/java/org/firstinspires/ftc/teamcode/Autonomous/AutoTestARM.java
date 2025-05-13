@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -14,11 +15,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.RoadRunner.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 
-import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
-
 @Config
-@Autonomous(name = "Auto_test", group = "Autonomous")
-public class AutoTest extends LinearOpMode {
+@Autonomous(name = "Auto_test_arm", group = "Autonomous")
+public class AutoTestARM extends LinearOpMode {
     GoBildaPinpointDriver odo;
     boolean ifblue = true;
 
@@ -140,23 +139,7 @@ public class AutoTest extends LinearOpMode {
             Action Actioncliptest = cliptest.build();
 
 
-            TrajectoryActionBuilder straightclip = drive.actionBuilder(new Pose2d(0.23, -60.26, Math.toRadians(90.00)))
-                    .strafeToConstantHeading(new Vector2d(24,16.575))
-                    .waitSeconds(1.0)
-                    .turnTo(135)
-                    .strafeTo(new Vector2d(-58.99, -59.45));
-            ;
 
-
-            Action CloseOutstraightclip = cliptest.endTrajectory().fresh()
-                    .build();
-            Action Actionstraightclip = cliptest.build();
-
-
-
-
-            //setreversed
-            //
             TrajectoryActionBuilder tap5 = drive.actionBuilder(new Pose2d(-5.13, -70.40, Math.toRadians(90.00)))
                     .splineToSplineHeading(new Pose2d(-35.94, -24.08, Math.toRadians(180.00)), Math.toRadians(180.00))
                     .splineTo(new Vector2d(-47.17, -53.27), Math.toRadians(248.96))
@@ -237,9 +220,9 @@ public class AutoTest extends LinearOpMode {
 
             Actions.runBlocking(
                     new SequentialAction(
-                            Actioncliptest,
-
-                            CloseOutcliptest
+                            armController.initArm(),
+                            armController.inTake(300, 0.5),
+                            armController.outPut()
                     )
             );
         }

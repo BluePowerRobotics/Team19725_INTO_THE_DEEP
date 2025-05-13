@@ -100,7 +100,7 @@ public class ArmController {
         clipUpPos = 0.245;// 0,1
         clipDownPos = 0.675;// calculated,useless
         clipPosition = 0;// 0123
-        armUpPos = 0.1;// 0,1
+        armUpPos = 0;// 0,1
         armPosMax = 1;// useless
         armPosMin = 0.7;// useless
 
