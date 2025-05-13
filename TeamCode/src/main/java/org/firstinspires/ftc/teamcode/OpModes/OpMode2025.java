@@ -63,7 +63,7 @@ public class OpMode2025 extends LinearOpMode {
 
 
         ChassisController.initChassis(hardwareMap,gamepad1);
-        ArmController.initArm(hardwareMap,gamepad1,gamepad2);
+        ArmController.initArm(hardwareMap,gamepad1,gamepad2,telemetry);
         //AutoFollow.init(drive, hardwareMap, ifblue);
 
 
