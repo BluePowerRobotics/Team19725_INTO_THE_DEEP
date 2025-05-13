@@ -32,6 +32,8 @@ package org.firstinspires.ftc.teamcode.OpModes;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.RoadRunner.GoBildaPinpointDriver;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -76,7 +78,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 //单独移动测试
 public class ChassisController {
-    HardwareMap HardwareMap;
+    GoBildaPinpointDriver odo;
     double leftFrontPower;
     double leftBackPower;
     double rightBackPower;
@@ -113,6 +115,7 @@ public class ChassisController {
     public double angletime = 0;
 
     public void initChassis(HardwareMap hardwareMaprc, Gamepad gamepad1rc, Gamepad gamepad2rc) {
+        initLocator();
         hardwareMap = hardwareMaprc;
         gamepad1 = gamepad1rc;
         gamepad2 = gamepad2rc;
@@ -194,19 +197,34 @@ public class ChassisController {
         rightFront.setPower(rightFrontPower);
 
     }
+    public double multiplyX = 0.01;
+    public double getNowX(){
+        return odo.getEncoderX()*multiplyX;
+    }
+    public double multiplyY = 0.01;
+    public double getNowY(){
+        return odo.getEncoderY()*multiplyY;
+    }
+    public void initLocator(){
+        odo = hardwareMap.get(GoBildaPinpointDriver.class,"pinpoint");
+        odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED, GoBildaPinpointDriver.EncoderDirection.FORWARD);
 
-    public void automove(double tx, double ty, double tr) {
+        odo.resetPosAndIMU();
+    }
+
+    public void automove(double targetX, double targetY, double targetR) {
         // x横向，y竖向，r旋转（-1~1），speed速
         // t目标，n目前
         // d距离
         // 半场1.78m，以m为单位
         // Math.sqrt()
-        double nx = 0;
-        double ny = 0;
-        double nr = 0;
-        double dx = tx - nx;// nx已被占用，需修改为当前位置数值
-        double dy = ty - ny;// 同上
-        double dr = tr - nr;//
+        double nowX = getNowX();
+        double nowY = getNowY();
+        double nowR = thita;
+        double dx = targetX - nowX;// nx已被占用，需修改为当前位置数值
+        double dy = targetY - nowY;// 同上
+        double dr = targetR - nowR;//
         // double x=speed*dx/(Math.sqrt(dx*dx+dy*dy));
         // double y=speed*dy/(Math.sqrt(dx*dx+dy*dy));
         noheadmove(dr, dy, dx, 2);
