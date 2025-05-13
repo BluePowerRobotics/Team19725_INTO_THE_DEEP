@@ -63,7 +63,7 @@ public class AutoTestARM extends LinearOpMode {
             //drive.settele(telemetry);
             //Claw claw = new Claw(hardwareMap);
             Arm armController = new Arm(hardwareMap,telemetry);
-            AutoAlignment autofollow = new AutoAlignment(hardwareMap, drive, telemetry,ifblue);
+            //AutoAlignment autofollow = new AutoAlignment(hardwareMap, drive, telemetry,ifblue);
 
 
             TrajectoryActionBuilder clip = drive.actionBuilder(new Pose2d(-23.85, -48.04, Math.toRadians(180.00)))
