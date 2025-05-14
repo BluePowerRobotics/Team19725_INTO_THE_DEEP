@@ -325,6 +325,8 @@ package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.qualcomm.robotcore.hardware.Blinker;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -338,7 +340,7 @@ public class ArmController {
     private Blinker expansion_Hub_2;
     private HardwareDevice webcam_1;
     public DcMotor armMotor;
-    private DcMotor armTest;
+    private DcMotor armPuller;
     private Gyroscope eimu;
     private IMU imu;
     private DcMotor leftBack;
@@ -409,6 +411,9 @@ public class ArmController {
         armMotor = hardwaremap.get(DcMotor.class, "armMotor");
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armMotor.setDirection(DcMotor.Direction.REVERSE);
+        armPuller = hardwaremap.get(DcMotor.class,"armPuller");
+        armPuller.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        armPuller.setDirection(DcMotorSimple.Direction.FORWARD);
         servoe3 = hardwaremap.get(Servo.class, "servoe3");
         servoe4 = hardwaremap.get(Servo.class, "servoe4");
         servoe5 = hardwaremap.get(Servo.class, "servoe5");
@@ -646,8 +651,10 @@ public class ArmController {
         armCalculator();
         if (armup) {
             armUp();
+            armPuller.setPower(0.2);
         } else {
             armDown();
+            armPuller.setPower(0.1);
         }
         clipControl();
     }
