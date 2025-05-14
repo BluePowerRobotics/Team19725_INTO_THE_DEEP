@@ -115,7 +115,7 @@ public class ChassisController {
     public double angletime = 0;
 
     public void initChassis(HardwareMap hardwareMaprc, Gamepad gamepad1rc, Gamepad gamepad2rc) {
-        initLocator();
+
         hardwareMap = hardwareMaprc;
         gamepad1 = gamepad1rc;
         gamepad2 = gamepad2rc;
@@ -138,6 +138,7 @@ public class ChassisController {
         rightBack.setDirection(DcMotor.Direction.REVERSE);
         leftBack.setDirection(DcMotor.Direction.FORWARD);
         freshThita();
+        initLocator();
     }
 
     void updateOrientation() {

@@ -30,22 +30,31 @@ public class AutoTestPOS extends LinearOpMode {
 
         //@Override
         public void runOpMode() {
-            Pose2d initialPoseLeft = new Pose2d(-24.15, -62.75, Math.toRadians(90.00));
+            Pose2d initialPoseLeft = new Pose2d(-24, -48, Math.toRadians(180.00));
             Pose2d initialPosetest1 = new Pose2d(-24.15, -62.75, Math.toRadians(90.00));
             Pose2d initialPosetmp = new Pose2d(0.23, -60.26, Math.toRadians(90.00));
             Pose2d initialPosetest2 = new Pose2d(-24.00, -48.00, Math.toRadians(90.00));
+
+
+
+            double OutPutHeading = Math.toRadians(135);
+            double Intake3Heading = Math.toRadians(228.81);
+            Vector2d OutPutPos = new Vector2d(-57,-57);
+            Vector2d IntkePos1 = new Vector2d(-48,-44);
+            Vector2d IntkePos2 = new Vector2d(-60,-44);
+            Vector2d IntkePos3 = new Vector2d(-60,-44);
             //telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
             odo = hardwareMap.get(GoBildaPinpointDriver.class,"pinpoint");
             //todo
             //    调整出发点位置！！！
 
-            MecanumDrive drive = new MecanumDrive(hardwareMap, initialPosetmp);
+            MecanumDrive drive = new MecanumDrive(hardwareMap, initialPoseLeft);
 
             //telemetry.addData("设置tele", 1);
             //drive.settele(telemetry);
             //Claw claw = new Claw(hardwareMap);
             Arm armController = new Arm(hardwareMap,telemetry);
-            AutoAlignment autofollow = new AutoAlignment(hardwareMap, drive, telemetry,ifblue);
+            //AutoAlignment autofollow = new AutoAlignment(hardwareMap, drive, telemetry,ifblue);
 
 
             AddTele step1  = new AddTele("step1", 1, telemetry);
@@ -132,42 +141,55 @@ public class AutoTestPOS extends LinearOpMode {
             Action Actioncliptest = cliptest.build();
 
 
-            TrajectoryActionBuilder straightclip = drive.actionBuilder(new Pose2d(0.23, -60.26, Math.toRadians(90.00)))
-                    .waitSeconds(1.0)
-                    .waitSeconds(1.0)
-                    .strafeToConstantHeading(new Vector2d(24,16.575))
-                    .stopAndAdd(step2.addTele())
+            TrajectoryActionBuilder straightclip = drive.actionBuilder(new Pose2d(0,0,0))
+
                     .waitSeconds(0.5)
-                    .splineTo(new Vector2d(-24.15, -62.75), Math.toRadians(90.00))
-                    .stopAndAdd(step3.addTele())
+                    .turnTo(Math.toRadians(135))
                     .waitSeconds(0.5)
-                    .turnTo(135)
-                    .stopAndAdd(step4.addTele())
+                    .strafeTo(OutPutPos)
+
                     .waitSeconds(0.5)
-                    .setTangent(Math.toRadians(135))
-                    .stopAndAdd(step5.addTele())
-                    .waitSeconds(0.5)
-                    .strafeTo(new Vector2d(5, 10))
+                    .turnTo(Math.PI)
+                    .strafeToConstantHeading(new Vector2d(-48,-30))
                     ;
-            ;
 
-
-            Action CloseOutstraightclip = cliptest.endTrajectory().fresh()
+            Action CloseOutstraightclip = straightclip.endTrajectory().fresh()
                     .build();
-            Action Actionstraightclip = cliptest.build();
+            Action Actionstraightclip = straightclip.build();
 
 
 
+            //todo set initPOS
+
+            TrajectoryActionBuilder OutPut = drive.actionBuilder(new Pose2d(0,0,0))
+                    .turnTo(OutPutHeading)
+                    .strafeTo(OutPutPos);
+            Action CloseOutOutPut = OutPut.endTrajectory().fresh()
+                    .build();
+            Action ActionOutPut = OutPut.build();
+
+            TrajectoryActionBuilder Intake1 = drive.actionBuilder(new Pose2d(0,0,0))
+                    .turnTo(Math.PI)
+                    .strafeTo(IntkePos1);
+            Action CloseOutIntake1 = Intake1.endTrajectory().fresh()
+                    .build();
+            Action ActionOutIntake1 = Intake1.build();
+
+            TrajectoryActionBuilder Intake2 = drive.actionBuilder(new Pose2d(0,0,0))
+                    .turnTo(Math.PI)
+                    .strafeTo(IntkePos2);
+            Action CloseOutIntake2 = Intake2.endTrajectory().fresh()
+                    .build();
+            Action ActionOutIntake2 = Intake2.build();
+
+            TrajectoryActionBuilder Intake3 = drive.actionBuilder(new Pose2d(0,0,0))
+                    .turnTo(Intake3Heading)
+                    .strafeTo(IntkePos3);
+            Action CloseOutIntake3 = Intake3.endTrajectory().fresh()
+                    .build();
+            Action ActionOutIntake3 = Intake3.build();
 
             //setreversed
-            //
-            TrajectoryActionBuilder tap5 = drive.actionBuilder(new Pose2d(-5.13, -70.40, Math.toRadians(90.00)))
-                    .splineToSplineHeading(new Pose2d(-35.94, -24.08, Math.toRadians(180.00)), Math.toRadians(180.00))
-                    .splineTo(new Vector2d(-47.17, -53.27), Math.toRadians(248.96))
-                    .splineToSplineHeading(new Pose2d(-59.13, -58.68, Math.toRadians(225.00)), Math.toRadians(225.00));
-            Action trajectoryActionCloseOuttap5 = tap5.endTrajectory().fresh()
-                    .build();
-            Action trajectoryActionChosentap5 = tap5.build();
 
             // vision here that outputs position
             int visionOutputPosition = 4;
@@ -241,7 +263,6 @@ public class AutoTestPOS extends LinearOpMode {
 
             Actions.runBlocking(
                     new SequentialAction(
-                            step1.addTele(),
                             Actionstraightclip,
 
                             CloseOutstraightclip

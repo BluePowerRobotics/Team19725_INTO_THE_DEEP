@@ -147,7 +147,7 @@ public class Auto0513Test extends LinearOpMode {
              * thita = orientation.getYaw(AngleUnit.DEGREES);
              */
 
-            ChassisController.runToLocation(100,100,0,30,2);
+            ChassisController.runToLocation(10,10,0,30,0.5);
             ArmController.armController();
 
             fps_and_tele();
