@@ -17,6 +17,7 @@ public class OP03252 extends LinearOpMode {
 
     ChassisController ChassisController = new ChassisController();// 构建class实例
     ArmController ArmController = new ArmController();
+    ClimbController ClimbController = new ClimbController();
     static DcMotor leftFront, leftBack, rightBack, rightFront, armMotor;
     Servo servoe3, servoe4, servoe5;
     static RevHubOrientationOnRobot.LogoFacingDirection[] logoFacingDirections = RevHubOrientationOnRobot.LogoFacingDirection
@@ -135,6 +136,7 @@ public class OP03252 extends LinearOpMode {
         inithardware();
         ChassisController.initChassis(hardwareMap, gamepad1,gamepad2);
         ArmController.initArm(hardwareMap, gamepad1, gamepad2,telemetry);
+        ClimbController.initClimb(hardwareMap,gamepad2,telemetry);
         waitForStart();
         while (opModeIsActive()) {
             /*
@@ -149,7 +151,7 @@ public class OP03252 extends LinearOpMode {
             //r,y,x,speed
             ChassisController.chassisController(move_x_l, -move_x_r, move_y_l + move_y_r, 1);
             ArmController.armController();
-
+            ClimbController.climb();
             fps_and_tele();
 
         }

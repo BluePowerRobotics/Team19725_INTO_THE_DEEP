@@ -200,11 +200,11 @@ public class ChassisController {
     }
     public double multiplyX = 0.01;
     public double getNowX(){
-        return odo.getEncoderX()*multiplyX;
+        return -odo.getEncoderY()*multiplyX;
     }
     public double multiplyY = 0.01;
     public double getNowY(){
-        return odo.getEncoderY()*multiplyY;
+        return odo.getEncoderX()*multiplyY;
     }
     public void initLocator(){
         odo = hardwareMap.get(GoBildaPinpointDriver.class,"pinpoint");

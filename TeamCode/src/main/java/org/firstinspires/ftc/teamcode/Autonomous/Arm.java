@@ -59,6 +59,7 @@ public class Arm {
     double armPosMin;
     double[] armMotorPosition;
     Telemetry telemetry;
+    double clipHeightErrorNumber = 8;
 
     public Arm(HardwareMap hardwaremaprc, Telemetry telemetryrc) {
         telemetry = telemetryrc;
@@ -74,20 +75,7 @@ public class Arm {
         servoe5 = hardwaremap.get(Servo.class, "servoe5");
         clipLock = false;
         armup = false;
-        servo_position = 0.9;// default position when arm is down.
 
-        motorTime = 0;
-        motorLength = 600;
-        motorNowLength = 0;
-        motorPower = 0;
-
-        clipLockPos = 0.72;
-        clipUnlockPos = 1;
-        clipUpPos = 0.245;
-        clipDownPos = 0.715;
-        armUpPos = 0;
-        armPosMax = 1;
-        armPosMin = 0.7;
     }
 
     double armUpTime = 0;
@@ -111,18 +99,22 @@ public class Arm {
                 servo_position = 0.9;// default position when arm is down.
 
                 motorTime = 0;
-                motorLength = 560;
+                motorLength = 430;
                 motorNowLength = 0;
                 motorPower = 0;
 
                 clipLockPos = 0.345;
                 clipUnlockPos = 0.625;
-                clipUpPos = 0.245;
+                clipUpPos = 0.3;
                 clipDownPos = 0.675;
                 clipPosition = 0;
                 armUpPos = 0.1;
                 armPosMax = 1;
                 armPosMin = 0.7;
+
+                clipHeight = 0;
+                clipHeightError = 0;
+                clipHeightErrorNumber = 8;
 
                 // armUp
                 servoe3.setPosition(armUpPos);// 一级舵机竖直
@@ -207,13 +199,13 @@ public class Arm {
                 return true;
             } else {
                 servoe4.setPosition(clipUpPos);// 二级舵机向后
-                armMotor.setTargetPosition(540);
+                armMotor.setTargetPosition((int) motorLength);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 // armMotor.setPower(1);
                 telemetry.addData("outPut:goingLonger", armMotor.getCurrentPosition());
                 telemetry.update();
             }
-            if (armMotor.getCurrentPosition() - 540 < 5 && armMotor.getCurrentPosition() - 540 > -5) {
+            if (armMotor.getCurrentPosition() - motorLength < 5 && armMotor.getCurrentPosition() - motorLength > -5) {
                 servoe5.setPosition(clipUnlockPos);
                 clipLock = false;
                 if (!finished) {

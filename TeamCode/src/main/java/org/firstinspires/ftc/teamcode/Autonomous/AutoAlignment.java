@@ -69,6 +69,7 @@ public class AutoAlignment {
 
     public MecanumDrive drive;
     Telemetry telemetry;
+    public int cnt = 0;
     ColorLocator colorLocator;
 
     public AutoAlignment(HardwareMap hardwaremaprc, MecanumDrive driverc, Telemetry telemetryrc, boolean teamcolor){
@@ -82,18 +83,21 @@ public class AutoAlignment {
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            telemetry.addData("state", "following");
+            telemetry.addData("following", cnt);
             telemetry.update();
             ColorReturn lx = colorLocator.LocateAll();
             double x = lx.x;
 
             double p_follow = -0.001;
             double v = p_follow * (x-117);
-            if (x == 999999){v = 0;}
+            if (x == 999999){
+                cnt++;
+                v = 0;
+            }
             drive.setDrivePowers(new PoseVelocity2d(
                     new Vector2d(v,0),
                     0));
-            if (x >= 100&&x <= 170){
+            if (x >= 100 && x <= 170 || (cnt > 50)){
                 return false;
             }
             return true;

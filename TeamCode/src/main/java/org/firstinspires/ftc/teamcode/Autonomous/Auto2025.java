@@ -91,33 +91,38 @@ public class Auto2025 extends LinearOpMode {
 
             if (isStopRequested()) return;
 
+
             Actions.runBlocking(
-                    new SequentialAction(
-                            armController.initArm(),
-                            new ParallelAction(
-                                    new SequentialAction(
-                                            ActionBasket1,
-                                            CloseOutBasket1
-                                    ),
-                                    armController.outPut()
-                            ),
-                            new SequentialAction(
-                                ActionClip1,
-                                CloseOutClip1
-                            ),
-                            new ParallelAction(
-                                    autofollow.follow(),
-                                    armController.inTake(20, -10)
-                            ),
-                            new ParallelAction(
-                                new SequentialAction(
-                                    ActionBasket2,
-                                    CloseOutBasket2
-                            ),
-                            armController.outPut()
-                        )
-                    )
+                    autofollow.follow()
             );
+
+//            Actions.runBlocking(
+//                    new SequentialAction(
+//                            armController.initArm(),
+//                            new ParallelAction(
+//                                    new SequentialAction(
+//                                            ActionBasket1,
+//                                            CloseOutBasket1
+//                                    ),
+//                                    armController.outPut()
+//                            ),
+//                            new SequentialAction(
+//                                ActionClip1,
+//                                CloseOutClip1
+//                            ),
+//                            new ParallelAction(
+//                                    autofollow.follow(),
+//                                    armController.inTake(20, -10)
+//                            ),
+//                            new ParallelAction(
+//                                new SequentialAction(
+//                                    ActionBasket2,
+//                                    CloseOutBasket2
+//                            ),
+//                            armController.outPut()
+//                        )
+//                    )
+//            );
 
 
 //            Actions.runBlocking(
