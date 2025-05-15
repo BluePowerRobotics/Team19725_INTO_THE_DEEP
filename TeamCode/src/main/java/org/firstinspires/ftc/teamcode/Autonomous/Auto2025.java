@@ -115,27 +115,17 @@ public class Auto2025 extends LinearOpMode {
 
             Actions.runBlocking(
                     new SequentialAction(
-                            //armController.initArm(),
-
+                            armController.initArm(),
                             ActionOutPut0,
-
-                            //armController.outPut(),
-
+                            armController.outPut(),
                             ActionIntake1,
-
-                            //armController.inTake(200, 0),
-
+                            armController.inTake(200, 0),
                             ActionOutPut1,
-
-                            //armController.outPut(),
-
+                            armController.outPut(),
                             ActionIntake2,
-
-                            //armController.inTake(200, 0),
-
-                            ActionOutPut2
-
-                            //armController.outPut()
+                            armController.inTake(200, 0),
+                            ActionOutPut2,
+                            armController.outPut()
                     )
             );
 
