@@ -29,16 +29,11 @@
 
 package org.firstinspires.ftc.teamcode.OpModes;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.RoadRunner.GoBildaPinpointDriver;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 
@@ -93,6 +88,55 @@ public class ChassisController {
     double py;
     double lock_thita;
 
+
+
+    private int MODE = 0;
+    public static final int RUN_TO_LOCATION= 2;
+    public static final int RUN_WITHOUT_LOCATOR= 1;
+    public static final int STOP_AND_RESET_LOCATOR= 3;
+
+    private boolean UseAutoMove = false;
+
+
+    private int targetLocationX=0;
+    private int targetLocationY=0;
+    private int targetLocationR=0;
+    private double distanceToTargetLocation=0;
+
+    public void setMode(int CHASSIS_MODE){
+        MODE = CHASSIS_MODE;
+
+
+        if(MODE==STOP_AND_RESET_LOCATOR){
+            UseAutoMove = true;
+
+            initLocator();
+
+
+        } else if (MODE==RUN_TO_LOCATION) {
+            UseAutoMove = true;
+            freshThita();
+            runToLocation(targetLocationX,targetLocationY,targetLocationR,0,maxSpeed);
+        } else if (MODE==RUN_WITHOUT_LOCATOR){
+            UseAutoMove = false;
+        } else{
+            UseAutoMove = false;
+            MODE = RUN_WITHOUT_LOCATOR;
+        }
+    }
+    public void setTargetLocation(int targetX,int targetY,int targetR){
+        targetLocationX=targetX;
+        targetLocationY=targetY;
+        targetLocationR=targetR;
+        distanceToTargetLocation = Math.sqrt(targetLocationX^2+targetLocationY^2);
+    }
+    double maxSpeed;
+    public void setSpeed(double Speed){
+        maxSpeed= Speed;
+    }
+
+
+
     public boolean climb = false;
 
     static RevHubOrientationOnRobot.LogoFacingDirection[] logoFacingDirections = RevHubOrientationOnRobot.LogoFacingDirection
@@ -138,7 +182,6 @@ public class ChassisController {
         rightBack.setDirection(DcMotor.Direction.REVERSE);
         leftBack.setDirection(DcMotor.Direction.FORWARD);
         freshThita();
-        initLocator();
     }
 
     void updateOrientation() {
@@ -198,11 +241,11 @@ public class ChassisController {
         rightFront.setPower(rightFrontPower);
 
     }
-    public double multiplyX = 0.01;
+    public double multiplyX = 1;
     public double getNowX(){
         return -odo.getEncoderY()*multiplyX;
     }
-    public double multiplyY = 0.01;
+    public double multiplyY = 1;
     public double getNowY(){
         return odo.getEncoderX()*multiplyY;
     }
@@ -210,7 +253,7 @@ public class ChassisController {
         odo = hardwareMap.get(GoBildaPinpointDriver.class,"pinpoint");
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED, GoBildaPinpointDriver.EncoderDirection.FORWARD);
-
+        
         odo.resetPosAndIMU();
     }
 
@@ -312,61 +355,63 @@ public class ChassisController {
     }
 
     public void chassisController(double r, double y, double x, double speed) {
-        freshThita();
-        if (gamepad1.y) {
-            if (!yhasbeenpressed) {
-                if (!noheadmode)
-                    noheadmode = true;
-                else if (noheadmode)
-                    noheadmode = false;
-                yhasbeenpressed = true;
-            } else {
-                yhasbeenpressed = true;
-            }
-            setthita = thita;
-
-        } else {
-            yhasbeenpressed = false;
-        }
-
-        if (gamepad1.x) {
-            if (!xhasbeenpressed) {
-                if (!thitalock)
-                    thitalock = true;
-                else if (thitalock)
-                    thitalock = false;
-                xhasbeenpressed = true;
-            } else {
-                xhasbeenpressed = true;
-            }
-            lock_thita = thita;
-        } else {
-            xhasbeenpressed = false;
-        }
-
-        getthita = thita;
-
-        if (thitalock) {
-            r = thitalock();
-        } else {
-            if (System.currentTimeMillis() - angletime >= 10) {
-                if (y < 0) {
-                    r = -r;
+        if(!UseAutoMove) {
+            freshThita();
+            if (gamepad1.y) {
+                if (!yhasbeenpressed) {
+                    if (!noheadmode)
+                        noheadmode = true;
+                    else if (noheadmode)
+                        noheadmode = false;
+                    yhasbeenpressed = true;
+                } else {
+                    yhasbeenpressed = true;
                 }
-                lock_thita -= 2 * r;
-                angletime = System.currentTimeMillis();
-            }
-            r = thitalock();
-        }
-        if (gamepad1.left_bumper)
-            lock_thita = 45;
-        else if (gamepad1.right_bumper)
-            lock_thita = 90;
+                setthita = thita;
 
-        if (!noheadmode||climb) {
-            move(r, y, x);
-        } else {
-            noheadmove(r, y, x, speed);
+            } else {
+                yhasbeenpressed = false;
+            }
+
+            if (gamepad1.x) {
+                if (!xhasbeenpressed) {
+                    if (!thitalock)
+                        thitalock = true;
+                    else if (thitalock)
+                        thitalock = false;
+                    xhasbeenpressed = true;
+                } else {
+                    xhasbeenpressed = true;
+                }
+                lock_thita = thita;
+            } else {
+                xhasbeenpressed = false;
+            }
+
+            getthita = thita;
+
+            if (thitalock) {
+                r = thitalock();
+            } else {
+                if (System.currentTimeMillis() - angletime >= 10) {
+                    if (y < 0) {
+                        r = -r;
+                    }
+                    lock_thita -= 2 * r;
+                    angletime = System.currentTimeMillis();
+                }
+                r = thitalock();
+            }
+            if (gamepad1.left_bumper)
+                lock_thita = 45;
+            else if (gamepad1.right_bumper)
+                lock_thita = 90;
+
+            if (!noheadmode || climb) {
+                move(r, y, x);
+            } else {
+                noheadmove(r, y, x, speed);
+            }
         }
     }
 }
