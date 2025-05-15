@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.RoadRunner.GoBildaPinpointDriver;
@@ -15,7 +16,7 @@ import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 
 @Config
-@Autonomous(name = "Auto_test_pos", group = "Autonomous")
+@Disabled
 public class AutoTestPOS extends LinearOpMode {
     GoBildaPinpointDriver odo;
     boolean ifblue = true;
@@ -41,11 +42,11 @@ public class AutoTestPOS extends LinearOpMode {
             double IntakeHeading = 3.1415926;   //todo  why not Math.PI
             double Intake3Heading = Math.toRadians(228.81);
             Vector2d OutPutPos = new Vector2d(-53.9,-53.9);
-            Pose2d OutPutStartPos = new Pose2d(-53.9,-53.9, OutPutHeading);
+            Pose2d OutPutFinishPos = new Pose2d(-53.9,-53.9, OutPutHeading);
             Vector2d IntakePos1 = new Vector2d(-49.18,-43.67);
-            Pose2d IntakeStart1 = new Pose2d(-49.18,-43.67, IntakeHeading);
+            Pose2d IntakeFinish1 = new Pose2d(-49.18,-43.67, IntakeHeading);
             Vector2d IntakePos2 = new Vector2d(-60.22,-43.67);
-            Pose2d IntakeStart2 = new Pose2d(-60.22,-43.67, IntakeHeading);
+            Pose2d IntakeFinish2 = new Pose2d(-60.22,-43.67, IntakeHeading);
             Vector2d IntakePos3 = new Vector2d(-60,-44);
             //telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
             odo = hardwareMap.get(GoBildaPinpointDriver.class,"pinpoint");
@@ -57,7 +58,7 @@ public class AutoTestPOS extends LinearOpMode {
             //telemetry.addData("设置tele", 1);
             //drive.settele(telemetry);
             //Claw claw = new Claw(hardwareMap);
-            Arm armController = new Arm(hardwareMap,telemetry);
+            //Arm armController = new Arm(hardwareMap,telemetry);
             //AutoAlignment autofollow = new AutoAlignment(hardwareMap, drive, telemetry,ifblue);
 
 
@@ -165,26 +166,40 @@ public class AutoTestPOS extends LinearOpMode {
 
             //todo set initPOS
 
-            TrajectoryActionBuilder OutPut = drive.actionBuilder(drive.localizer.getPose())
+            TrajectoryActionBuilder OutPut0 = drive.actionBuilder(initialPoseLeft)
                     .turnTo(OutPutHeading)
                     .strafeTo(OutPutPos);
-            Action CloseOutOutPut = OutPut.endTrajectory().fresh()
-                    .build();
-            Action ActionOutPut = OutPut.build();
 
-            TrajectoryActionBuilder Intake1 = drive.actionBuilder(initialPoseLeft)
+            Action ActionOutPut0 = OutPut0.build();
+
+            TrajectoryActionBuilder Intake1 = OutPut0.endTrajectory().fresh()
                     .turnTo(IntakeHeading)
                     .strafeTo(IntakePos1);
-            Action CloseOutIntake1 = Intake1.endTrajectory().fresh()
-                    .build();
             Action ActionIntake1 = Intake1.build();
 
-            TrajectoryActionBuilder Intake2 = drive.actionBuilder(drive.localizer.getPose())
+            TrajectoryActionBuilder OutPut1 = Intake1.endTrajectory().fresh()
+                    .turnTo(OutPutHeading)
+                    .strafeTo(OutPutPos);
+
+            Action ActionOutPut1 = OutPut1.build();
+
+            TrajectoryActionBuilder Intake2 = OutPut1.endTrajectory().fresh()
                     .turnTo(IntakeHeading)
                     .strafeTo(IntakePos2);
-            Action CloseOutIntake2 = Intake2.endTrajectory().fresh()
-                    .build();
             Action ActionIntake2 = Intake2.build();
+
+            TrajectoryActionBuilder OutPut2 = Intake2.endTrajectory().fresh()
+                    .turnTo(OutPutHeading)
+                    .strafeTo(OutPutPos);
+
+            Action ActionOutPut2 = OutPut2.build();
+
+
+
+
+
+
+
 
             TrajectoryActionBuilder Intake3 = drive.actionBuilder(drive.localizer.getPose())
                     .turnTo(Intake3Heading)
@@ -267,10 +282,27 @@ public class AutoTestPOS extends LinearOpMode {
 
             Actions.runBlocking(
                     new SequentialAction(
+                            //armController.initArm(),
+
+                            ActionOutPut0,
+
+                            //armController.outPut(),
+
                             ActionIntake1,
-                            CloseOutIntake1,
-                            ActionOutPut,
-                            CloseOutOutPut
+
+                            //armController.inTake(200, 0),
+
+                            ActionOutPut1,
+
+                            //armController.outPut(),
+
+                            ActionIntake2,
+
+                            //armController.inTake(200, 0),
+
+                            ActionOutPut2
+
+                            //armController.outPut()
                     )
             );
         }
