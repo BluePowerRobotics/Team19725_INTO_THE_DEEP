@@ -141,13 +141,16 @@ public class Auto0513Test extends LinearOpMode {
         ArmController.armMotor.setTargetPosition(0);
         ArmController.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         ArmController.armMotor.setPower(1);
+        ChassisController.setMode(ChassisController.STOP_AND_RESET_LOCATOR);
+        ChassisController.setTargetLocation(100,100,0);
+        ChassisController.setSpeed(0.1);
         while (opModeIsActive()) {
             /*
              * updateOrientation();
              * thita = orientation.getYaw(AngleUnit.DEGREES);
              */
 
-            ChassisController.runToLocation(10,10,0,30,0.5);
+            ChassisController.setMode(ChassisController.RUN_TO_LOCATION);
             ArmController.armController();
 
             fps_and_tele();
