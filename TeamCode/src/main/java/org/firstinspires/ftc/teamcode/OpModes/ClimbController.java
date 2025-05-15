@@ -58,14 +58,16 @@ public class ClimbController {
         climbLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
     void climb(){
+        telemetry.addData("climbLeftLength",climbLeftLength);
+        telemetry.addData("climbRightLength",climbRightLength);
         if(climbUp){
-            climbLeft.setTargetPosition((int) climbLeftLength);
-            climbRight.setTargetPosition((int) climbRightLength);
+            climbLeft.setTargetPosition(0);
+            climbRight.setTargetPosition(0);
             climbLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             climbRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }else{
-            climbLeft.setTargetPosition(0);
-            climbRight.setTargetPosition(0);
+            climbLeft.setTargetPosition((int) climbLeftLength);
+            climbRight.setTargetPosition((int) climbRightLength);
             climbLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             climbRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }

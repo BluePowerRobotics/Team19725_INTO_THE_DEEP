@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -16,7 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 public class OP12122 extends LinearOpMode {
 
     ChassisController rbmove = new ChassisController();// 构建Move_GYW（）class实例
-
+    static DcMotor armPuller;
     static DcMotor leftFront, leftBack, rightBack, rightFront;
     Servo servos3, servos4, servos5;
     static RevHubOrientationOnRobot.LogoFacingDirection[] logoFacingDirections = RevHubOrientationOnRobot.LogoFacingDirection
@@ -55,11 +56,15 @@ public class OP12122 extends LinearOpMode {
     private void inithardware() {
         // control_Hub = hardwareMap.get(Blinker.class, "Control Hub");
         // expansion_Hub_3 = hardwareMap.get(Blinker.class, "Expansion Hub 3");
+
         leftFront = hardwareMap.get(DcMotor.class, "leftFront"); // Configure the robot to use these 4 motor names,
         leftBack = hardwareMap.get(DcMotor.class, "leftBack"); // or change these strings to match your existing Robot
                                                                // Configuration.
         rightBack = hardwareMap.get(DcMotor.class, "rightBack");
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
+        armPuller = hardwareMap.get(DcMotor.class,"armPuller");
+        armPuller.setDirection(DcMotorSimple.Direction.FORWARD);
+        armPuller.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         servos3 = hardwareMap.get(Servo.class, "servos3");
         servos4 = hardwareMap.get(Servo.class, "servos4");
         servos5 = hardwareMap.get(Servo.class, "servos5");
@@ -81,6 +86,7 @@ public class OP12122 extends LinearOpMode {
 
     public void fps_and_tele() {
 
+        telemetry.addData("armPuller",armPuller.getCurrentPosition());
         telemetry.addData("fps", 1000 / (System.currentTimeMillis() - t));// fps
 
         telemetry.addData("thita", orientation.getYaw(AngleUnit.DEGREES));
@@ -140,7 +146,13 @@ public class OP12122 extends LinearOpMode {
 
             degree = 0.0036984 * orientation.getYaw(AngleUnit.DEGREES) + 0.499286;
             servocontrol();
-
+            if(gamepad1.x){
+                armPuller.setPower(0.1);
+            }else if(gamepad1.y){
+                armPuller.setPower(-0.1);
+            }else{
+                armPuller.setPower(0);
+            }
         }
     }
 

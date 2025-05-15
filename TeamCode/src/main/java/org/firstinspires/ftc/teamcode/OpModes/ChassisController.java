@@ -268,7 +268,7 @@ public class ChassisController {
         double errorX = targetX - nowX;
         double errorY = targetY - nowY;
         double speed = Math.sqrt(errorX*errorX+errorY*errorY);
-        speed = Math.min(speed,maxSpeed);
+        double outSpeed = Math.min(speed,maxSpeed);
         double pathDegree,moveX,moveY;
         if (errorX != 0 || errorY != 0) {
             pathDegree = Math.toDegrees(Math.atan(Math.abs(errorY / errorX)));
@@ -279,9 +279,9 @@ public class ChassisController {
             if (errorY > 0 && errorX <= 0)
                 pathDegree = 180 - pathDegree;
 
-            moveX = speed * Math.cos(Math.toRadians(pathDegree+pathError));
+            moveX = outSpeed * Math.cos(Math.toRadians(pathDegree+pathError*speed/distanceToTargetLocation));
             // if (getthita<=0) px = -px;
-            moveY = speed * Math.sin(Math.toRadians(pathDegree+pathError));
+            moveY = outSpeed * Math.sin(Math.toRadians(pathDegree+pathError*speed/distanceToTargetLocation));
         } else {
             moveX = 0;
             moveY = 0;

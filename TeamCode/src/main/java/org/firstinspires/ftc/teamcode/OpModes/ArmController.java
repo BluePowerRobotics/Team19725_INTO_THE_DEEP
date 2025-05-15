@@ -410,10 +410,10 @@ public class ArmController {
         hardwaremap = hardwaremaprc;
         armMotor = hardwaremap.get(DcMotor.class, "armMotor");
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        armMotor.setDirection(DcMotor.Direction.REVERSE);
+        armMotor.setDirection(DcMotor.Direction.FORWARD);
         armPuller = hardwaremap.get(DcMotor.class,"armPuller");
         armPuller.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        armPuller.setDirection(DcMotorSimple.Direction.FORWARD);
+        armPuller.setDirection(DcMotorSimple.Direction.REVERSE);
         servoe3 = hardwaremap.get(Servo.class, "servoe3");
         servoe4 = hardwaremap.get(Servo.class, "servoe4");
         servoe5 = hardwaremap.get(Servo.class, "servoe5");
@@ -464,10 +464,11 @@ public class ArmController {
         while (System.currentTimeMillis() - t <= 2000) {
             armMotor.setTargetPosition(560 * 2);
             armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            armPuller.setPower(-0.5);
             // telemetry.addData("Testing", armMotor.getCurrentPosition());
             // telemetry.update();
         }
-
+        armPuller.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         telemetry.addData("StartToBack", armMotor.getCurrentPosition());
         telemetry.update();
@@ -623,24 +624,33 @@ public class ArmController {
     double clipHeight = 6;// 12
     double clipHeightError = 0;
 
+    double armPullerLength = 0;
+    double armPullerCycleEncoder =300;
+    double armPullerCycleReal=1.3*2*Math.PI;
     void armCalculator() {
-        // if (cliplock && clipLockTime + 500 >= System.currentTimeMillis())
-        //     clipHeightError = 3;// servo_position+=0.12;
-        // else if (gamepad2.x)
-        //     clipHeightError = 3;// servo_position+=0.12;//8
-        // else
-        //     clipHeightError = 0;
+         if (cliplock && clipLockTime + 500 >= System.currentTimeMillis())
+             clipHeightError = 3;// servo_position+=0.12;
+         else if (gamepad2.x)
+             clipHeightError = 3;// servo_position+=0.12;//8
+         else
+             clipHeightError = 0;
         double L = 30.5 + (motorNowLength / motorLength) * 32.0;
         double argument = -(clipHeight + clipHeightError) / L;
         servo_position = Math.toDegrees(Math.acos(argument)) / 135.0 /*- 0.1*/;
 
-        if (cliplock && clipLockTime + 500 >= System.currentTimeMillis())
-            servo_position+=0.12;
-        else if (gamepad2.x)
-            servo_position+=0.12;//8
+//        if (cliplock && clipLockTime + 500 >= System.currentTimeMillis())
+//            servo_position+=0.12;
+//        else if (gamepad2.x)
+//            servo_position+=0.12;//8
 
         clipDownPos = (3 * 0.3 + 2.2 - 1.5 * (servo_position - 0.1)) / 3;
-
+        if(!armup)
+            armPullerLength = armPullerCycleEncoder / armPullerCycleReal * -(Math.sqrt(951.25-531*argument)-29.5);
+        else
+            armPullerLength = armPullerCycleEncoder / armPullerCycleReal * 0;
+        if(armPuller.getTargetPosition()!=(int)armPullerLength){
+            armPuller.setTargetPosition((int)armPullerLength);
+        }
     }
 
     public void armController() {
@@ -651,11 +661,11 @@ public class ArmController {
         armCalculator();
         if (armup) {
             armUp();
-            armPuller.setPower(0.2);
         } else {
             armDown();
-            armPuller.setPower(0.1);
+
         }
+        armPuller.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         clipControl();
     }
 
