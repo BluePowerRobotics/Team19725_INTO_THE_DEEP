@@ -645,8 +645,9 @@ public class ArmController {
 
         clipDownPos = (3 * 0.3 + 2.2 - 1.5 * (servo_position - 0.1)) / 3;
         if(!armup)
-            armPullerLength = armPullerCycleEncoder / armPullerCycleReal * -(Math.sqrt(951.25-531*argument)-29.5);
+            armPullerLength = armPullerCycleEncoder / armPullerCycleReal * (Math.sqrt(1027.95-554.4*argument)-29.5)+100;//(Math.sqrt(951.25-531*argument)-29.5);
         else
+            //Math.sqrt((a-r*cos(thita))^2+(b-r*sin(thita))^2)   1027.95 554.4
             armPullerLength = armPullerCycleEncoder / armPullerCycleReal * 0;
         if(armPuller.getTargetPosition()!=(int)armPullerLength){
             armPuller.setTargetPosition((int)armPullerLength);
@@ -665,6 +666,7 @@ public class ArmController {
             armDown();
 
         }
+        armPuller.setPower(1);
         armPuller.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         clipControl();
     }
