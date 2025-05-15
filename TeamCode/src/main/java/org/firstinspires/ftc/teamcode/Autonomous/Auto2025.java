@@ -30,41 +30,67 @@ public class Auto2025 extends LinearOpMode {
 
         //@Override
         public void runOpMode() {
+            AddTele step1  = new AddTele("step1", 1, telemetry);
+            AddTele step2  = new AddTele("step2", 2, telemetry);
+            AddTele step3  = new AddTele("step3", 3, telemetry);
+            AddTele step4  = new AddTele("step4", 4, telemetry);
+            AddTele step5  = new AddTele("step5", 5, telemetry);
+
             Pose2d initialPoseLeft = new Pose2d(-24, -64.575, Math.toRadians(180.00));
-            Pose2d initialPose = initialPoseLeft;
+
+
+
+            double OutPutHeading = Math.toRadians(135);
+            double IntakeHeading = 3.1415926;   //todo  why not Math.PI
+            double Intake3Heading = Math.toRadians(228.81);
+            Vector2d OutPutPos = new Vector2d(-53.9,-53.9);
+            Pose2d OutPutFinishPos = new Pose2d(-53.9,-53.9, OutPutHeading);
+            Vector2d IntakePos1 = new Vector2d(-49.18,-43.67);
+            Pose2d IntakeFinish1 = new Pose2d(-49.18,-43.67, IntakeHeading);
+            Vector2d IntakePos2 = new Vector2d(-60.22,-43.67);
+            Pose2d IntakeFinish2 = new Pose2d(-60.22,-43.67, IntakeHeading);
+            Vector2d IntakePos3 = new Vector2d(-60,-44);
 
             //todo
             //    调整出发点位置！！！
 
-            MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
+            MecanumDrive drive = new MecanumDrive(hardwareMap, initialPoseLeft);
 
             Arm armController = new Arm(hardwareMap,telemetry);
             AutoAlignment autofollow = new AutoAlignment(hardwareMap, drive, telemetry,ifblue);
             //旋转角度的cos和sin的值（0，1）-> 90°
 
-            TrajectoryActionBuilder Basket1 = drive.actionBuilder(new Pose2d(-23.62, -64.58, Math.toRadians(180.00)))
-                    .splineTo(new Vector2d(-56.25, -57.85), Math.toRadians(135.00));
-            Action CloseOutBasket1 = Basket1.endTrajectory().fresh()
-                    .build();
-            Action ActionBasket1 = Basket1.build();
 
 
+            TrajectoryActionBuilder OutPut0 = drive.actionBuilder(initialPoseLeft)
+                    .turnTo(OutPutHeading)
+                    .strafeTo(OutPutPos);
+
+            Action ActionOutPut0 = OutPut0.build();
+
+            TrajectoryActionBuilder Intake1 = OutPut0.endTrajectory().fresh()
+                    .turnTo(IntakeHeading)
+                    .strafeTo(IntakePos1);
+            Action ActionIntake1 = Intake1.build();
+
+            TrajectoryActionBuilder OutPut1 = Intake1.endTrajectory().fresh()
+                    .turnTo(OutPutHeading)
+                    .strafeTo(OutPutPos);
+
+            Action ActionOutPut1 = OutPut1.build();
+
+            TrajectoryActionBuilder Intake2 = OutPut1.endTrajectory().fresh()
+                    .turnTo(IntakeHeading)
+                    .strafeTo(IntakePos2);
+            Action ActionIntake2 = Intake2.build();
+
+            TrajectoryActionBuilder OutPut2 = Intake2.endTrajectory().fresh()
+                    .turnTo(OutPutHeading)
+                    .strafeTo(OutPutPos);
+
+            Action ActionOutPut2 = OutPut2.build();
 
 
-            TrajectoryActionBuilder Clip1 = drive.actionBuilder(new Pose2d(-60.26, -59.36, Math.toRadians(135.00)))
-                    .splineTo(new Vector2d(-58.91, -37.92), Math.toRadians(180.00));
-            Action CloseOutClip1 = Clip1.endTrajectory().fresh()
-                    .build();
-            Action ActionClip1 = Clip1.build();
-
-
-
-            TrajectoryActionBuilder Basket2 = drive.actionBuilder(new Pose2d(-60.04, -35.89, Math.toRadians(180.00)))
-                    .splineTo(new Vector2d(-53.72, -53.27), Math.toRadians(248.20))
-                    .splineTo(new Vector2d(-58.46, -57.33), Math.toRadians(135.00));
-            Action CloseOutBasket2 = Basket2.endTrajectory().fresh()
-                    .build();
-            Action ActionBasket2 = Basket2.build();
 
 
 
@@ -83,74 +109,35 @@ public class Auto2025 extends LinearOpMode {
             //todo 初始化机器
             //Actions.runBlocking(claw.closeClaw());
 
-
-
-            telemetry.addData("Starting Position", initialPose.toString());
-            telemetry.update();
             waitForStart();
 
             if (isStopRequested()) return;
 
-
             Actions.runBlocking(
-                    autofollow.follow()
+                    new SequentialAction(
+                            //armController.initArm(),
+
+                            ActionOutPut0,
+
+                            //armController.outPut(),
+
+                            ActionIntake1,
+
+                            //armController.inTake(200, 0),
+
+                            ActionOutPut1,
+
+                            //armController.outPut(),
+
+                            ActionIntake2,
+
+                            //armController.inTake(200, 0),
+
+                            ActionOutPut2
+
+                            //armController.outPut()
+                    )
             );
 
-//            Actions.runBlocking(
-//                    new SequentialAction(
-//                            armController.initArm(),
-//                            new ParallelAction(
-//                                    new SequentialAction(
-//                                            ActionBasket1,
-//                                            CloseOutBasket1
-//                                    ),
-//                                    armController.outPut()
-//                            ),
-//                            new SequentialAction(
-//                                ActionClip1,
-//                                CloseOutClip1
-//                            ),
-//                            new ParallelAction(
-//                                    autofollow.follow(),
-//                                    armController.inTake(20, -10)
-//                            ),
-//                            new ParallelAction(
-//                                new SequentialAction(
-//                                    ActionBasket2,
-//                                    CloseOutBasket2
-//                            ),
-//                            armController.outPut()
-//                        )
-//                    )
-//            );
-
-
-//            Actions.runBlocking(
-//                new SequentialAction(
-//
-//                        armController.initArm(),
-//
-//                        new SequentialAction(
-//                                Actioncliptest,
-//
-//                                CloseOutcliptest
-//                        ),
-//                        armController.inTake(560,0)
-//
-////                    new SequentialAction(
-////                            Actiontest2,
-////                            CloseOuttest2
-////                    )
-//                )
-//            );
-
-
-//            Actions.runBlocking(
-//                    new SequentialAction(
-//                            armController.initArm(),
-//                            armController.inTake(300, 0.5),
-//                            armController.outPut()
-//                    )
-//            );
         }
     }
