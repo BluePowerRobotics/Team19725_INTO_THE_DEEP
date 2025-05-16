@@ -418,7 +418,7 @@ public class ArmController {
         armSpinner = hardwaremap.get(DcMotor.class, "armSpinner");
         armSpinner.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armSpinner.setDirection(DcMotorSimple.Direction.FORWARD);
-        
+
         servoe3 = hardwaremap.get(Servo.class, "servoe3");
         servoe4 = hardwaremap.get(Servo.class, "servoe4");
         servoe5 = hardwaremap.get(Servo.class, "servoe5");
