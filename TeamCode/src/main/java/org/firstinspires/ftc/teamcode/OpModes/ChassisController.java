@@ -366,7 +366,21 @@ public class ChassisController {
         // if (locked_thita > 2) locked_thita -=4;
         return locked_thita;
     }
+    public boolean USE_SLOW_MODE = false;
 
+    public void chassisController(double r, double y, double x){
+        double receiveSpeed = 1;
+        if (gamepad1.x) {
+            if (!xhasbeenpressed) {
+                USE_SLOW_MODE = !USE_SLOW_MODE;
+            }
+            xhasbeenpressed = true;
+        } else {
+            xhasbeenpressed = false;
+        }
+        if(USE_SLOW_MODE) receiveSpeed = 0.6;
+        chassisController(r,y,x,receiveSpeed);
+    }
     public void chassisController(double r, double y, double x, double speed) {
         if(!UseAutoMove) {
             freshThita();

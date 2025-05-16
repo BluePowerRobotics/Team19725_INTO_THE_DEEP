@@ -65,24 +65,15 @@ public class ColorLocator{
 
     //////////
     public ColorLocator(WebcamName cam1, boolean ifblue){
-        if(ifblue){
-            colorLocator = new ColorBlobLocatorProcessor.Builder()
-                    .setTargetColorRange(ColorRange.BLUE)         // use a predefined color match
-                    .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
-                    .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 1, 1, -1))  // ROI:全屏
-                    .setDrawContours(true)                        // Show contours on the Stream Preview
-                    .setBlurSize(5)                               // Smooth the transitions between different colors in image
-                    .build();
-        }
-        else{
-            colorLocator = new ColorBlobLocatorProcessor.Builder()
-                    .setTargetColorRange(ColorRange.RED)
-                    .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)
-                    .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 1, 1, -1))
-                    .setDrawContours(true)
-                    .setBlurSize(5)
-                    .build();
-        }
+        colorLocator = new ColorBlobLocatorProcessor.Builder()
+                .setTargetColorRange(ColorRange.YELLOW)         // use a predefined color match
+                .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
+                .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 1, 1, -1))  // ROI:全屏
+                .setDrawContours(true)                        // Show contours on the Stream Preview
+                .setBlurSize(5)                               // Smooth the transitions between different colors in image
+                .build();
+
+
         portal = new VisionPortal.Builder()
                 .addProcessor(colorLocator)
                 .setCameraResolution(new Size(320, 240))

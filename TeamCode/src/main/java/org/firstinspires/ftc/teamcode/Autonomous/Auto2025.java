@@ -114,6 +114,7 @@ public class Auto2025 extends LinearOpMode {
             if (isStopRequested()) return;
 
             Actions.runBlocking(
+
                     new SequentialAction(
                             armController.initArm(),
                             ActionOutPut0,

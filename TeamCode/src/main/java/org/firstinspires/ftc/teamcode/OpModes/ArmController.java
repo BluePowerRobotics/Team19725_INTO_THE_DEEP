@@ -324,6 +324,9 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.qualcomm.robotcore.hardware.Blinker;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -340,7 +343,7 @@ public class ArmController {
     private Blinker expansion_Hub_2;
     private HardwareDevice webcam_1;
     public DcMotor armMotor;
-    private DcMotor armPuller;
+    //private DcMotor armPuller;
     private  DcMotor armSpinner;
     private Gyroscope eimu;
     private IMU imu;
@@ -363,6 +366,7 @@ public class ArmController {
     private HardwareMap hardwaremap;
     private Gamepad gamepad1;
     private Gamepad gamepad2;
+    private DistanceSensor distanceSensor;
 
     private static final int HIGHBLANKET = 0;
     private static final int LOWBLANKET = 1;
@@ -397,7 +401,10 @@ public class ArmController {
     double armPosMax = 1;
     double armPosMin = 0.7;
     double[] armMotorPosition;
-
+    int armSpinnerLength = 112;
+    int armSpinnerPosition = 0;
+    int armSpinnerStartPosition;
+    int armSpinnerStopPosition;
     int armUpSpendHalfMS;
     int armUpLength;
     Telemetry telemetry;
@@ -411,14 +418,17 @@ public class ArmController {
         hardwaremap = hardwaremaprc;
         armMotor = hardwaremap.get(DcMotor.class, "armMotor");
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        armMotor.setDirection(DcMotor.Direction.FORWARD);
-        armPuller = hardwaremap.get(DcMotor.class,"armPuller");
-        armPuller.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        armPuller.setDirection(DcMotorSimple.Direction.REVERSE);
+        armMotor.setDirection(DcMotor.Direction.REVERSE);
+        //armPuller = hardwaremap.get(DcMotor.class,"armPuller");
+        //armPuller.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+       //armPuller.setDirection(DcMotorSimple.Direction.FORWARD);
         armSpinner = hardwaremap.get(DcMotor.class, "armSpinner");
-        armSpinner.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armSpinner.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         armSpinner.setDirection(DcMotorSimple.Direction.FORWARD);
-
+        distanceSensor = hardwaremap.get(DistanceSensor.class,"distanceSensor");
+        Rev2mDistanceSensor sensorTimeOfFight = (Rev2mDistanceSensor) distanceSensor;
+        //80
+        //50
         servoe3 = hardwaremap.get(Servo.class, "servoe3");
         servoe4 = hardwaremap.get(Servo.class, "servoe4");
         servoe5 = hardwaremap.get(Servo.class, "servoe5");
@@ -428,7 +438,7 @@ public class ArmController {
         servo_position = 0.9;// default position when arm is down.calculated,useless
 
         motorTime = 0;
-        motorLength =430;
+        motorLength =600;
         motorNowLength = 0;
         motorPower = 0;
 
@@ -441,10 +451,15 @@ public class ArmController {
         armPosMax = 1;// useless
         armPosMin = 0.7;// useless
 
+        armSpinnerLength = 112;
+        armSpinnerPosition = 0;
+        //armSpinnerStartPosition = ;
+        //armSpinnerStopPosition = ;
+
         if (MODE == HIGHBLANKET || MODE == LOWBLANKET) {
             armUpSpendHalfMS = 1600;
             if (MODE == HIGHBLANKET) {
-                armUpLength = 430;
+                armUpLength = (int) motorLength;
             } else {
                 armUpLength = 0;
             }
@@ -462,31 +477,70 @@ public class ArmController {
 
         // armUp
         servoe3.setPosition(armUpPos);// 一级舵机竖直
+        //armSpinner.setPower(-0.5);//一级电机向上拉
         servoe4.setPosition(clipUpPos);// 二级舵机向后
 
-        armMotor.setPower(1);
-
+        //1.收到最短
+        //2.用力抬升（armPuller拉满。setPower(1);）
         while (System.currentTimeMillis() - t <= 2000) {
-            armMotor.setTargetPosition(560 * 2);
-            armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            armPuller.setPower(-0.5);
-            // telemetry.addData("Testing", armMotor.getCurrentPosition());
-            // telemetry.update();
-        }
-        armPuller.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        telemetry.addData("StartToBack", armMotor.getCurrentPosition());
-        telemetry.update();
-        while (armMotor.getCurrentPosition() + motorLength > 5 || armMotor.getCurrentPosition() + motorLength < -5) {
-            armMotor.setTargetPosition(-(int) motorLength);
-            armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            //armPuller.setPower(1);
+            armMotor.setPower(-1);
             telemetry.addData("Backing", armMotor.getCurrentPosition());
+            //telemetry.addData("TESTING", armPuller.getCurrentPosition());
+            armSpinner.setPower(1);
+            telemetry.addData("Uping", armSpinner.getCurrentPosition());
             telemetry.update();
         }
+        armSpinner.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        
+        armSpinner.setDirection(DcMotor.Direction.REVERSE);
+        
+        armSpinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        
+        //armSpinner.set
+        
+        armSpinner.setPower(0.5);
+        //armPuller.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        
+        telemetry.addData("StartToTest", armMotor.getCurrentPosition());
+        telemetry.update();
+        armMotor.setTargetPosition(0);
+        // armSpinner.setTargetPosition(60);
+        
+        int Place = 0;
+        int Arm = 1;
+        int uponArm = 2;
+        int anywhere = 0;
+        while (Place!=uponArm){
+            if(Math.abs(distanceSensor.getDistance(DistanceUnit.MM) - 30) < 10){
+                telemetry.addData("status", "主臂");
+                telemetry.update();
+                armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                Place = Arm;
+            }
+            else if(Math.abs(distanceSensor.getDistance(DistanceUnit.MM) - 60) < 10){
+                telemetry.addData("status", "主臂上");
+                telemetry.update();
+                armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                Place = uponArm;
+            }
+            else{
+                telemetry.addData("status", "无");
+                telemetry.update();
+                armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                Place = anywhere;
+            }
+        }
+        armSpinner.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armSpinner.setDirection(DcMotor.Direction.FORWARD);
+        armSpinner.setTargetPosition(0);
+        armSpinner.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armSpinner.setPower(1);
         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         // armLenthControl();
-        armCalculator();
+        //armCalculator();
         armDown();
         //armMotor.setMode(DcMotor.RunMode.Run_WITHOUT_ENCODER);
         telemetry.addData("Finished", armMotor.getCurrentPosition());
@@ -525,6 +579,8 @@ public class ArmController {
                     armup = false;
                     clipPosition = 0;
                     armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    //armPuller.setPower(1);
+                    
                 } else {
                     armup = true;
                     clipPosition = 0;
@@ -532,6 +588,7 @@ public class ArmController {
                     armMotor.setTargetPosition(0);
                     armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     armMotor.setPower(1);
+                    //armPuller.setPower(0.5);
                 }
                 ahasbeenpressed = true;
             }
@@ -556,9 +613,9 @@ public class ArmController {
     double armUpTime = 0;
 
     void armUp() {
-
+        if(armSpinner.getTargetPosition()!=0) armSpinner.setTargetPosition(120);
         servoe3.setPosition(armUpPos);// 一级舵机竖直
-
+        armSpinner.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         if (armUpTime >= System.currentTimeMillis()) {
             servoe4.setPosition(0.9);// 二级舵机收起
             armMotor.setTargetPosition(0);
@@ -573,9 +630,12 @@ public class ArmController {
     }
 
     void armDown() {
+        
         armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         servoe3.setPosition(servo_position);// 一级舵机地面
         servoe4.setPosition(clipDownPos);// 二级舵机向下
+        if(armSpinner.getTargetPosition()!=armSpinnerPosition) armSpinner.setTargetPosition(armSpinnerPosition);
+        armSpinner.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     void angleRange() {
@@ -629,7 +689,7 @@ public class ArmController {
     double clipHeight = 6;// 12
     double clipHeightError = 0;
 
-    double armPullerLength = 0;
+    //double armPullerLength = 0;
     double armPullerCycleEncoder =300;
     double armPullerCycleReal=1.3*2*Math.PI;
     void armCalculator() {
@@ -642,6 +702,8 @@ public class ArmController {
         double L = 30.5 + (motorNowLength / motorLength) * 32.0;
         double argument = -(clipHeight + clipHeightError) / L;
         servo_position = Math.toDegrees(Math.acos(argument)) / 135.0 /*- 0.1*/;
+        servo_position = Math.max(0, Math.min(1.0, servo_position));
+        armSpinnerPosition = -(int) (Math.toDegrees(Math.acos(argument))/135*120);
 
 //        if (cliplock && clipLockTime + 500 >= System.currentTimeMillis())
 //            servo_position+=0.12;
@@ -649,14 +711,6 @@ public class ArmController {
 //            servo_position+=0.12;//8
 
         clipDownPos = (3 * 0.3 + 2.2 - 1.5 * (servo_position - 0.1)) / 3;
-        if(!armup)
-            armPullerLength = armPullerCycleEncoder / armPullerCycleReal * (Math.sqrt(1027.95-554.4*argument)-29.5)+100;//(Math.sqrt(951.25-531*argument)-29.5);
-        else
-            //Math.sqrt((a-r*cos(thita))^2+(b-r*sin(thita))^2)   1027.95 554.4
-            armPullerLength = armPullerCycleEncoder / armPullerCycleReal * 0;
-        if(armPuller.getTargetPosition()!=(int)armPullerLength){
-            armPuller.setTargetPosition((int)armPullerLength);
-        }
     }
 
     public void armController() {
@@ -671,8 +725,8 @@ public class ArmController {
             armDown();
 
         }
-        armPuller.setPower(1);
-        armPuller.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        armPuller.setPower(1);
+//        armPuller.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         clipControl();
     }
 

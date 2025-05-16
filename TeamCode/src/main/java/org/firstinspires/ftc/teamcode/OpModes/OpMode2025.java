@@ -17,13 +17,16 @@ import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.RoadRunner.tuning.TuningOpModes;
 
 import com.acmerobotics.roadrunner.ftc.FlightRecorder;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.messages.MecanumLocalizerInputsMessage;
 import org.firstinspires.ftc.teamcode.messages.PoseMessage;
 
 
-@TeleOp
+@TeleOp(name = "OpMode2025")
 public class OpMode2025 extends LinearOpMode {
 
     //12
@@ -41,6 +44,8 @@ public class OpMode2025 extends LinearOpMode {
     ColorLocator colorLocator;
     ChassisController ChassisController=new ChassisController();//构建class实例
     ArmController ArmController = new ArmController();
+    //ClimbController climbController = new ClimbController();
+
     Alignment AutoFollow;
     public double t = 0;//当前时间
     public double move_x_l;
@@ -62,13 +67,13 @@ public class OpMode2025 extends LinearOpMode {
 
 
 
-        ChassisController.initChassis(hardwareMap,gamepad1,gamepad2);
+        //ChassisController.initChassis(hardwareMap,gamepad1,gamepad2);
         ArmController.initArm(hardwareMap,gamepad1,gamepad2,telemetry);
+        //climbController.initClimb(hardwareMap, gamepad2, telemetry);
         //AutoFollow.init(drive, hardwareMap, ifblue);
 
 
-
-        colorLocator = new ColorLocator(hardwareMap.get(WebcamName.class, "Webcam 1"), ifblue);
+        //colorLocator = new ColorLocator(hardwareMap.get(WebcamName.class, "Webcam 1"), ifblue);
 
 
         odo = hardwareMap.get(GoBildaPinpointDriver.class,"pinpoint");
@@ -167,12 +172,12 @@ public class OpMode2025 extends LinearOpMode {
         Drawing.drawRobot(packet.fieldOverlay(), pose);
         FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
-    public void telecolor(){
-        telemetry.addData("角度", colorLocator.LocateAll().angle);
-        telemetry.addData("X", colorLocator.LocateAll().x);
-        telemetry.addData("Y", colorLocator.LocateAll().y);
-        telemetry.update();
-    }
+//    public void telecolor(){
+//        telemetry.addData("角度", colorLocator.LocateAll().angle);
+//        telemetry.addData("X", colorLocator.LocateAll().x);
+//        telemetry.addData("Y", colorLocator.LocateAll().y);
+//        telemetry.update();
+//    }
 
 
 
@@ -182,24 +187,22 @@ public class OpMode2025 extends LinearOpMode {
         if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
             initall();
             while(opModeInInit() && !opModeIsActive()){
-                telecolor();
+                //telecolor();
             }
             waitForStart();
             while (opModeIsActive()) {
                 //odo.update();
                 move();
                 teleprint();
+                //climbController.climb();
                 //ChassisController.chassisController(move_x_l,-move_x_r,move_y_l+move_y_r);
                 ArmController.armController();
-                FlightRecorder.write("Pose", new PoseMessage(
-                        drive.localizer.getPose()));
 
 
                 if(gamepad2.x){
                     //AutoFollow.follow();
                 }
             }
-            //File log = new File(Environment.getExternalStorageDirectory(), "FIRST/roadrunner/logs");
         }
     }
 }
