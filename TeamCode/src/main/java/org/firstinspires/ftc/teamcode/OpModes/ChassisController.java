@@ -124,6 +124,19 @@ public class ChassisController {
             MODE = RUN_WITHOUT_LOCATOR;
         }
     }
+    public static final int NO_HEAD_MODE = 1;
+    public static final int ORDINARY_MODE = 0;
+    public static final int EXCHANGE_MODE = 2;
+    public void setRunMode(int RunMode){
+        if(RunMode == NO_HEAD_MODE){
+            USE_NO_HEAD_MODE = true;
+        }else if(RunMode == ORDINARY_MODE){
+            USE_NO_HEAD_MODE = false;
+        }else if(RunMode == EXCHANGE_MODE){
+            USE_NO_HEAD_MODE = !USE_NO_HEAD_MODE;
+        }
+    }
+
     public void setTargetLocation(int targetX,int targetY,int targetR){
         targetLocationX=targetX;
         targetLocationY=targetY;
@@ -151,7 +164,7 @@ public class ChassisController {
     int logoFacingDirectionPosition = 0;
     int usbFacingDirectionPosition = 2;
 
-    public boolean noheadmode = false;
+    public boolean USE_NO_HEAD_MODE = false;
     public boolean yhasbeenpressed = false;
     public boolean thitalock = false;
     public boolean xhasbeenpressed = false;
@@ -359,10 +372,10 @@ public class ChassisController {
             freshThita();
             if (gamepad1.y) {
                 if (!yhasbeenpressed) {
-                    if (!noheadmode)
-                        noheadmode = true;
-                    else if (noheadmode)
-                        noheadmode = false;
+                    if (!USE_NO_HEAD_MODE)
+                        USE_NO_HEAD_MODE = true;
+                    else if (USE_NO_HEAD_MODE)
+                        USE_NO_HEAD_MODE = false;
                     yhasbeenpressed = true;
                 } else {
                     yhasbeenpressed = true;
@@ -407,7 +420,7 @@ public class ChassisController {
             else if (gamepad1.right_bumper)
                 lock_thita = 90;
 
-            if (!noheadmode || climb) {
+            if (!USE_NO_HEAD_MODE || climb) {
                 move(r, y, x);
             } else {
                 noheadmove(r, y, x, speed);

@@ -341,6 +341,7 @@ public class ArmController {
     private HardwareDevice webcam_1;
     public DcMotor armMotor;
     private DcMotor armPuller;
+    private  DcMotor armSpinner;
     private Gyroscope eimu;
     private IMU imu;
     private DcMotor leftBack;
@@ -414,6 +415,10 @@ public class ArmController {
         armPuller = hardwaremap.get(DcMotor.class,"armPuller");
         armPuller.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         armPuller.setDirection(DcMotorSimple.Direction.REVERSE);
+        armSpinner = hardwaremap.get(DcMotor.class, "armSpinner");
+        armSpinner.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armSpinner.setDirection(DcMotorSimple.Direction.FORWARD);
+        
         servoe3 = hardwaremap.get(Servo.class, "servoe3");
         servoe4 = hardwaremap.get(Servo.class, "servoe4");
         servoe5 = hardwaremap.get(Servo.class, "servoe5");
