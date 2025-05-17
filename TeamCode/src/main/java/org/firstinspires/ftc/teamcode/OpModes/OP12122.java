@@ -52,6 +52,9 @@ public class OP12122 extends LinearOpMode {
     public int servo_select = 3;
     public double servo_position = 0.5;
     // servos5:0.86~1
+    ArmDirectController armDirectController = new ArmDirectController();
+    ChassisController chassisController = new ChassisController();
+    EasyClimb easyClimb = new EasyClimb();
 
     private void inithardware() {
         // control_Hub = hardwareMap.get(Blinker.class, "Control Hub");
@@ -62,9 +65,9 @@ public class OP12122 extends LinearOpMode {
                                                                // Configuration.
         rightBack = hardwareMap.get(DcMotor.class, "rightBack");
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
-        armPuller = hardwareMap.get(DcMotor.class,"armPuller");
-        armPuller.setDirection(DcMotorSimple.Direction.FORWARD);
-        armPuller.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+//        armPuller = hardwareMap.get(DcMotor.class,"armPuller");
+//        armPuller.setDirection(DcMotorSimple.Direction.FORWARD);
+//        armPuller.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         servos3 = hardwareMap.get(Servo.class, "servos3");
         servos4 = hardwareMap.get(Servo.class, "servos4");
         servos5 = hardwareMap.get(Servo.class, "servos5");
@@ -86,7 +89,7 @@ public class OP12122 extends LinearOpMode {
 
     public void fps_and_tele() {
 
-        telemetry.addData("armPuller",armPuller.getCurrentPosition());
+        //telemetry.addData("armPuller",armPuller.getCurrentPosition());
         telemetry.addData("fps", 1000 / (System.currentTimeMillis() - t));// fps
 
         telemetry.addData("thita", orientation.getYaw(AngleUnit.DEGREES));
@@ -131,19 +134,30 @@ public class OP12122 extends LinearOpMode {
 
     public void runOpMode() {
         inithardware();
+        armDirectController.initArm(hardwareMap,gamepad2,telemetry);
+        armDirectController.initArmAction();
+        chassisController.initChassis(hardwareMap,gamepad1,gamepad2);
+        easyClimb.initClimb(hardwareMap,gamepad2);
         waitForStart();
         while (opModeIsActive()) {
             updateOrientation();
             thita = orientation.getYaw(AngleUnit.DEGREES);
+            armDirectController.armSpinnerController(gamepad2.left_stick_y);
+            armDirectController.armMotorController(-gamepad2.left_trigger+ gamepad2.right_trigger);
+            armDirectController.servoe4Controller(gamepad2.right_stick_y);
+            armDirectController.servoe5Controller(gamepad2.a);
+            armDirectController.servoe2Controller(gamepad2.y);
 
             move_x_l = gamepad1.left_stick_x;
             move_y_l = gamepad1.left_stick_y;
             move_x_r = gamepad1.right_stick_x;
             move_y_r = gamepad1.right_stick_y;
+            chassisController.chassisController(move_x_l, -move_x_r, move_y_l + move_y_r);
+
             // moveselect(move_x_l,-move_x_r,move_y_l+move_y_r);
             // moveselect(move_x_l,-move_y_l-move_y_r,-move_x_r);
             fps_and_tele();
-
+            /*
             degree = 0.0036984 * orientation.getYaw(AngleUnit.DEGREES) + 0.499286;
             servocontrol();
             if(gamepad1.x){
@@ -152,7 +166,7 @@ public class OP12122 extends LinearOpMode {
                 armPuller.setPower(-0.1);
             }else{
                 armPuller.setPower(0);
-            }
+            }*/
         }
     }
 

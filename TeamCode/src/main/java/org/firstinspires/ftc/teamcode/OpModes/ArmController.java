@@ -355,7 +355,7 @@ public class ArmController {
     private Servo servoe1;
     private Servo servoe2;
     private Servo servoe3;
-    private Servo servoe4;
+    public Servo servoe4;
     private Servo servoe5;
     private Servo servos0;
     private Servo servos1;
@@ -395,7 +395,7 @@ public class ArmController {
     double clipLockPos = 0.7;
     double clipUnlockPos = 1;
     double clipPosition = 0;
-    double clipUpPos = 0.3;
+    double clipUpPos = 0.4;
     double clipDownPos = 0.675;
     double armUpPos = 0.09;
     double armPosMax = 1;
@@ -492,13 +492,13 @@ public class ArmController {
             telemetry.update();
         }
         armSpinner.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        
+
         armSpinner.setDirection(DcMotor.Direction.REVERSE);
-        
+
         armSpinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        
+
         //armSpinner.set
-        
+
         armSpinner.setPower(1);
         //armPuller.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -547,6 +547,13 @@ public class ArmController {
         //armMotor.setMode(DcMotor.RunMode.Run_WITHOUT_ENCODER);
         telemetry.addData("Finished", armMotor.getCurrentPosition());
         telemetry.update();
+
+        armSpinner.setTargetPosition(0);
+        armSpinner.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armSpinner.setPower(0.4);
+        servoe4.setPosition(0.7);
+        servoe5.setPosition(1);
+        servoe2.setPosition(0);
     }
 
     void gampadArmReceiver() {
@@ -615,9 +622,8 @@ public class ArmController {
     double armUpTime = 0;
 
     void armUp() {
-        if(armSpinner.getTargetPosition()!=120) armSpinner.setTargetPosition(120);
         servoe3.setPosition(armUpPos);// 一级舵机竖直
-        armSpinner.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
         if (armUpTime >= System.currentTimeMillis()) {
             servoe4.setPosition(0.9);// 二级舵机收起
             armMotor.setTargetPosition(0);
@@ -636,8 +642,7 @@ public class ArmController {
         armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         servoe3.setPosition(servo_position);// 一级舵机地面
         servoe4.setPosition(clipDownPos);// 二级舵机向下
-        if(armSpinner.getTargetPosition()!=armSpinnerPosition) armSpinner.setTargetPosition(armSpinnerPosition);
-        armSpinner.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
     }
 
     void angleRange() {
@@ -695,17 +700,29 @@ public class ArmController {
     double armPullerCycleEncoder =300;
     double armPullerCycleReal=1.3*2*Math.PI;
     void armCalculator() {
-        armSpinnerPosition = (int)((120.0/135)*45);
-         if (cliplock && clipLockTime + 500 >= System.currentTimeMillis())
-             armSpinnerPosition-=30;//clipHeightError = 3;// servo_position+=0.12;
-         else if (gamepad2.x)
-             armSpinnerPosition-=30;//clipHeightError = 3;// servo_position+=0.12;//8
-         else
-             armSpinnerPosition-=0;//clipHeightError = 0;
+
         double L = 30.5 + (motorNowLength / motorLength) * 32.0;
         double argument = -(clipHeight + clipHeightError) / L;
         servo_position = Math.toDegrees(Math.acos(argument)) / 135.0 /*- 0.1*/;
         servo_position = Math.max(0, Math.min(1.0, servo_position));
+        if(!armup) {
+            armSpinnerPosition = (int) ((120.0 / 135) * 45);
+            if (cliplock && clipLockTime + 500 >= System.currentTimeMillis()) {
+                armSpinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                armSpinner.setPower(-1);
+                //armSpinnerPosition -= 30;//clipHeightError = 3;// servo_position+=0.12;
+            } else if (gamepad2.x) {
+                armSpinnerPosition -= 30;//clipHeightError = 3;// servo_position+=0.12;//8
+            } else {
+                armSpinnerPosition -= 0;//clipHeightError = 0;
+                if (armSpinner.getTargetPosition() != armSpinnerPosition)
+                    armSpinner.setTargetPosition(armSpinnerPosition);
+                armSpinner.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            }
+        }else{
+                if (armSpinner.getTargetPosition() != 130) armSpinner.setTargetPosition(130);
+                armSpinner.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
 
 
 //        if (cliplock && clipLockTime + 500 >= System.currentTimeMillis())

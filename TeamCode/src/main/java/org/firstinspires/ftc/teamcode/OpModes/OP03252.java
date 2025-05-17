@@ -136,7 +136,7 @@ public class OP03252 extends LinearOpMode {
         inithardware();
         ChassisController.initChassis(hardwareMap, gamepad1,gamepad2);
         ArmController.initArm(hardwareMap, gamepad1, gamepad2,telemetry);
-        //ClimbController.initClimb(hardwareMap,gamepad2,telemetry);
+        ClimbController.initClimb(hardwareMap,gamepad2,telemetry);
         waitForStart();
         while (opModeIsActive()) {
             /*
@@ -151,7 +151,7 @@ public class OP03252 extends LinearOpMode {
             //r,y,x,speed
             ChassisController.chassisController(move_x_l, -move_x_r, move_y_l + move_y_r);
             ArmController.armController();
-            //ClimbController.climb();
+            ClimbController.climb();
             fps_and_tele();
 
 

@@ -24,17 +24,19 @@ public class EasyClimb {
         climbLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         climbRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         while (System.currentTimeMillis() - t <= 2000) {
-            climbLeft.setPower(1);
-            climbRight.setPower(1);
+            //climbLeft.setPower(1);
+            climbRight.setPower(0.1);
         }
+        climbLeft.setPower(0);
+        climbRight.setPower(0);
     }
     void climb() {
         if (gamepad2.left_bumper) {
-            climbLeft.setPower(-1);
-            climbRight.setPower(-1);
+            //climbLeft.setPower(-1);
+            climbRight.setPower(-0.5);
         } else if(gamepad2.right_bumper){
-            climbLeft.setPower(1);
-            climbRight.setPower(1);
+            //climbLeft.setPower(1);
+            climbRight.setPower(0.5);
         }
     }
 }

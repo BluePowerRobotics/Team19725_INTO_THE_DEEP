@@ -1,10 +1,7 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
@@ -13,12 +10,13 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.OpModes.ArmController;
 import org.firstinspires.ftc.teamcode.RoadRunner.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 
 @Config
-@Autonomous(name = "Auto_2025", group = "Autonomous")
-public class Auto2025 extends LinearOpMode {
+@Autonomous(name = "Auto_2025_Left", group = "Autonomous")
+public class Auto2025Left extends LinearOpMode {
     GoBildaPinpointDriver odo;
     boolean ifblue = true;
 
@@ -36,7 +34,7 @@ public class Auto2025 extends LinearOpMode {
             AddTele step4  = new AddTele("step4", 4, telemetry);
             AddTele step5  = new AddTele("step5", 5, telemetry);
 
-            Pose2d initialPoseLeft = new Pose2d(-24, -64.575, Math.toRadians(180.00));
+            Pose2d initialPoseLeft = new Pose2d(-24, -64.575, Math.toRadians(90.00));
 
 
 
@@ -102,12 +100,19 @@ public class Auto2025 extends LinearOpMode {
 
 
 
+            TrajectoryActionBuilder climb2 = drive.actionBuilder(new Pose2d(-33.89, -66.29, Math.toRadians(90.00)))
+                    .splineTo(new Vector2d(-33.89, -10.38), Math.toRadians(90.00))
+                    .splineTo(new Vector2d(-23.39, -0.34), Math.toRadians(90.00));
+            Action CloseOutclimb2 = climb2.endTrajectory().fresh()
+                    .build();
+            Action Actionclimb2 = climb2.build();
+
 
 
 
             // actions that need to happen on init; for instance, a claw tightening.
             //todo 初始化机器
-            //Actions.runBlocking(claw.closeClaw());
+            Actions.runBlocking(armController.initArm());
 
             waitForStart();
 
@@ -116,17 +121,8 @@ public class Auto2025 extends LinearOpMode {
             Actions.runBlocking(
 
                     new SequentialAction(
-                            armController.initArm(),
-                            ActionOutPut0,
-                            armController.outPut(),
-                            ActionIntake1,
-                            armController.inTake(200, 0),
-                            ActionOutPut1,
-                            armController.outPut(),
-                            ActionIntake2,
-                            armController.inTake(200, 0),
-                            ActionOutPut2,
-                            armController.outPut()
+                            Actionclimb2,
+                            CloseOutclimb2
                     )
             );
 

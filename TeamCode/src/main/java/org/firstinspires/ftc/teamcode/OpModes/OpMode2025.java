@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
-import android.os.Environment;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -18,12 +16,8 @@ import org.firstinspires.ftc.teamcode.RoadRunner.tuning.TuningOpModes;
 
 import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.messages.MecanumLocalizerInputsMessage;
-import org.firstinspires.ftc.teamcode.messages.PoseMessage;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 
 @TeleOp(name = "OpMode2025")
@@ -33,6 +27,7 @@ public class OpMode2025 extends LinearOpMode {
     FlightRecorder recorder;
     GoBildaPinpointDriver odo;
     MecanumDrive drive;
+    Servo E4 = null;
     //boolean ifchanged = false;
     boolean lbispressed = false;
     boolean rbispressed = false;
@@ -41,13 +36,15 @@ public class OpMode2025 extends LinearOpMode {
 
     boolean ifblue = true;
     double kpad;
-    ColorLocator colorLocator;
+    //ColorLocator colorLocator;
     ChassisController ChassisController=new ChassisController();//构建class实例
     ArmController ArmController = new ArmController();
+    EasyClimb easyClimb = new EasyClimb();
     //ClimbController climbController = new ClimbController();
 
     Alignment AutoFollow;
     public double t = 0;//当前时间
+    public DcMotor armSpinner = null;
     public double move_x_l;
     public double move_y_l;
     public double move_x_r;
@@ -64,14 +61,17 @@ public class OpMode2025 extends LinearOpMode {
         drive = new MecanumDrive(hardwareMap, initposeRedLeft);
         //telemetry.addData("设置tele", 1);
         //drive.settele(telemetry);
-
-
-
-        //ChassisController.initChassis(hardwareMap,gamepad1,gamepad2);
-        ArmController.initArm(hardwareMap,gamepad1,gamepad2,telemetry);
-        //climbController.initClimb(hardwareMap, gamepad2, telemetry);
-        //AutoFollow.init(drive, hardwareMap, ifblue);
-
+//        armSpinner = hardwareMap.get(DcMotor.class, "armSpinner");
+//        armSpinner.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+//        armSpinner.setDirection(DcMotorSimple.Direction.FORWARD);
+//
+//
+//        //ChassisController.initChassis(hardwareMap,gamepad1,gamepad2);
+//        ArmController.initArm(hardwareMap,gamepad1,gamepad2,telemetry);
+//        easyClimb.initClimb(hardwareMap, gamepad2);
+//        //climbController.initClimb(hardwareMap, gamepad2, telemetry);
+//        //AutoFollow.init(drive, hardwareMap, ifblue);
+//        E4 = hardwareMap.get(Servo.class, "servoe4");
 
         //colorLocator = new ColorLocator(hardwareMap.get(WebcamName.class, "Webcam 1"), ifblue);
 
@@ -159,9 +159,9 @@ public class OpMode2025 extends LinearOpMode {
 //        String velocity = String.format(Locale.US,"{XVel: %.3f, YVel: %.3f, HVel: %.3f}", vel.getX(DistanceUnit.MM), vel.getY(DistanceUnit.MM), vel.getHeading(AngleUnit.DEGREES));
 //        telemetry.addData("Velocity", velocity);
         telemetry.addLine();
-        telemetry.addData("角度", colorLocator.LocateAll().angle);
-        telemetry.addData("X", colorLocator.LocateAll().x);
-        telemetry.addData("Y", colorLocator.LocateAll().y);
+//        telemetry.addData("角度", colorLocator.LocateAll().angle);
+//        telemetry.addData("X", colorLocator.LocateAll().x);
+//        telemetry.addData("Y", colorLocator.LocateAll().y);
         telemetry.addData("ifslow", ifslow);
         telemetry.addData("ifgyw", ifgyw);
         telemetry.update();
@@ -188,20 +188,39 @@ public class OpMode2025 extends LinearOpMode {
             initall();
             while(opModeInInit() && !opModeIsActive()){
                 //telecolor();
+                telemetry.addData("E4", ArmController.servoe4.getPosition());
+                telemetry.update();
             }
+            //E4.setPosition(0.8);
+//            double armPower = 0;
+//            double E4pos = 0.8;
+//            E4.setPosition(E4pos);
             waitForStart();
             while (opModeIsActive()) {
                 //odo.update();
                 move();
-                teleprint();
-                //climbController.climb();
-                //ChassisController.chassisController(move_x_l,-move_x_r,move_y_l+move_y_r);
-                ArmController.armController();
-
-
-                if(gamepad2.x){
-                    //AutoFollow.follow();
-                }
+//                teleprint();
+//                easyClimb.climb();
+//                //climbController.climb();
+//                //ChassisController.chassisController(move_x_l,-move_x_r,move_y_l+move_y_r);
+//                ArmController.armController();
+//                if(gamepad2.right_stick_x> 0.1){
+//                    E4pos += 0.05;
+//                }
+//                if(gamepad2.right_stick_x< -0.1){
+//                    E4pos -= 0.05;
+//                }
+//                E4.setPosition(E4pos);
+//                if(gamepad2.left_bumper){
+//                    armPower = -0.5;
+//                }
+//                if(gamepad2.right_bumper){
+//                    armPower = 0.5;
+//                }
+//                armSpinner.setPower(armPower);
+//                if(gamepad2.x){
+//                    //AutoFollow.follow();
+//                }
             }
         }
     }

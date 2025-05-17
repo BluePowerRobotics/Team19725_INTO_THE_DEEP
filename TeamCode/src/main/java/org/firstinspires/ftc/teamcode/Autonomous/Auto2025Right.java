@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.RoadRunner.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 
 @Config
-@Autonomous(name = "Auto_2025_Left", group = "Autonomous")
+@Autonomous(name = "Auto_2025_Right", group = "Autonomous")
 public class Auto2025Right extends LinearOpMode {
     GoBildaPinpointDriver odo;
     boolean ifblue = true;
@@ -33,7 +33,7 @@ public class Auto2025Right extends LinearOpMode {
             AddTele step4  = new AddTele("step4", 4, telemetry);
             AddTele step5  = new AddTele("step5", 5, telemetry);
 
-            Pose2d initialPoseRight = new Pose2d(24, -64.575, Math.toRadians(180.00));
+            Pose2d initialPoseRight = new Pose2d(32.75, -64.575, Math.toRadians(180.00));
 
 
 
@@ -57,6 +57,12 @@ public class Auto2025Right extends LinearOpMode {
 
             Action ActionClimb = Climb.build();
 
+            TrajectoryActionBuilder rightmax = drive.actionBuilder(initialPoseRight)
+                    .strafeTo(new Vector2d(64,-63.25))
+                    .waitSeconds(20)
+                    .strafeTo(new Vector2d(60,-63.25));
+            Action Actionrightmax = rightmax.build();
+
 
 
 
@@ -76,8 +82,8 @@ public class Auto2025Right extends LinearOpMode {
 
             Actions.runBlocking(
                     new SequentialAction(
-                            armController.initArm(),
-                            ActionClimb
+                            //armController.initArm(),
+                            Actionrightmax
                     )
             );
 

@@ -222,7 +222,7 @@ public class AutoTestARM extends LinearOpMode {
             Actions.runBlocking(
                     new SequentialAction(
                             armController.initArm(),
-                            armController.inTake(300, 0.5),
+                            //armController.inTake(300, 0.5),
                             armController.outPut()
                     )
             );
