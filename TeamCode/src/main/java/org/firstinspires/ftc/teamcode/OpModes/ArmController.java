@@ -407,8 +407,10 @@ public class ArmController {
     int armSpinnerStopPosition;
     int armUpSpendHalfMS;
     int armUpLength;
+
+    int SpinnerUpPosition = 150;
     Telemetry telemetry;
-    void initArm(HardwareMap hardwaremaprc, Gamepad gamepadrc, Gamepad gamepadrc2, Telemetry telemetryrc) {
+    public void initArm(HardwareMap hardwaremaprc, Gamepad gamepadrc, Gamepad gamepadrc2, Telemetry telemetryrc) {
 
         t = System.currentTimeMillis();// 获取当前时间
         telemetry = telemetryrc;
@@ -442,9 +444,9 @@ public class ArmController {
         motorNowLength = 0;
         motorPower = 0;
 
-        clipLockPos = 0.345;// 0123
-        clipUnlockPos = 0.625;// 0123
-        clipUpPos = 0.3; //(0.245)// 0,1
+        clipLockPos = 0.7;// 0123
+        clipUnlockPos = 1;//0.625;// 0123
+        clipUpPos = 0.075; //(0.245)// 0,1
         clipDownPos = 0.675;// calculated,useless
         clipPosition = 0;// 0123
         armUpPos = 0;// 0,1
@@ -465,7 +467,7 @@ public class ArmController {
             }
         } else if (MODE == HIGHRAILING || MODE == LOWRAILING) {
             armUpSpendHalfMS = 800;
-            armUpLength = 430;//540
+            armUpLength = 300;//540
             clipUpPos = 0.9;
             if (MODE == HIGHRAILING) {
                 armUpPos = 0.4;
@@ -513,7 +515,8 @@ public class ArmController {
         int uponArm = 2;
         int anywhere = 0;
         boolean armHasRun = false;
-        while ((Place!=uponArm)&&(!((Place==anywhere)&&armHasRun))){
+        long time = System.currentTimeMillis();
+        while ((Place!=uponArm)&&(!((Place==anywhere)&&armHasRun)) && ((System.currentTimeMillis() - time) < 3500)){
             if(Math.abs(distanceSensor.getDistance(DistanceUnit.MM) - 30) < 10){
                 telemetry.addData("status", "主臂");
                 telemetry.update();
@@ -533,6 +536,10 @@ public class ArmController {
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Place = anywhere;
             }
+        }
+        if(System.currentTimeMillis() - time > 3400){
+            SpinnerUpPosition +=70;
+            armUpLength+=120;
         }
         armSpinner.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armSpinner.setDirection(DcMotor.Direction.FORWARD);
@@ -624,16 +631,16 @@ public class ArmController {
     void armUp() {
 //        if(armSpinner.getTargetPosition()!=130) armSpinner.setTargetPosition(130);
         armSpinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        if(armSpinner.getCurrentPosition()<120)
+        if(armSpinner.getCurrentPosition()<140)
             armSpinner.setPower(1);
-        else if(armSpinner.getCurrentPosition()>140)
+        else if(armSpinner.getCurrentPosition()>160)
             armSpinner.setPower(-1);
         else
-            armSpinner.setPower((130-armSpinner.getCurrentPosition())*1.0/10);
+            armSpinner.setPower((150-armSpinner.getCurrentPosition())*1.0/10);
         servoe3.setPosition(armUpPos);// 一级舵机竖直
 
         if (armUpTime >= System.currentTimeMillis()) {
-            servoe4.setPosition(0.9);// 二级舵机收起
+            servoe4.setPosition(0.8);// 二级舵机收起
             armMotor.setTargetPosition(0);
             armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             // armMotor.setPower(1);
@@ -713,18 +720,19 @@ public class ArmController {
     double armPullerCycleReal=1.3*2*Math.PI;
     void armCalculator() {
         //armSpinnerPosition = (int)((130.0/135)*45);
-         if (cliplock && clipLockTime + 500 >= System.currentTimeMillis())
-             armSpinnerPosition-=30;//clipHeightError = 3;// servo_position+=0.12;
-         else if (gamepad2.x)
-             armSpinnerPosition-=30;//clipHeightError = 3;// servo_position+=0.12;//8
-         else
-             armSpinnerPosition-=0;//clipHeightError = 0;
+
         double L = 30.5 + (motorNowLength / motorLength) * 32.0;
         double argument = -(clipHeight + clipHeightError) / L;
         servo_position = Math.toDegrees(Math.acos(argument)) / 135.0 /*- 0.1*/;
         servo_position = Math.max(0, Math.min(1.0, servo_position));
         armSpinnerPosition = (int)((-servo_position)*135/130);
-        clipDownPos = 1-0.5*servo_position;
+        if (cliplock && clipLockTime + 500 >= System.currentTimeMillis())
+            armSpinnerPosition-=30;//clipHeightError = 3;// servo_position+=0.12;
+        else if (gamepad2.x)
+            armSpinnerPosition-=30;//clipHeightError = 3;// servo_position+=0.12;//8
+        else
+            armSpinnerPosition-=0;//clipHeightError = 0;
+        clipDownPos = 0.9-0.5*servo_position;
 
 
 //        if (cliplock && clipLockTime + 500 >= System.currentTimeMillis())

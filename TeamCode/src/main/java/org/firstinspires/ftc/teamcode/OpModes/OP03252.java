@@ -1,5 +1,11 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
+import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 //import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
@@ -10,11 +16,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 
 @TeleOp
 
 public class OP03252 extends LinearOpMode {
-
+    MecanumDrive drive = new MecanumDrive(hardwareMap,new Pose2d(-24,-48,Math.toRadians(180)));
     ChassisController ChassisController = new ChassisController();// 构建class实例
     ArmController ArmController = new ArmController();
     ClimbController ClimbController = new ClimbController();
@@ -137,7 +144,27 @@ public class OP03252 extends LinearOpMode {
         ChassisController.initChassis(hardwareMap, gamepad1,gamepad2);
         ArmController.initArm(hardwareMap, gamepad1, gamepad2,telemetry);
         ClimbController.initClimb(hardwareMap,gamepad2,telemetry);
+        double OutPutHeading = Math.toRadians(135);
+        double IntakeHeading = 3.1415926;   //todo  why not Math.PI
+        double Intake3Heading = Math.toRadians(228.81);
+        Vector2d OutPutPos = new Vector2d(-53.9,-53.9);
+        Pose2d OutPutFinishPos = new Pose2d(-53.9,-53.9, OutPutHeading);
+        Vector2d IntakePos1 = new Vector2d(-49.18,-43.67);
+        Pose2d IntakeFinish1 = new Pose2d(-49.18,-43.67, IntakeHeading);
+        Vector2d IntakePos2 = new Vector2d(-60.22,-43.67);
+        Pose2d IntakeFinish2 = new Pose2d(-60.22,-43.67, IntakeHeading);
+        Vector2d IntakePos3 = new Vector2d(-60,-44);
+
+        TrajectoryActionBuilder Intake1 = drive.actionBuilder(new Pose2d(-24,-64.575,Math.toRadians(180)))
+                .strafeTo(IntakePos1);
+        Action ActionIntake1 = Intake1.build();
+
         waitForStart();
+        Actions.runBlocking(
+                new SequentialAction(
+                        ActionIntake1
+                )
+        );
         while (opModeIsActive()) {
             /*
              * updateOrientation();

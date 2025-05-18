@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.OpModes.ArmController;
 import org.firstinspires.ftc.teamcode.RoadRunner.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
+import org.firstinspires.ftc.teamcode.OpModes.ArmController;
 
 @Config
 @Autonomous(name = "Auto_2025_Left", group = "Autonomous")
@@ -34,7 +35,7 @@ public class Auto2025Left extends LinearOpMode {
             AddTele step4  = new AddTele("step4", 4, telemetry);
             AddTele step5  = new AddTele("step5", 5, telemetry);
 
-            Pose2d initialPoseLeft = new Pose2d(-24, -64.575, Math.toRadians(90.00));
+            Pose2d initialPoseLeft = new Pose2d(-34, -64.575, Math.toRadians(90.00));
 
 
 
@@ -91,7 +92,7 @@ public class Auto2025Left extends LinearOpMode {
 
 
 
-
+            ArmController armController1 = new ArmController();
 
 
 
@@ -112,7 +113,7 @@ public class Auto2025Left extends LinearOpMode {
 
             // actions that need to happen on init; for instance, a claw tightening.
             //todo 初始化机器
-            Actions.runBlocking(armController.initArm());
+            armController1.initArm(hardwareMap, gamepad1, gamepad2, telemetry);
 
             waitForStart();
 
