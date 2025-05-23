@@ -52,9 +52,9 @@ public class OP12122 extends LinearOpMode {
     public int servo_select = 3;
     public double servo_position = 0.5;
     // servos5:0.86~1
-    ArmDirectController armDirectController = new ArmDirectController();
+    //ArmDirectController armDirectController = new ArmDirectController();
     ChassisController chassisController = new ChassisController();
-    EasyClimb easyClimb = new EasyClimb();
+    //EasyClimb easyClimb = new EasyClimb();
 
     private void inithardware() {
         // control_Hub = hardwareMap.get(Blinker.class, "Control Hub");
@@ -134,19 +134,19 @@ public class OP12122 extends LinearOpMode {
 
     public void runOpMode() {
         inithardware();
-        armDirectController.initArm(hardwareMap,gamepad2,telemetry);
-        armDirectController.initArmAction();
+//        armDirectController.initArm(hardwareMap,gamepad2,telemetry);
+//        armDirectController.initArmAction();
         chassisController.initChassis(hardwareMap,gamepad1,gamepad2);
-        easyClimb.initClimb(hardwareMap,gamepad2);
+        //easyClimb.initClimb(hardwareMap,gamepad2);
         waitForStart();
         while (opModeIsActive()) {
             updateOrientation();
             thita = orientation.getYaw(AngleUnit.DEGREES);
-            armDirectController.armSpinnerController(gamepad2.left_stick_y);
-            armDirectController.armMotorController(-gamepad2.left_trigger+ gamepad2.right_trigger);
-            armDirectController.servoe4Controller(gamepad2.right_stick_y);
-            armDirectController.servoe5Controller(gamepad2.a);
-            armDirectController.servoe2Controller(gamepad2.y);
+//            armDirectController.armSpinnerController(gamepad2.left_stick_y);
+//            armDirectController.armMotorController(-gamepad2.left_trigger+ gamepad2.right_trigger);
+//            armDirectController.servoe4Controller(gamepad2.right_stick_y);
+//            armDirectController.servoe5Controller(gamepad2.a);
+//            armDirectController.servoe2Controller(gamepad2.y);
 
             move_x_l = gamepad1.left_stick_x;
             move_y_l = gamepad1.left_stick_y;

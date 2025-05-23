@@ -133,15 +133,15 @@ public class Auto0513Test extends LinearOpMode {
     public void runOpMode() {
         inithardware();
         ChassisController.initChassis(hardwareMap, gamepad1,gamepad2);
-        ArmController.initArm(hardwareMap, gamepad1, gamepad2,telemetry);
+//        ArmController.initArm(hardwareMap, gamepad1, gamepad2,telemetry);
         waitForStart();
-        ArmController.armup = true;
-        ArmController.clipPosition = 0;
-        ArmController.armUpTime = t + 1600;
-        ArmController.armMotor.setTargetPosition(0);
-        ArmController.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        ArmController.armMotor.setPower(1);
-        ChassisController.setMode(ChassisController.STOP_AND_RESET_LOCATOR);
+//        ArmController.armup = true;
+//        ArmController.clipPosition = 0;
+//        ArmController.armUpTime = t + 1600;
+//        ArmController.armMotor.setTargetPosition(0);
+//        ArmController.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        ArmController.armMotor.setPower(1);
+        ChassisController.setMode(org.firstinspires.ftc.teamcode.OpModes.ChassisController.MODE.STOP_AND_RESET_LOCATOR);
         ChassisController.setTargetLocation(100,100,0);
         ChassisController.setSpeed(0.1);
         while (opModeIsActive()) {
@@ -150,10 +150,11 @@ public class Auto0513Test extends LinearOpMode {
              * thita = orientation.getYaw(AngleUnit.DEGREES);
              */
 
-            ChassisController.setMode(ChassisController.RUN_TO_LOCATION);
-            ArmController.armController();
+            ChassisController.setMode(org.firstinspires.ftc.teamcode.OpModes.ChassisController.MODE.RUN_TO_LOCATION);
+            //ArmController.armController();
 
             fps_and_tele();
+
 
         }
     }

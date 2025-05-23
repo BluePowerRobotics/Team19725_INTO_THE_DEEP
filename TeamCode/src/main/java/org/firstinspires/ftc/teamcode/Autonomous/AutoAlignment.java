@@ -30,6 +30,7 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
 import android.text.Layout;
+import android.util.Size;
 
 import androidx.annotation.NonNull;
 
@@ -42,13 +43,18 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.OpModes.ColorLocator;
-import org.firstinspires.ftc.teamcode.OpModes.ColorReturn;
+//import org.firstinspires.ftc.teamcode.OpModes.ColorLocator;
+//import org.firstinspires.ftc.teamcode.OpModes.ColorReturn;
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 import org.firstinspires.ftc.vision.VisionPortal;
 
-import org.firstinspires.ftc.teamcode.OpModes.ColorLocator;
-import org.firstinspires.ftc.teamcode.OpModes.ColorReturn;
+
+import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
+import org.firstinspires.ftc.vision.opencv.ColorRange;
+import org.firstinspires.ftc.vision.opencv.ImageRegion;
+import org.opencv.core.RotatedRect;
+
+import java.util.List;
 
 
 /*
@@ -109,3 +115,72 @@ public class AutoAlignment {
     }
 }
 
+class ColorLocator{
+    public double bluex;
+    public double bluey;
+    public ColorBlobLocatorProcessor colorLocator;
+    public VisionPortal portal;
+
+
+
+
+    //////////
+    public ColorLocator(WebcamName cam1, boolean ifblue){
+        colorLocator = new ColorBlobLocatorProcessor.Builder()
+                .setTargetColorRange(ColorRange.YELLOW)         // use a predefined color match
+                .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
+                .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 1, 1, -1))  // ROI:全屏
+                .setDrawContours(true)                        // Show contours on the Stream Preview
+                .setBlurSize(5)                               // Smooth the transitions between different colors in image
+                .build();
+
+
+        portal = new VisionPortal.Builder()
+                .addProcessor(colorLocator)
+                .setCameraResolution(new Size(320, 240))
+                .setCamera(cam1)
+                .build();
+
+
+    }
+    ////////
+
+
+
+
+    public ColorReturn LocateAll()
+    {
+        List<ColorBlobLocatorProcessor.Blob> blobs = colorLocator.getBlobs();
+        ColorBlobLocatorProcessor.Util.filterByArea(50, 20000, blobs);
+        org.opencv.core.Size myBoxFitSize;
+        for(ColorBlobLocatorProcessor.Blob b : blobs){
+            RotatedRect boxFit = b.getBoxFit();
+            myBoxFitSize = boxFit.size;
+            ColorReturn LocateAll = new ColorReturn(boxFit.center.x,boxFit.center.y,myBoxFitSize.width,myBoxFitSize.height,boxFit.angle);
+            //telemetry.addData("x:",boxFit.center.x);
+            //telemetry.addData("y:",boxFit.center.y);
+            //telemetry.addData("######################################");
+            //telemetry.update();
+            return (LocateAll);
+        }
+        //
+        //telemetry.update();
+        ColorReturn LocateError = new ColorReturn(999999,999999,999999,999999,999999);
+        return(LocateError);
+        //sleep(50);
+    }
+}
+class ColorReturn{
+    public double x;
+    public double y;
+    public double width;
+    public double height;
+    public double angle;
+    public ColorReturn(double a,double b,double c,double d, double e){
+        x = a;
+        y = b;
+        width = c;
+        height = d;
+        angle = e;
+    }
+}

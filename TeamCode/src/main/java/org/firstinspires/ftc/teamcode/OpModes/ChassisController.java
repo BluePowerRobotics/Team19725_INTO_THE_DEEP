@@ -89,11 +89,9 @@ public class ChassisController {
     double lock_thita;
 
 
+    public enum MODE{RUN_TO_LOCATION,RUN_WITHOUT_LOCATOR,STOP_AND_RESET_LOCATOR}
+    private MODE RUNMODE = ChassisController.MODE.RUN_WITHOUT_LOCATOR;
 
-    private int MODE = 0;
-    public static final int RUN_TO_LOCATION= 2;
-    public static final int RUN_WITHOUT_LOCATOR= 1;
-    public static final int STOP_AND_RESET_LOCATOR= 3;
 
     private boolean UseAutoMove = false;
 
@@ -103,25 +101,25 @@ public class ChassisController {
     private int targetLocationR=0;
     private double distanceToTargetLocation=0;
 
-    public void setMode(int CHASSIS_MODE){
-        MODE = CHASSIS_MODE;
+    public void setMode(MODE CHASSIS_MODE){
+        RUNMODE = CHASSIS_MODE;
 
 
-        if(MODE==STOP_AND_RESET_LOCATOR){
+        if(RUNMODE==MODE.STOP_AND_RESET_LOCATOR){
             UseAutoMove = true;
 
             initLocator();
 
 
-        } else if (MODE==RUN_TO_LOCATION) {
+        } else if (RUNMODE==MODE.RUN_TO_LOCATION) {
             UseAutoMove = true;
             freshThita();
             runToLocation(targetLocationX,targetLocationY,targetLocationR,0,maxSpeed);
-        } else if (MODE==RUN_WITHOUT_LOCATOR){
+        } else if (RUNMODE==MODE.RUN_WITHOUT_LOCATOR){
             UseAutoMove = false;
         } else{
             UseAutoMove = false;
-            MODE = RUN_WITHOUT_LOCATOR;
+            RUNMODE = MODE.RUN_WITHOUT_LOCATOR;
         }
     }
     public static final int NO_HEAD_MODE = 1;
@@ -158,6 +156,7 @@ public class ChassisController {
             .values();
     HardwareMap hardwareMap;
     Gamepad gamepad1,gamepad2;
+    DcMotor a124;
     IMU imu;
     YawPitchRollAngles orientation;
     static DcMotor leftFront, leftBack, rightBack, rightFront, armMotor;
