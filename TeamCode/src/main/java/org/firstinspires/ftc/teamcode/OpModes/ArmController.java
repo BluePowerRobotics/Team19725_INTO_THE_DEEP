@@ -90,10 +90,23 @@ public class ArmController {
         return OUTPUT_RUNMODE;
     }
     public enum INTAKE_MODE{EXTENDING,SHORTENING,TAKING,PUTTING,WAITING}
-
+    public INTAKE_MODE inTakeStatus;
+    public INTAKE_MODE INTAKE_RUNMODE;
     public void inTake(){
         if(RUNMODE == MODE.HIGH_CHAMBER){
-            if
+            if(inTakeStatus!= INTAKE_MODE.WAITING)inTakeStatus = chamberInTake();
         }
+    }
+    public INTAKE_MODE chamberInTake(){
+        if(INTAKE_RUNMODE==INTAKE_MODE.EXTENDING){
+
+        } else if (INTAKE_RUNMODE==INTAKE_MODE.TAKING) {
+
+        } else if(INTAKE_RUNMODE==INTAKE_MODE.SHORTENING){
+
+        } else if (INTAKE_RUNMODE==INTAKE_MODE.PUTTING) {
+
+        }
+        return INTAKE_RUNMODE;
     }
 }

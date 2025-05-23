@@ -105,9 +105,9 @@ public class Auto0513Test extends LinearOpMode {
         telemetry.addData("alpha", ChassisController.alpha);
         telemetry.addData("angle", ChassisController.angle);
 
-        telemetry.addData("servo_position", ArmController.servo_position);
+        //telemetry.addData("servo_position", ArmController.servo_position);
 
-        telemetry.addData("length", ArmController.motorNowLength / ArmController.motorLength);
+        //telemetry.addData("length", ArmController.motorNowLength / ArmController.motorLength);
 
         telemetry.update();
         t = System.currentTimeMillis();// 获取当前时间
