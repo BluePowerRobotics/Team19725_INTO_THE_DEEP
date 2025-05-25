@@ -114,9 +114,9 @@ public class OP03252 extends LinearOpMode {
         telemetry.addData("alpha", ChassisController.alpha);
         telemetry.addData("angle", ChassisController.angle);
 
-        telemetry.addData("servo_position", ArmController.servo_position);
+        //telemetry.addData("servo_position", ArmController.servo_position);
 
-        telemetry.addData("length", ArmController.motorNowLength / ArmController.motorLength);
+        //telemetry.addData("length", ArmController.motorNowLength / ArmController.motorLength);
 
         telemetry.update();
         t = System.currentTimeMillis();// 获取当前时间
@@ -141,30 +141,15 @@ public class OP03252 extends LinearOpMode {
 
     public void runOpMode() {
         inithardware();
+        SharedStates sharedStates = SharedStates.getInstance();
         ChassisController.initChassis(hardwareMap, gamepad1,gamepad2);
         ArmController.initArm(hardwareMap, gamepad1, gamepad2,telemetry);
         ClimbController.initClimb(hardwareMap,gamepad2,telemetry);
-        double OutPutHeading = Math.toRadians(135);
-        double IntakeHeading = 3.1415926;   //todo  why not Math.PI
-        double Intake3Heading = Math.toRadians(228.81);
-        Vector2d OutPutPos = new Vector2d(-53.9,-53.9);
-        Pose2d OutPutFinishPos = new Pose2d(-53.9,-53.9, OutPutHeading);
-        Vector2d IntakePos1 = new Vector2d(-49.18,-43.67);
-        Pose2d IntakeFinish1 = new Pose2d(-49.18,-43.67, IntakeHeading);
-        Vector2d IntakePos2 = new Vector2d(-60.22,-43.67);
-        Pose2d IntakeFinish2 = new Pose2d(-60.22,-43.67, IntakeHeading);
-        Vector2d IntakePos3 = new Vector2d(-60,-44);
 
-        TrajectoryActionBuilder Intake1 = drive.actionBuilder(new Pose2d(-24,-64.575,Math.toRadians(180)))
-                .strafeTo(IntakePos1);
-        Action ActionIntake1 = Intake1.build();
+
 
         waitForStart();
-        Actions.runBlocking(
-                new SequentialAction(
-                        ActionIntake1
-                )
-        );
+
         while (opModeIsActive()) {
             /*
              * updateOrientation();

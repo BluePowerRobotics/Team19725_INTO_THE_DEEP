@@ -26,25 +26,31 @@ public class ArmController {
     private double clipLockPos;
     private double clipUnlockPos;
 
+    public enum ARM_MODE{BasicArm,FiveServoArm}
+    public ARM_MODE USE_ARM_MODE = ARM_MODE.BasicArm;
 
 
+    //public boolean AUTO = false;
 
-
-    public boolean AUTO = false;
-
-    public MODE RUNMODE = MODE.HIGH_CHAMBER;
-    public enum MODE {HIGH_CHAMBER,LOW_CHAMBER,HIGH_BASKET,LOW_BASKET}
+//    public MODE RUNMODE = MODE.HIGH_CHAMBER;
+//    public enum MODE {HIGH_CHAMBER,LOW_CHAMBER,HIGH_BASKET,LOW_BASKET}
     // todo: write your code here
 
     double t = 0;
 
     // ArmController
+
+    Servo inTakeLength;
+
     public boolean initArmInitiated=false;
     public boolean initArm(HardwareMap hardwareMapRC, Gamepad gamepad1RC, Gamepad gamepad2RC, Telemetry telemetry){
         if(!initArmInitiated){
             hardwaremap = hardwareMapRC;
             gamepad1 = gamepad1RC;
             gamepad2 = gamepad2RC;
+            inTakeLength = hardwaremap.get(Servo.class,"");
+
+            initArmInitiated = true;
         }
 
         return false;
@@ -58,12 +64,12 @@ public class ArmController {
     }
     public OUTPUT_MODE outPutStatus;
     public void outPut(){
-        if (RUNMODE == MODE.HIGH_CHAMBER){
+        if (SharedStates.getInstance().getRUNMODE() == SharedStates.MODE.HIGH_CHAMBER){
             if(outPutStatus != OUTPUT_MODE.WAITING) outPutStatus = chamberOutPut();
         }
     }
     public enum OUTPUT_MODE {PUTTING, UPPING,DOWNING, WAITING}
-    public OUTPUT_MODE OUTPUT_RUNMODE;
+    private OUTPUT_MODE OUTPUT_RUNMODE;
     public OUTPUT_MODE chamberOutPut(){
         if (OUTPUT_RUNMODE==OUTPUT_MODE.UPPING){
 
@@ -76,9 +82,9 @@ public class ArmController {
     }
     public enum INTAKE_MODE{EXTENDING,SHORTENING,TAKING,PUTTING,WAITING}
     public INTAKE_MODE inTakeStatus;
-    public INTAKE_MODE INTAKE_RUNMODE;
+    private INTAKE_MODE INTAKE_RUNMODE;
     public void inTake(){
-        if(RUNMODE == MODE.HIGH_CHAMBER){
+        if(SharedStates.getInstance().getRUNMODE() == SharedStates.MODE.HIGH_CHAMBER){
             if(inTakeStatus!= INTAKE_MODE.WAITING)inTakeStatus = chamberInTake();
         }
     }
@@ -91,7 +97,7 @@ public class ArmController {
                 inTakeActionInitiated = true;
             }
 
-            if(AUTO&&inTakeActionFinished){
+            if(SharedStates.getInstance().isAUTO()&&inTakeActionFinished){
                 INTAKE_RUNMODE = INTAKE_MODE.TAKING;
                 inTakeActionInitiated = false;
             }
@@ -101,7 +107,7 @@ public class ArmController {
                 inTakeActionInitiated = true;
             }
 
-            if(AUTO&&inTakeActionFinished){
+            if(SharedStates.getInstance().isAUTO()&&inTakeActionFinished){
                 INTAKE_RUNMODE = INTAKE_MODE.SHORTENING;
                 inTakeActionInitiated = false;
             }
@@ -111,7 +117,7 @@ public class ArmController {
                 inTakeActionInitiated = true;
             }
 
-            if(AUTO&&inTakeActionFinished){
+            if(SharedStates.getInstance().isAUTO()&&inTakeActionFinished){
                 INTAKE_RUNMODE = INTAKE_MODE.PUTTING;
                 inTakeActionInitiated = false;
             }
@@ -121,7 +127,7 @@ public class ArmController {
                 inTakeActionInitiated = true;
             }
 
-            if(AUTO&&inTakeActionFinished){
+            if(SharedStates.getInstance().isAUTO()&&inTakeActionFinished){
                 INTAKE_RUNMODE = INTAKE_MODE.WAITING;
                 inTakeActionInitiated = false;
             }
@@ -140,6 +146,7 @@ public class ArmController {
     }
     public void inTakeLengthCalculator(){
         inTakeTargetLengthAngle = Math.acos((armALength*armALength+(inTakeTargetLength+inTakeMinLength)*(inTakeTargetLength+inTakeMinLength)-armBLength*armBLength)/(2*armALength*(inTakeTargetLength+inTakeMinLength)))/Math.PI;
+
     }
 
 }

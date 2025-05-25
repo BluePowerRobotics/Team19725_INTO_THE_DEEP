@@ -428,12 +428,13 @@ public class ChassisController {
                 }
                 r = thitalock();
             }
-            if (gamepad1.left_bumper)
-                lock_thita = 45;
-            else if (gamepad1.right_bumper)
-                lock_thita = 90;
+//            if (gamepad1.left_bumper)
+//                lock_thita = 45;
+//            else if (gamepad1.right_bumper)
+//                lock_thita = 90;
+            //if(SharedStates.getInstance().isCLIMBING()) r = 0;
 
-            if (!USE_NO_HEAD_MODE || climb) {
+            if (!USE_NO_HEAD_MODE) {
                 move(r, y, x);
             } else {
                 noheadmove(r, y, x, speed);

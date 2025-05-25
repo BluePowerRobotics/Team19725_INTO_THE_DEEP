@@ -36,22 +36,22 @@ public class ClimbController {
             climbLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             climbRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            telemetry.addData("Testing", climbLeft.getCurrentPosition());
+            telemetry.addData("ClimbController:Testing", climbLeft.getCurrentPosition());
             telemetry.update();
         }
         climbLeftLength=climbLeft.getCurrentPosition();
         climbRightLength=climbRight.getCurrentPosition();
         climbLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         climbRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        telemetry.addData("StartToBack", climbLeft.getCurrentPosition());
+        telemetry.addData("ClimbController:StartToBack", climbLeft.getCurrentPosition());
         telemetry.update();
         climbLeft.setTargetPosition(-(int) climbLeftLength);
         climbRight.setTargetPosition(-(int) climbRightLength);
-        while ((climbLeft.getCurrentPosition() + climbLeftLength > 5 || climbLeft.getCurrentPosition() + climbLeftLength < -5)&&(climbRight.getCurrentPosition() + climbRightLength > 5 || climbRight.getCurrentPosition() + climbRightLength < -5)) {
+        while ((climbLeft.getCurrentPosition() + climbLeftLength > 5 || climbLeft.getCurrentPosition() + climbLeftLength < -5)&&(climbRight.getCurrentPosition() + climbRightLength > 5 || climbRight.getCurrentPosition() + climbRightLength < -5)&&System.currentTimeMillis() - t <= 4000) {
             climbLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             climbRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            telemetry.addData("Backing", climbRight.getCurrentPosition());
+            telemetry.addData("ClimbController:Backing", climbRight.getCurrentPosition());
             telemetry.update();
         }
         climbRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
