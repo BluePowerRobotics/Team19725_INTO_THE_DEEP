@@ -10,10 +10,9 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.OpModes.ArmController;
+import org.firstinspires.ftc.teamcode.Controllers.ArmController;
 import org.firstinspires.ftc.teamcode.RoadRunner.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
-import org.firstinspires.ftc.teamcode.OpModes.ArmController;
 
 @Config
 @Autonomous(name = "Auto_2025_Left", group = "Autonomous")

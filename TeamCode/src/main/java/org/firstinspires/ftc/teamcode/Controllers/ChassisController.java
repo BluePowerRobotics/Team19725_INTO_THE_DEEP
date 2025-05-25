@@ -27,8 +27,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode.OpModes;
+package org.firstinspires.ftc.teamcode.Controllers;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.RoadRunner.GoBildaPinpointDriver;
@@ -148,7 +149,7 @@ public class ChassisController {
 
 
 
-    public boolean climb = false;
+
 
     static RevHubOrientationOnRobot.LogoFacingDirection[] logoFacingDirections = RevHubOrientationOnRobot.LogoFacingDirection
             .values();
@@ -156,10 +157,10 @@ public class ChassisController {
             .values();
     HardwareMap hardwareMap;
     Gamepad gamepad1,gamepad2;
-    DcMotor a124;
+    Telemetry telemetry;
     IMU imu;
     YawPitchRollAngles orientation;
-    static DcMotor leftFront, leftBack, rightBack, rightFront, armMotor;
+    static DcMotor leftFront, leftBack, rightBack, rightFront;
     int logoFacingDirectionPosition = 0;
     int usbFacingDirectionPosition = 2;
 
@@ -170,8 +171,8 @@ public class ChassisController {
     public double thita = 0;
     public double angletime = 0;
 
-    public void initChassis(HardwareMap hardwareMaprc, Gamepad gamepad1rc, Gamepad gamepad2rc) {
-
+    public void initChassis(HardwareMap hardwareMaprc, Gamepad gamepad1rc, Gamepad gamepad2rc, Telemetry telemetryRC) {
+        telemetry = telemetryRC;
         hardwareMap = hardwareMaprc;
         gamepad1 = gamepad1rc;
         gamepad2 = gamepad2rc;
@@ -200,19 +201,28 @@ public class ChassisController {
 
         RevHubOrientationOnRobot.LogoFacingDirection logo = logoFacingDirections[logoFacingDirectionPosition];
         RevHubOrientationOnRobot.UsbFacingDirection usb = usbFacingDirections[usbFacingDirectionPosition];
-        /*
-         * try {
-         * RevHubOrientationOnRobot orientationOnRobot = new
-         * RevHubOrientationOnRobot(logo, usb);
-         * imu.initialize(new IMU.Parameters(orientationOnRobot));
-         * orientationIsValid = true;
-         * } catch (IllegalArgumentException e) {
-         * orientationIsValid = false;
-         * }
-         */
+        // try {
+        // RevHubOrientationOnRobot orientationOnRobot = new
+        // RevHubOrientationOnRobot(logo, usb);
+        // imu.initialize(new IMU.Parameters(orientationOnRobot));
+        // orientationIsValid = true;
+        // } catch (IllegalArgumentException e) {
+        // orientationIsValid = false;
+        // }
         orientation = imu.getRobotYawPitchRollAngles();
     }
-
+    public void addTelemetry(){
+        telemetry.addData("leftFront", leftFrontPower);
+        telemetry.addData("leftBack", leftBackPower);
+        telemetry.addData("rightFront", rightFrontPower);
+        telemetry.addData("rightBack", rightBackPower);
+        telemetry.addData("thita", orientation.getYaw(AngleUnit.DEGREES));
+        telemetry.addData("px", px);
+        telemetry.addData("py", py);
+        telemetry.addData("omiga", omiga);
+        telemetry.addData("alpha", alpha);
+        telemetry.addData("angle", angle);
+    }
     public void freshThita() {
         updateOrientation();
         thita = orientation.getYaw(AngleUnit.DEGREES);
@@ -440,5 +450,6 @@ public class ChassisController {
                 noheadmove(r, y, x, speed);
             }
         }
+        addTelemetry();
     }
 }

@@ -9,15 +9,16 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.Controllers.ArmController;
+import org.firstinspires.ftc.teamcode.Controllers.ChassisController;
 
 @TeleOp
 
 public class Auto0513Test extends LinearOpMode {
 
-    org.firstinspires.ftc.teamcode.OpModes.ChassisController ChassisController = new ChassisController();// 构建class实例
-    org.firstinspires.ftc.teamcode.OpModes.ArmController ArmController = new ArmController();
-    static DcMotor leftFront, leftBack, rightBack, rightFront, armMotor;
-    Servo servoe3, servoe4, servoe5;
+    org.firstinspires.ftc.teamcode.Controllers.ChassisController ChassisController = new ChassisController();// 构建class实例
+    org.firstinspires.ftc.teamcode.Controllers.ArmController ArmController = new ArmController();
+
     static RevHubOrientationOnRobot.LogoFacingDirection[] logoFacingDirections = RevHubOrientationOnRobot.LogoFacingDirection
             .values();
     static RevHubOrientationOnRobot.UsbFacingDirection[] usbFacingDirections = RevHubOrientationOnRobot.UsbFacingDirection
@@ -86,24 +87,17 @@ public class Auto0513Test extends LinearOpMode {
     }
 
     public void fps_and_tele() {
-        telemetry.addData("leftFront", ChassisController.leftFrontPower);
-        telemetry.addData("leftBack", ChassisController.leftBackPower);
-        telemetry.addData("rightFront", ChassisController.rightFrontPower);
-        telemetry.addData("rightBack", ChassisController.rightBackPower);
+
 
         telemetry.addData("fps", 1000 / (System.currentTimeMillis() - t));// fps
 
-        telemetry.addData("thita", ChassisController.orientation.getYaw(AngleUnit.DEGREES));
+
         telemetry.addData("move_x_l/旋转--逆-顺+", move_x_l);
         telemetry.addData("move_y_l+move_y_r/前-后+", move_y_l + move_y_r);
         telemetry.addData("move_x_r/左-右+", move_x_r);
         telemetry.addData("degree", degree);
 
-        telemetry.addData("px", ChassisController.px);
-        telemetry.addData("py", ChassisController.py);
-        telemetry.addData("omiga", ChassisController.omiga);
-        telemetry.addData("alpha", ChassisController.alpha);
-        telemetry.addData("angle", ChassisController.angle);
+
 
         //telemetry.addData("servo_position", ArmController.servo_position);
 
@@ -132,7 +126,7 @@ public class Auto0513Test extends LinearOpMode {
 
     public void runOpMode() {
         inithardware();
-        ChassisController.initChassis(hardwareMap, gamepad1,gamepad2);
+        ChassisController.initChassis(hardwareMap, gamepad1,gamepad2,telemetry);
 //        ArmController.initArm(hardwareMap, gamepad1, gamepad2,telemetry);
         waitForStart();
 //        ArmController.armup = true;
@@ -141,7 +135,7 @@ public class Auto0513Test extends LinearOpMode {
 //        ArmController.armMotor.setTargetPosition(0);
 //        ArmController.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 //        ArmController.armMotor.setPower(1);
-        ChassisController.setMode(org.firstinspires.ftc.teamcode.OpModes.ChassisController.MODE.STOP_AND_RESET_LOCATOR);
+        ChassisController.setMode(org.firstinspires.ftc.teamcode.Controllers.ChassisController.MODE.STOP_AND_RESET_LOCATOR);
         ChassisController.setTargetLocation(100,100,0);
         ChassisController.setSpeed(0.1);
         while (opModeIsActive()) {
@@ -150,7 +144,7 @@ public class Auto0513Test extends LinearOpMode {
              * thita = orientation.getYaw(AngleUnit.DEGREES);
              */
 
-            ChassisController.setMode(org.firstinspires.ftc.teamcode.OpModes.ChassisController.MODE.RUN_TO_LOCATION);
+            ChassisController.setMode(org.firstinspires.ftc.teamcode.Controllers.ChassisController.MODE.RUN_TO_LOCATION);
             //ArmController.armController();
 
             fps_and_tele();

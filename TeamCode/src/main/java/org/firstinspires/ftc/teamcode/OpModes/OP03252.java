@@ -1,11 +1,6 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
-import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
-import com.acmerobotics.roadrunner.Vector2d;
-import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 //import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
@@ -16,15 +11,19 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.Controllers.ArmController;
+import org.firstinspires.ftc.teamcode.Controllers.ChassisController;
+import org.firstinspires.ftc.teamcode.Controllers.ClimbController;
+import org.firstinspires.ftc.teamcode.Controllers.SharedStates;
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 
 @TeleOp
 
 public class OP03252 extends LinearOpMode {
     MecanumDrive drive = new MecanumDrive(hardwareMap,new Pose2d(-24,-48,Math.toRadians(180)));
-    ChassisController ChassisController = new ChassisController();// 构建class实例
-    ArmController ArmController = new ArmController();
-    ClimbController ClimbController = new ClimbController();
+    org.firstinspires.ftc.teamcode.Controllers.ChassisController ChassisController = new ChassisController();// 构建class实例
+    org.firstinspires.ftc.teamcode.Controllers.ArmController ArmController = new ArmController();
+    org.firstinspires.ftc.teamcode.Controllers.ClimbController ClimbController = new ClimbController();
     static DcMotor leftFront, leftBack, rightBack, rightFront, armMotor;
     Servo servoe3, servoe4, servoe5;
     static RevHubOrientationOnRobot.LogoFacingDirection[] logoFacingDirections = RevHubOrientationOnRobot.LogoFacingDirection
@@ -95,24 +94,15 @@ public class OP03252 extends LinearOpMode {
     }
 
     public void fps_and_tele() {
-        telemetry.addData("leftFront", ChassisController.leftFrontPower);
-        telemetry.addData("leftBack", ChassisController.leftBackPower);
-        telemetry.addData("rightFront", ChassisController.rightFrontPower);
-        telemetry.addData("rightBack", ChassisController.rightBackPower);
 
         telemetry.addData("fps", 1000 / (System.currentTimeMillis() - t));// fps
 
-        telemetry.addData("thita", ChassisController.orientation.getYaw(AngleUnit.DEGREES));
+
         telemetry.addData("move_x_l/旋转--逆-顺+", move_x_l);
         telemetry.addData("move_y_l+move_y_r/前-后+", move_y_l + move_y_r);
         telemetry.addData("move_x_r/左-右+", move_x_r);
         telemetry.addData("degree", degree);
 
-        telemetry.addData("px", ChassisController.px);
-        telemetry.addData("py", ChassisController.py);
-        telemetry.addData("omiga", ChassisController.omiga);
-        telemetry.addData("alpha", ChassisController.alpha);
-        telemetry.addData("angle", ChassisController.angle);
 
         //telemetry.addData("servo_position", ArmController.servo_position);
 
@@ -142,7 +132,7 @@ public class OP03252 extends LinearOpMode {
     public void runOpMode() {
         inithardware();
         SharedStates sharedStates = SharedStates.getInstance();
-        ChassisController.initChassis(hardwareMap, gamepad1,gamepad2);
+        ChassisController.initChassis(hardwareMap, gamepad1,gamepad2,telemetry);
         ArmController.initArm(hardwareMap, gamepad1, gamepad2,telemetry);
         ClimbController.initClimb(hardwareMap,gamepad2,telemetry);
 
