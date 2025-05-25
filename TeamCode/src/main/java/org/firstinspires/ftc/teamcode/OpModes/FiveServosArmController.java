@@ -53,6 +53,7 @@ public class FiveServosArmController {
         servoC.setPosition(radianB/(0.75*Math.PI));
         double radianARest = Math.PI*0.5-radianArmPosition-radianC-radianCRest;
         servoB.setPosition((radianA+radianARest)/(0.75*Math.PI));
+        servoE.setPosition(radianClipPosition/Math.PI);
     }
     public void setClip(boolean lock){
         if(lock) servoF.setPosition(clipLockPos);
