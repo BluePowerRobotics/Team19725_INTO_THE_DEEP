@@ -20,12 +20,12 @@ import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 @TeleOp
 
 public class OP03252 extends LinearOpMode {
-    MecanumDrive drive = new MecanumDrive(hardwareMap,new Pose2d(-24,-48,Math.toRadians(180)));
+    //MecanumDrive drive = new MecanumDrive(hardwareMap,new Pose2d(-24,-48,Math.toRadians(180)));
     org.firstinspires.ftc.teamcode.Controllers.ChassisController ChassisController = new ChassisController();// 构建class实例
     org.firstinspires.ftc.teamcode.Controllers.ArmController ArmController = new ArmController();
     org.firstinspires.ftc.teamcode.Controllers.ClimbController ClimbController = new ClimbController();
-    static DcMotor leftFront, leftBack, rightBack, rightFront, armMotor;
-    Servo servoe3, servoe4, servoe5;
+    //static DcMotor leftFront, leftBack, rightBack, rightFront, armMotor;
+    //Servo servoe3, servoe4, servoe5;
     static RevHubOrientationOnRobot.LogoFacingDirection[] logoFacingDirections = RevHubOrientationOnRobot.LogoFacingDirection
             .values();
     static RevHubOrientationOnRobot.UsbFacingDirection[] usbFacingDirections = RevHubOrientationOnRobot.UsbFacingDirection
@@ -44,7 +44,7 @@ public class OP03252 extends LinearOpMode {
     public double move_y_l;
     public double move_x_r;
     public double move_y_r;
-    public double move_x2;
+    //public double move_x2;
     public double degree = 0;
     public double thita = 0;
 
@@ -53,9 +53,11 @@ public class OP03252 extends LinearOpMode {
     public boolean thitalock = false;
     public boolean xhasbeenpressed = false;
     public boolean lthasbeenpressed = false, rthasbeenpressed = false;
-    // servoe5:0.86~1
-    // servoe4:0;0.515;0.95
-    // servoe3:0.7~1
+    /*
+     * servoe5:0.86~1
+     * servoe4:0;0.515;0.95
+     * servoe3:0.7~1
+     */
 
     private void inithardware() {
         // control_Hub = hardwareMap.get(Blinker.class, "Control Hub");
@@ -132,6 +134,9 @@ public class OP03252 extends LinearOpMode {
     public void runOpMode() {
         inithardware();
         SharedStates sharedStates = SharedStates.getInstance();
+        SharedStates.getInstance().setAUTO(false);
+        SharedStates.getInstance().setCLIMBING(false);
+        SharedStates.getInstance().setRUNMODE(SharedStates.MODE.HIGH_CHAMBER);
         ChassisController.initChassis(hardwareMap, gamepad1,gamepad2,telemetry);
         ArmController.initArm(hardwareMap, gamepad1, gamepad2,telemetry);
         ClimbController.initClimb(hardwareMap,gamepad2,telemetry);

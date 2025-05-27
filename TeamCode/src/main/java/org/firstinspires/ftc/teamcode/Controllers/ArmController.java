@@ -127,12 +127,12 @@ public class ArmController {
         }
         return INTAKE_RUNMODE;
     }
-    public double armALength=0;
-    public double armBLength=0;
-    public double inTakeMinLength=0;
-    public double inTakeTargetLength;
-    public double inTakeTargetLengthAngle;
-    public double inTakeTargetAngle;
+    private double armALength=0;
+    private double armBLength=0;
+    private double inTakeMinLength=0;
+    private double inTakeTargetLength;
+    private double inTakeTargetLengthAngle;
+    private double inTakeTargetAngle;
     public void setInTakePosition(double inTakeLength,double inTakeAngle){
         inTakeTargetLength = inTakeLength;
         inTakeTargetAngle = inTakeAngle;
