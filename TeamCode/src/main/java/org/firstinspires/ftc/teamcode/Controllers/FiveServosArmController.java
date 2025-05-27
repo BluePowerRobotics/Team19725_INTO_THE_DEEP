@@ -49,7 +49,7 @@ public class FiveServosArmController {
                 alphaDegree = 180 - degrees;
         }
 
-
+        
         double r = Math.sqrt(x*x+y*y);
         length = Math.sqrt(r*r+z*z);
         lengthAC = Math.sqrt(length * length + lengthC * lengthC - 2 * length * lengthC * Math.cos(Math.toRadians(Math.abs(alphaDegree))-0.5*Math.PI+radianArmPosition));

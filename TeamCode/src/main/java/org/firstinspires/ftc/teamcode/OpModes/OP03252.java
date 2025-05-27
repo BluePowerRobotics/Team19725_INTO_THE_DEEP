@@ -130,7 +130,7 @@ public class OP03252 extends LinearOpMode {
          */
         orientation = imu.getRobotYawPitchRollAngles();
     }
-
+    public boolean armInitFinished = false;
     public void runOpMode() {
         inithardware();
         SharedStates sharedStates = SharedStates.getInstance();
@@ -138,10 +138,9 @@ public class OP03252 extends LinearOpMode {
         SharedStates.getInstance().setCLIMBING(false);
         SharedStates.getInstance().setRUNMODE(SharedStates.MODE.HIGH_CHAMBER);
         ChassisController.initChassis(hardwareMap, gamepad1,gamepad2,telemetry);
-        ArmController.initArm(hardwareMap, gamepad1, gamepad2,telemetry);
+
         ClimbController.initClimb(hardwareMap,gamepad2,telemetry);
-
-
+        while(!armInitFinished) armInitFinished = ArmController.initArm(hardwareMap, gamepad1, gamepad2,telemetry);
 
         waitForStart();
 

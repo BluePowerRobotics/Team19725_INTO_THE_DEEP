@@ -36,17 +36,22 @@ public class ArmController {
     Servo inTakeLength;
 
     public boolean initArmInitiated=false;
-    public boolean initArm(HardwareMap hardwareMapRC, Gamepad gamepad1RC, Gamepad gamepad2RC, Telemetry telemetry){
+    public boolean initArmFinished = false;
+    public boolean initArm(HardwareMap hardwareMapRC, Gamepad gamepad1, Gamepad gamepad2, Telemetry telemetry){
         if(!initArmInitiated){
             hardwaremap = hardwareMapRC;
-            gamepad1 = gamepad1RC;
-            gamepad2 = gamepad2RC;
+            if(!SharedStates.getInstance().isAUTO()) {
+                this.gamepad1 = gamepad1;
+                this.gamepad2 = gamepad2;
+            }
             inTakeLength = hardwaremap.get(Servo.class,"");
 
             initArmInitiated = true;
         }
-
-        return false;
+        if(1==1){
+            initArmFinished = true;
+        }
+        return initArmFinished;
     }
 
 
@@ -54,14 +59,48 @@ public class ArmController {
     public void armController() {
         t = System.currentTimeMillis();// 获取当前时间
 
+        if(!SharedStates.getInstance().isAUTO()){
+            gamepadReceiver();
+        }
+        inTake();
+        outPut();
+
+
     }
+    boolean bHasBeenPressed = false, aHasBeenPressed = false;
+    void gamepadReceiver(){
+        if(gamepad1.b){
+            if(!bHasBeenPressed){
+                bHasBeenPressed = true;
+                INTAKE_RUNMODE = INTAKE_RUNMODE.next();
+            }
+        }else{
+            bHasBeenPressed = false;
+        }
+        if(gamepad1.a){
+            if(!aHasBeenPressed){
+                aHasBeenPressed = true;
+                OUTPUT_RUNMODE = OUTPUT_RUNMODE.next();
+            }
+        }else{
+            aHasBeenPressed = false;
+        }
+    }
+
     public OUTPUT_MODE outPutStatus;
     public void outPut(){
         if (SharedStates.getInstance().getRUNMODE() == SharedStates.MODE.HIGH_CHAMBER){
             if(outPutStatus != OUTPUT_MODE.WAITING) outPutStatus = chamberOutPut();
         }
     }
-    public enum OUTPUT_MODE {PUTTING, UPPING,DOWNING, WAITING}
+    public enum OUTPUT_MODE {
+        PUTTING, UPPING,DOWNING, WAITING;
+        private static final OUTPUT_MODE[] VALUES = values();
+
+        public OUTPUT_MODE next() {
+            return VALUES[(this.ordinal() + 1) % VALUES.length];
+        }
+    }
     private OUTPUT_MODE OUTPUT_RUNMODE;
     public OUTPUT_MODE chamberOutPut(){
         if (OUTPUT_RUNMODE==OUTPUT_MODE.UPPING){
@@ -73,7 +112,14 @@ public class ArmController {
         }
         return OUTPUT_RUNMODE;
     }
-    public enum INTAKE_MODE{EXTENDING,SHORTENING,TAKING,PUTTING,WAITING}
+    public enum INTAKE_MODE{
+        EXTENDING,SHORTENING,TAKING,PUTTING,WAITING;
+        private static final INTAKE_MODE[] VALUES = values();
+
+        public INTAKE_MODE next() {
+            return VALUES[(this.ordinal() + 1) % VALUES.length];
+        }
+    }
     public INTAKE_MODE inTakeStatus;
     private INTAKE_MODE INTAKE_RUNMODE;
     public void inTake(){
@@ -141,5 +187,6 @@ public class ArmController {
         inTakeTargetLengthAngle = Math.acos((armALength*armALength+(inTakeTargetLength+inTakeMinLength)*(inTakeTargetLength+inTakeMinLength)-armBLength*armBLength)/(2*armALength*(inTakeTargetLength+inTakeMinLength)))/Math.PI;
 
     }
+
 
 }

@@ -12,7 +12,16 @@ public class SharedStates {
 
 
 
-    public enum MODE {HIGH_CHAMBER,LOW_CHAMBER,HIGH_BASKET,LOW_BASKET}
+    public enum MODE {
+        HIGH_CHAMBER,LOW_CHAMBER,HIGH_BASKET,LOW_BASKET;
+        // 缓存枚举数组以避免重复调用values()
+        private static final MODE[] VALUES = values();
+
+        public MODE next() {
+            // 计算下一个位置（循环）
+            return VALUES[(this.ordinal() + 1) % VALUES.length];
+        }
+    }
     private MODE RUNMODE = MODE.HIGH_CHAMBER;
     public MODE getRUNMODE(){
         return  RUNMODE;
