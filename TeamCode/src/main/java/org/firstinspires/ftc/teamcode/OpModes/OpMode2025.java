@@ -188,8 +188,6 @@ public class OpMode2025 extends LinearOpMode {
             initall();
             while(opModeInInit() && !opModeIsActive()){
                 //telecolor();
-                telemetry.addData("E4", ArmController.servoe4.getPosition());
-                telemetry.update();
             }
             //E4.setPosition(0.8);
 //            double armPower = 0;
