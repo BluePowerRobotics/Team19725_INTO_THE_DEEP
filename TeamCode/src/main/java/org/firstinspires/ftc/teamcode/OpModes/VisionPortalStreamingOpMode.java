@@ -60,7 +60,6 @@ public class VisionPortalStreamingOpMode extends LinearOpMode {
             .addProcessor(processor)
             .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
             .build();
-
         FtcDashboard.getInstance().startCameraStream(processor, 0);
 
         waitForStart();

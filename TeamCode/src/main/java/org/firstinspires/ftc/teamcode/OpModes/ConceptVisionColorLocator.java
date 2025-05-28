@@ -21,24 +21,32 @@
 
 package org.firstinspires.ftc.teamcode.OpModes;
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.util.Size;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.function.Consumer;
+import org.firstinspires.ftc.robotcore.external.function.Continuation;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
+import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
 import org.firstinspires.ftc.vision.opencv.ColorRange;
 import org.firstinspires.ftc.vision.opencv.ImageRegion;
+import org.opencv.android.Utils;
+import org.opencv.core.Mat;
 import org.opencv.core.RotatedRect;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 /*
  * This OpMode illustrates how to use a video source (camera) to locate specifically colored regions
@@ -65,6 +73,7 @@ import java.util.List;
 @TeleOp(name = "Vision colorlocator", group = "Concept")
 public class ConceptVisionColorLocator extends LinearOpMode
 {
+
     @Override
     public void runOpMode()
     {
@@ -133,12 +142,13 @@ public class ConceptVisionColorLocator extends LinearOpMode
 
 
 
-        ColorBlobLocatorProcessor colorLocator = new ColorBlobLocatorProcessor.Builder()
+        ColorProcessorDash colorLocator = new ColorProcessorDash.Builder()
                 .setTargetColorRange(ColorRange.BLUE)         // use a predefined color match
-                .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
+                .setContourMode(ColorProcessorDash.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
                 .setRoi(ImageRegion.asUnityCenterCoordinates(-0.5, 0.5, 0.5, -0.5))  // search central 1/4 of camera view
                 .setDrawContours(true)                        // Show contours on the Stream Preview
-                .setBlurSize(5)                               // Smooth the transitions between different colors in image
+                .setBlurSize(5)
+                // Smooth the transitions between different colors in image
                 .build();
 
 
@@ -151,15 +161,14 @@ public class ConceptVisionColorLocator extends LinearOpMode
         telemetry.setMsTransmissionInterval(50);   // Speed up telemetry updates, Just use for debugging.
         telemetry.setDisplayFormat(Telemetry.DisplayFormat.MONOSPACE);
         //sendimage()???
-        FtcDashboard.getInstance()
-                .startCameraStream((CameraStreamSource) colorLocator, 0);
+        //FtcDashboard.getInstance().sendImage(colorLocator.getLastFrame());
         // WARNING:  To be able to view the stream preview on the Driver Station, this code runs in INIT mode.
         while (opModeIsActive() || opModeInInit())
         {
             telemetry.addData("preview on/off", "... Camera Stream\n");
 
             // Read the current list
-            List<ColorBlobLocatorProcessor.Blob> blobs = colorLocator.getBlobs();
+            List<ColorProcessorDash.Blob> blobs = colorLocator.getBlobs();
 
             /*
              * The list of Blobs can be filtered to remove unwanted Blobs.
@@ -181,7 +190,7 @@ public class ConceptVisionColorLocator extends LinearOpMode
              *   A blob's Aspect ratio is the ratio of boxFit long side to short side.
              *   A perfect Square has an aspect ratio of 1.  All others are > 1
              */
-            ColorBlobLocatorProcessor.Util.filterByArea(50, 20000, blobs);  // filter out very small blobs.
+            ColorProcessorDash.Util.filterByArea(50, 20000, blobs);  // filter out very small blobs.
 
             /*
              * The list of Blobs can be sorted using the same Blob attributes as listed above.
@@ -194,7 +203,7 @@ public class ConceptVisionColorLocator extends LinearOpMode
             telemetry.addLine(" Area Density Aspect  Center");
 
             // Display the size (area) and center location for each Blob.
-            for(ColorBlobLocatorProcessor.Blob b : blobs)
+            for(ColorProcessorDash.Blob b : blobs)
             {
                 RotatedRect boxFit = b.getBoxFit();
                 telemetry.addLine(String.format("%5d  %4.2f   %5.2f  (%3d,%3d)",
@@ -202,6 +211,8 @@ public class ConceptVisionColorLocator extends LinearOpMode
             }
 
             telemetry.update();
+            FtcDashboard.getInstance().sendImage(colorLocator.getLastFrame());
+
             sleep(50);
         }
     }
