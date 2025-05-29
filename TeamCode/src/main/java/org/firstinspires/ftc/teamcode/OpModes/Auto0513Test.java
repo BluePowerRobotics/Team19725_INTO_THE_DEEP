@@ -3,11 +3,8 @@ package org.firstinspires.ftc.teamcode.OpModes;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.Controllers.ArmController;
 import org.firstinspires.ftc.teamcode.Controllers.ChassisController;
@@ -135,7 +132,7 @@ public class Auto0513Test extends LinearOpMode {
 //        ArmController.armMotor.setTargetPosition(0);
 //        ArmController.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 //        ArmController.armMotor.setPower(1);
-        ChassisController.setMode(org.firstinspires.ftc.teamcode.Controllers.ChassisController.MODE.STOP_AND_RESET_LOCATOR);
+        ChassisController.setMode(org.firstinspires.ftc.teamcode.Controllers.ChassisController.CHASSIS_RUNMODE.STOP_AND_RESET_LOCATOR);
         ChassisController.setTargetLocation(100,100,0);
         ChassisController.setSpeed(0.1);
         while (opModeIsActive()) {
@@ -144,7 +141,7 @@ public class Auto0513Test extends LinearOpMode {
              * thita = orientation.getYaw(AngleUnit.DEGREES);
              */
 
-            ChassisController.setMode(org.firstinspires.ftc.teamcode.Controllers.ChassisController.MODE.RUN_TO_LOCATION);
+            ChassisController.setMode(org.firstinspires.ftc.teamcode.Controllers.ChassisController.CHASSIS_RUNMODE.RUN_TO_LOCATION);
             //ArmController.armController();
 
             fps_and_tele();

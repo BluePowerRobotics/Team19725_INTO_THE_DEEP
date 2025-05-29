@@ -72,7 +72,7 @@ public class ArmController {
         if(gamepad1.b){
             if(!bHasBeenPressed){
                 bHasBeenPressed = true;
-                INTAKE_RUNMODE = INTAKE_RUNMODE.next();
+                INTAKE_MODE = INTAKE_MODE.next();
             }
         }else{
             bHasBeenPressed = false;
@@ -80,98 +80,98 @@ public class ArmController {
         if(gamepad1.a){
             if(!aHasBeenPressed){
                 aHasBeenPressed = true;
-                OUTPUT_RUNMODE = OUTPUT_RUNMODE.next();
+                PUTPUT_MODE = PUTPUT_MODE.next();
             }
         }else{
             aHasBeenPressed = false;
         }
     }
 
-    public OUTPUT_MODE outPutStatus;
+    public OUTPUT_RUNMODE outPutStatus;
     public void outPut(){
-        if (SharedStates.getInstance().getRUNMODE() == SharedStates.MODE.HIGH_CHAMBER){
-            if(outPutStatus != OUTPUT_MODE.WAITING) outPutStatus = chamberOutPut();
+        if (SharedStates.getInstance().getMODE() == SharedStates.RUNMODE.HIGH_CHAMBER){
+            if(outPutStatus != OUTPUT_RUNMODE.WAITING) outPutStatus = chamberOutPut();
         }
     }
-    public enum OUTPUT_MODE {
+    public enum OUTPUT_RUNMODE {
         PUTTING, UPPING,DOWNING, WAITING;
-        private static final OUTPUT_MODE[] VALUES = values();
+        private static final OUTPUT_RUNMODE[] VALUES = values();
 
-        public OUTPUT_MODE next() {
+        public OUTPUT_RUNMODE next() {
             return VALUES[(this.ordinal() + 1) % VALUES.length];
         }
     }
-    private OUTPUT_MODE OUTPUT_RUNMODE;
-    public OUTPUT_MODE chamberOutPut(){
-        if (OUTPUT_RUNMODE==OUTPUT_MODE.UPPING){
+    private OUTPUT_RUNMODE PUTPUT_MODE;
+    public OUTPUT_RUNMODE chamberOutPut(){
+        if (PUTPUT_MODE == OUTPUT_RUNMODE.UPPING){
 
-        } else if (OUTPUT_RUNMODE == OUTPUT_MODE.PUTTING) {
+        } else if (PUTPUT_MODE == OUTPUT_RUNMODE.PUTTING) {
 
-        }else if(OUTPUT_RUNMODE == OUTPUT_MODE.DOWNING){
+        }else if(PUTPUT_MODE == OUTPUT_RUNMODE.DOWNING){
 
         }
-        return OUTPUT_RUNMODE;
+        return PUTPUT_MODE;
     }
-    public enum INTAKE_MODE{
+    public enum INTAKE_RUNMODE {
         EXTENDING,SHORTENING,TAKING,PUTTING,WAITING;
-        private static final INTAKE_MODE[] VALUES = values();
+        private static final INTAKE_RUNMODE[] VALUES = values();
 
-        public INTAKE_MODE next() {
+        public INTAKE_RUNMODE next() {
             return VALUES[(this.ordinal() + 1) % VALUES.length];
         }
     }
-    public INTAKE_MODE inTakeStatus;
-    private INTAKE_MODE INTAKE_RUNMODE;
+    public INTAKE_RUNMODE inTakeStatus;
+    private INTAKE_RUNMODE INTAKE_MODE;
     public void inTake(){
-        if(SharedStates.getInstance().getRUNMODE() == SharedStates.MODE.HIGH_CHAMBER){
-            if(inTakeStatus!= INTAKE_MODE.WAITING)inTakeStatus = chamberInTake();
+        if(SharedStates.getInstance().getMODE() == SharedStates.RUNMODE.HIGH_CHAMBER){
+            if(inTakeStatus!= INTAKE_RUNMODE.WAITING)inTakeStatus = chamberInTake();
         }
     }
     private boolean inTakeActionInitiated=false, inTakeActionFinished = false;
 
-    public INTAKE_MODE chamberInTake(){
-        if(INTAKE_RUNMODE==INTAKE_MODE.EXTENDING){
+    public INTAKE_RUNMODE chamberInTake(){
+        if(INTAKE_MODE == INTAKE_RUNMODE.EXTENDING){
             if(!inTakeActionInitiated){
 
                 inTakeActionInitiated = true;
             }
 
             if(SharedStates.getInstance().isAUTO()&&inTakeActionFinished){
-                INTAKE_RUNMODE = INTAKE_MODE.TAKING;
+                INTAKE_MODE = INTAKE_RUNMODE.TAKING;
                 inTakeActionInitiated = false;
             }
-        } else if (INTAKE_RUNMODE==INTAKE_MODE.TAKING) {
+        } else if (INTAKE_MODE == INTAKE_RUNMODE.TAKING) {
             if(!inTakeActionInitiated){
 
                 inTakeActionInitiated = true;
             }
 
             if(SharedStates.getInstance().isAUTO()&&inTakeActionFinished){
-                INTAKE_RUNMODE = INTAKE_MODE.SHORTENING;
+                INTAKE_MODE = INTAKE_RUNMODE.SHORTENING;
                 inTakeActionInitiated = false;
             }
-        } else if(INTAKE_RUNMODE==INTAKE_MODE.SHORTENING){
+        } else if(INTAKE_MODE == INTAKE_RUNMODE.SHORTENING){
             if(!inTakeActionInitiated){
 
                 inTakeActionInitiated = true;
             }
 
             if(SharedStates.getInstance().isAUTO()&&inTakeActionFinished){
-                INTAKE_RUNMODE = INTAKE_MODE.PUTTING;
+                INTAKE_MODE = INTAKE_RUNMODE.PUTTING;
                 inTakeActionInitiated = false;
             }
-        } else if (INTAKE_RUNMODE==INTAKE_MODE.PUTTING) {
+        } else if (INTAKE_MODE == INTAKE_RUNMODE.PUTTING) {
             if(!inTakeActionInitiated){
 
                 inTakeActionInitiated = true;
             }
 
             if(SharedStates.getInstance().isAUTO()&&inTakeActionFinished){
-                INTAKE_RUNMODE = INTAKE_MODE.WAITING;
+                INTAKE_MODE = INTAKE_RUNMODE.WAITING;
                 inTakeActionInitiated = false;
             }
         }
-        return INTAKE_RUNMODE;
+        return INTAKE_MODE;
     }
     private double armALength=0;
     private double armBLength=0;

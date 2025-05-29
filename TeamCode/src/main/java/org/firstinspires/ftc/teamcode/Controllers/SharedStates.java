@@ -12,22 +12,22 @@ public class SharedStates {
 
 
 
-    public enum MODE {
+    public enum RUNMODE {
         HIGH_CHAMBER,LOW_CHAMBER,HIGH_BASKET,LOW_BASKET;
         // 缓存枚举数组以避免重复调用values()
-        private static final MODE[] VALUES = values();
+        private static final RUNMODE[] VALUES = values();
 
-        public MODE next() {
+        public RUNMODE next() {
             // 计算下一个位置（循环）
             return VALUES[(this.ordinal() + 1) % VALUES.length];
         }
     }
-    private MODE RUNMODE = MODE.HIGH_CHAMBER;
-    public MODE getRUNMODE(){
-        return  RUNMODE;
+    private RUNMODE MODE = RUNMODE.HIGH_CHAMBER;
+    public RUNMODE getMODE(){
+        return MODE;
     }
-    public void setRUNMODE(MODE RUNMODE){
-        this.RUNMODE = RUNMODE;
+    public void setMODE(RUNMODE MODE){
+        this.MODE = MODE;
     }
 
 

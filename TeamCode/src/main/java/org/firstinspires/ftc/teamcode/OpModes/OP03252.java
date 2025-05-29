@@ -1,21 +1,16 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
-import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 //import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Controllers.ArmController;
 import org.firstinspires.ftc.teamcode.Controllers.ChassisController;
 import org.firstinspires.ftc.teamcode.Controllers.ClimbController;
 import org.firstinspires.ftc.teamcode.Controllers.SharedStates;
-import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 
 @TeleOp
 
@@ -136,7 +131,7 @@ public class OP03252 extends LinearOpMode {
         SharedStates sharedStates = SharedStates.getInstance();
         SharedStates.getInstance().setAUTO(false);
         SharedStates.getInstance().setCLIMBING(false);
-        SharedStates.getInstance().setRUNMODE(SharedStates.MODE.HIGH_CHAMBER);
+        SharedStates.getInstance().setMODE(SharedStates.RUNMODE.HIGH_CHAMBER);
         ChassisController.initChassis(hardwareMap, gamepad1,gamepad2,telemetry);
 
         ClimbController.initClimb(hardwareMap,gamepad2,telemetry);

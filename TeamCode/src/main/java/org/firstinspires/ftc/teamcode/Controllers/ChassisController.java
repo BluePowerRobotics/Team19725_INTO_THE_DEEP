@@ -90,8 +90,8 @@ public class ChassisController {
     double lock_thita;
 
 
-    public enum MODE{RUN_TO_LOCATION,RUN_WITHOUT_LOCATOR,STOP_AND_RESET_LOCATOR}
-    private MODE RUNMODE = ChassisController.MODE.RUN_WITHOUT_LOCATOR;
+    public enum CHASSIS_RUNMODE {RUN_TO_LOCATION,RUN_WITHOUT_LOCATOR,STOP_AND_RESET_LOCATOR}
+    private CHASSIS_RUNMODE CHASSIS_MODE = CHASSIS_RUNMODE.RUN_WITHOUT_LOCATOR;
 
 
     private boolean UseAutoMove = false;
@@ -102,37 +102,36 @@ public class ChassisController {
     private int targetLocationR=0;
     private double distanceToTargetLocation=0;
 
-    public void setMode(MODE CHASSIS_MODE){
-        RUNMODE = CHASSIS_MODE;
+    public void setMode(CHASSIS_RUNMODE CHASSIS_MODE){
+        this.CHASSIS_MODE = CHASSIS_MODE;
 
-
-        if(RUNMODE==MODE.STOP_AND_RESET_LOCATOR){
-            UseAutoMove = true;
-
-            initLocator();
-
-
-        } else if (RUNMODE==MODE.RUN_TO_LOCATION) {
-            UseAutoMove = true;
-            freshThita();
-            runToLocation(targetLocationX,targetLocationY,targetLocationR,0,maxSpeed);
-        } else if (RUNMODE==MODE.RUN_WITHOUT_LOCATOR){
-            UseAutoMove = false;
-        } else{
-            UseAutoMove = false;
-            RUNMODE = MODE.RUN_WITHOUT_LOCATOR;
+        switch (this.CHASSIS_MODE) {
+            case RUN_TO_LOCATION:
+                UseAutoMove = true;
+                freshThita();
+                runToLocation(targetLocationX,targetLocationY,targetLocationR,0,maxSpeed);
+                break;
+            case RUN_WITHOUT_LOCATOR:
+                UseAutoMove = false;
+                break;
+            case STOP_AND_RESET_LOCATOR:
+                UseAutoMove = true;
+                initLocator();
+                break;
         }
+
     }
-    public static final int NO_HEAD_MODE = 1;
-    public static final int ORDINARY_MODE = 0;
-    public static final int EXCHANGE_MODE = 2;
-    public void setRunMode(int RunMode){
-        if(RunMode == NO_HEAD_MODE){
-            USE_NO_HEAD_MODE = true;
-        }else if(RunMode == ORDINARY_MODE){
-            USE_NO_HEAD_MODE = false;
-        }else if(RunMode == EXCHANGE_MODE){
-            USE_NO_HEAD_MODE = !USE_NO_HEAD_MODE;
+    public enum OPERATION_RUNMODE{NO_HEAD_MODE,ORDINARY_MODE}
+    public OPERATION_RUNMODE OPERATION_MODE=OPERATION_RUNMODE.ORDINARY_MODE;
+    public void setOperationMode(OPERATION_RUNMODE OPERATION_MODE){
+        this.OPERATION_MODE = OPERATION_MODE;
+        switch (this.OPERATION_MODE) {
+            case NO_HEAD_MODE:
+                USE_NO_HEAD_MODE = true;
+                break;
+            case ORDINARY_MODE:
+                USE_NO_HEAD_MODE = false;
+                break;
         }
     }
 

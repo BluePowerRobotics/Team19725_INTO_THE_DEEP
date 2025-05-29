@@ -8,24 +8,28 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class FiveServosArmController {
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
-    private Servo servoA,servoB,servoC,servoD,servoE,servoF;
+    private Servo[] servo;
     private double lengthA,lengthB,lengthC;
     private double clipLockPos,clipUnlockPos;
+    private final int[] servoDegree={270,180,180,270,180,180};
+
+    private final int servoADegree = 270,servoBDegree = 180,servoCDegree = 180,servoDDegree = 270,servoEDegree = 180,servoFDegree = 180;
+    private double[] servoPosition;
     public void initArm(HardwareMap hardwareMap, Telemetry telemetry){
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
-        servoA = this.hardwareMap.get(Servo.class,"");
-        servoB = this.hardwareMap.get(Servo.class,"");
-        servoC = this.hardwareMap.get(Servo.class,"");
-        servoD = this.hardwareMap.get(Servo.class,"");
-        servoE = this.hardwareMap.get(Servo.class,"");
-        servoF = this.hardwareMap.get(Servo.class,"");
-        servoA.setDirection(Servo.Direction.REVERSE);//逆时针
-        servoB.setDirection(Servo.Direction.REVERSE);//逆时针
-        servoC.setDirection(Servo.Direction.FORWARD);//顺时针
-        servoD.setDirection(Servo.Direction.FORWARD);//顺时针
-        servoE.setDirection(Servo.Direction.FORWARD);
-        servoF.setDirection(Servo.Direction.FORWARD);//夹取
+        servo[0] = this.hardwareMap.get(Servo.class,"");
+        servo[1] = this.hardwareMap.get(Servo.class,"");
+        servo[2] = this.hardwareMap.get(Servo.class,"");
+        servo[3] = this.hardwareMap.get(Servo.class,"");
+        servo[4] = this.hardwareMap.get(Servo.class,"");
+        servo[5] = this.hardwareMap.get(Servo.class,"");
+        servo[0].setDirection(Servo.Direction.REVERSE);//逆时针
+        servo[1].setDirection(Servo.Direction.REVERSE);//逆时针
+        servo[2].setDirection(Servo.Direction.FORWARD);//顺时针
+        servo[3].setDirection(Servo.Direction.FORWARD);//顺时针
+        servo[4].setDirection(Servo.Direction.FORWARD);
+        servo[5].setDirection(Servo.Direction.FORWARD);//夹取
     }
 
     //均为向上正方向，向右正方向，向前正方向
@@ -59,23 +63,21 @@ public class FiveServosArmController {
         double radianCRest = Math.acos((lengthAC*lengthAC+lengthC*lengthC-length*length)/(2*lengthAC*lengthC));
         double radianARest = Math.PI*0.5-radianArmPosition-radianC-radianCRest;
 
-        if(alphaDegree/270>=1){
-            servoA.setPosition((alphaDegree-180)/270);
-            servoD.setPosition((2*Math.PI-radianC-radianCRest)/(1.5*Math.PI));
-            servoC.setPosition((2*Math.PI-radianB)/(1.5*Math.PI));
-            servoB.setPosition((2*Math.PI-radianA-radianARest)/(1.5*Math.PI));
-            servoE.setPosition((Math.PI-radianClipPosition)/Math.PI);
-        }else{
-            servoA.setPosition(alphaDegree/270);
-            servoD.setPosition((radianC+radianCRest)/(1.5*Math.PI));
-            servoC.setPosition(radianB/(1.5*Math.PI));
-            servoB.setPosition((radianA+radianARest)/(1.5*Math.PI));
-            servoE.setPosition(radianClipPosition/Math.PI);
+        servoPosition[0]=alphaDegree/servoDegree[0];
+        servoPosition[1]=(radianA+radianARest)/Math.toRadians(servoDegree[1]);
+        servoPosition[2]=radianB/Math.toRadians(servoDegree[2]);
+        servoPosition[3]=(radianC+radianCRest)/Math.toRadians(servoDegree[3]);
+        servoPosition[4]=radianClipPosition/Math.toRadians(servoDegree[4]);
+
+        for(int i = 0;i<=4;i++){
+            servoPosition[i]=Math.min(1,Math.max(0,servoPosition[i]));
+            servo[i].setPosition(servoPosition[i]);
         }
+
 
     }
     public void setClip(boolean lock){
-        if(lock) servoF.setPosition(clipLockPos);
-        else servoF.setPosition(clipUnlockPos);
+        if(lock) servo[5].setPosition(clipLockPos);
+        else servo[5].setPosition(clipUnlockPos);
     }
 }
