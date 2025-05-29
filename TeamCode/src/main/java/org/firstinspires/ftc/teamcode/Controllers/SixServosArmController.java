@@ -5,16 +5,16 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class FiveServosArmController {
+public class SixServosArmController {
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
     private Servo[] servo;
-    private double lengthA,lengthB,lengthC;
-    private double clipLockPos,clipUnlockPos;
+    private static final double lengthA=0,lengthB=0,lengthC=0;
+    private static final double clipLockPos=0,clipUnlockPos=0;
     private final int[] servoDegree={270,180,180,270,180,180};
 
     private final int servoADegree = 270,servoBDegree = 180,servoCDegree = 180,servoDDegree = 270,servoEDegree = 180,servoFDegree = 180;
-    private double[] servoPosition;
+    private double[] servoPosition={0,0,0,0,0};
     public void initArm(HardwareMap hardwareMap, Telemetry telemetry){
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
