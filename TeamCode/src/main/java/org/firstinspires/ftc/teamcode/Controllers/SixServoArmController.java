@@ -102,7 +102,7 @@ public class SixServoArmController {
         this.SIX_SERVO_ARM_MODE = SIX_SERVO_ARM_MODE;
         switch (this.SIX_SERVO_ARM_MODE) {
             case RUN_TO_POSITION: {
-                
+
 //        servoPosition[0]=alphaDegree/servoDegree[0];
 //        servoPosition[1]=(radianA+radianARest)/Math.toRadians(servoDegree[1]);
 //        servoPosition[2]=radianB/Math.toRadians(servoDegree[2]);
