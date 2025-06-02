@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.Controllers.ArmController;
 import org.firstinspires.ftc.teamcode.Controllers.ChassisController;
 import org.firstinspires.ftc.teamcode.Controllers.ClimbController;
-import org.firstinspires.ftc.teamcode.Controllers.SharedStates;
+import org.firstinspires.ftc.teamcode.Controllers.RobotStates;
 
 @TeleOp
 
@@ -128,10 +128,10 @@ public class OP03252 extends LinearOpMode {
     public boolean armInitFinished = false;
     public void runOpMode() {
         inithardware();
-        SharedStates sharedStates = SharedStates.getInstance();
-        SharedStates.getInstance().setAUTO(false);
-        SharedStates.getInstance().setCLIMBING(false);
-        SharedStates.getInstance().setMODE(SharedStates.RUNMODE.HIGH_CHAMBER);
+        RobotStates robotStates = RobotStates.getInstance();
+        RobotStates.getInstance().setAUTO(false);
+        RobotStates.getInstance().setCLIMBING(false);
+        RobotStates.getInstance().setMODE(RobotStates.RUNMODE.HIGH_CHAMBER);
         ChassisController.initChassis(hardwareMap, gamepad1,gamepad2,telemetry);
 
         ClimbController.initClimb(hardwareMap,gamepad2,telemetry);
