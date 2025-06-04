@@ -87,5 +87,78 @@ public class RobotStates {
         }
     }
 
-    INSTALL_RUNMODE INSTALL_MODE;
+    INSTALL_RUNMODE INSTALL_MODE ;
+
+
+    public enum HIGH_CHAMBER_RUNMODE {
+        INTAKE_ACTION_1, INTAKE_ACTION_2, INTAKE_ACTION_3, INSTALL_ACTION_1, INSTALL_ACTION_2, OUTPUT_ACTION_1, OUTPUT_ACTION_2,OUTPUT_ACTION_3, OUTPUT_ACTION_4;
+        private static final HIGH_CHAMBER_RUNMODE[] VALUES = values();
+
+        public HIGH_CHAMBER_RUNMODE next() {
+            return VALUES[(this.ordinal() + 1) % VALUES.length];
+        }
+    }
+    HIGH_CHAMBER_RUNMODE RobotMode_HIGH_CHAMBER;
+    public void setRobotMode(HIGH_CHAMBER_RUNMODE RobotMode_HIGH_CHAMBER) {
+        this.RobotMode_HIGH_CHAMBER = RobotMode_HIGH_CHAMBER;
+        setRobotMode();
+    }
+    public void setRobotMode(){
+        if(MODE == RUNMODE.HIGH_CHAMBER) {
+            switch (RobotMode_HIGH_CHAMBER) {
+                case INTAKE_ACTION_1:
+                    INTAKE_MODE = INTAKE_RUNMODE.EXTENDING;
+                    OUTPUT_MODE = OUTPUT_RUNMODE.UPPING;
+                    INSTALL_MODE = INSTALL_RUNMODE.WAITING;
+                    break;
+                case INTAKE_ACTION_2:
+                    INTAKE_MODE = INTAKE_RUNMODE.TAKING;
+                    OUTPUT_MODE = OUTPUT_RUNMODE.SCANNING;
+                    INSTALL_MODE = INSTALL_RUNMODE.WAITING;
+                    break;
+                case INTAKE_ACTION_3:
+                    INTAKE_MODE = INTAKE_RUNMODE.SHORTENING;
+                    OUTPUT_MODE = OUTPUT_RUNMODE.WAITING;
+                    break;
+                case INSTALL_ACTION_1:
+                    INTAKE_MODE = INTAKE_RUNMODE.PUTTING_INSTALL;
+                    OUTPUT_MODE = OUTPUT_RUNMODE.WAITING;
+                    INSTALL_MODE = INSTALL_RUNMODE.PREPARING;
+                    break;
+                case INSTALL_ACTION_2:
+                    INTAKE_MODE = INTAKE_RUNMODE.WAITING;
+                    OUTPUT_MODE = OUTPUT_RUNMODE.DOWNING;
+                    INSTALL_MODE = INSTALL_RUNMODE.INSTALLING;
+                    break;
+                case OUTPUT_ACTION_1:
+                    INTAKE_MODE = INTAKE_RUNMODE.PUTTING_OUTPUT;
+                    OUTPUT_MODE = OUTPUT_RUNMODE.WAITING;
+                    INSTALL_MODE = INSTALL_RUNMODE.WAITING;
+                    break;
+                case OUTPUT_ACTION_2:
+                    INTAKE_MODE = INTAKE_RUNMODE.WAITING;
+                    OUTPUT_MODE = OUTPUT_RUNMODE.TAKING;
+                    INSTALL_MODE = INSTALL_RUNMODE.WAITING;
+                    break;
+                case OUTPUT_ACTION_3:
+                    INTAKE_MODE = INTAKE_RUNMODE.WAITING;
+                    OUTPUT_MODE = OUTPUT_RUNMODE.UPPING;
+                    INSTALL_MODE = INSTALL_RUNMODE.WAITING;
+                    break;
+                case OUTPUT_ACTION_4:
+                    INTAKE_MODE = INTAKE_RUNMODE.EXTENDING;
+                    OUTPUT_MODE = OUTPUT_RUNMODE.PUTTING;
+                    INSTALL_MODE = INSTALL_RUNMODE.WAITING;
+                    break;
+            }
+        }
+    }
+    public void updateRobotMode() {
+        if(true){
+            // 这里可以添加条件判断来决定何时更新状态
+            // 例如，如果需要在某个特定条件下更新状态，可以在这里实现
+
+            setRobotMode(RobotMode_HIGH_CHAMBER.next());
+        }
+    }
 }

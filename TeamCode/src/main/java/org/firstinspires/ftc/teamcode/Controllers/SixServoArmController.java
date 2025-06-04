@@ -51,6 +51,7 @@ public class SixServoArmController {
     final double resetX = 100,resetY = 0,resetZ = 10;
     double x=resetX,y=resetY,z=resetZ;
     double recentX=resetX,recentY=resetY,recentZ=resetZ;
+    double nowX=resetX,nowY=resetY,nowZ=resetZ;
     double Distance;
     double radianArmPosition;
     double radianClipPosition;
@@ -101,7 +102,6 @@ public class SixServoArmController {
         servoTargetDegree[4]=Math.toDegrees(radianClipPosition);
         for(int i = 0;i<=4;i++){
             servoDegreeError[i] = servoTargetDegree[i]-servoNowDegree[i];
-            servoNowDegree[i] = servoTargetDegree[i];
             servoRunTimeMax = Math.max(servoRunTimeMax,servoSpeed[i]*60*servoDegreeError[i]);
         }
         if (Objects.requireNonNull(SIX_SERVO_ARM_MODE) == SIX_SERVO_ARM_RUNMODE.RUN_WITHOUT_PREDICTOR) {
@@ -114,7 +114,7 @@ public class SixServoArmController {
 
 
     }
-
+    public boolean runToPositionFinished=false;
     public void setMode(SIX_SERVO_ARM_RUNMODE SIX_SERVO_ARM_MODE){
         this.SIX_SERVO_ARM_MODE = SIX_SERVO_ARM_MODE;
         switch (this.SIX_SERVO_ARM_MODE) {
@@ -124,11 +124,13 @@ public class SixServoArmController {
                     x = this.x;
                     y = this.y;
                     z = this.z;
+                    runToPositionFinished = true;
                 }else{
                     double ratio = (System.currentTimeMillis()-setLocationTime)/(servoRunTimeMax*1000);
                     x = (this.x - recentX) * ratio;
                     y = (this.y - recentY) * ratio;
                     z = (this.z - recentZ) * ratio;
+                    runToPositionFinished = false;
                 }
                 double lengthAC;
                 double length;
@@ -164,6 +166,7 @@ public class SixServoArmController {
                 servoTargetDegree[4]=Math.toDegrees(radianClipPosition);
 
                 for(int i = 0;i<=4;i++){
+                    servoNowDegree[i] = servoTargetDegree[i];
                     servoPosition[i] = (servoTargetDegree[i]-servoZeroPositionDegree[i])/servoDegree[i];
                     servoPosition[i]=Math.min(1,Math.max(0,servoPosition[i]));
                     servo[i].setPosition(servoPosition[i]);
