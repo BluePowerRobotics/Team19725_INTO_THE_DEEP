@@ -1,27 +1,29 @@
 package org.firstinspires.ftc.teamcode.Controllers;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import java.text.MessageFormat;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+import java.text.MessageFormat;
 import java.util.Objects;
 
 public class SixServoArmController {
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
-    private Servo[] servo;
+    private Servo[] servo = new Servo[6];
     public enum SIX_SERVO_ARM_RUNMODE{
         RUN_TO_POSITION,STOP_AND_RESET,RUN_WITHOUT_PREDICTOR
     }
     private SIX_SERVO_ARM_RUNMODE SIX_SERVO_ARM_MODE;
     private long setLocationTime;
-    private static final double lengthA=0,lengthB=0,lengthC=0;
+    private static final double lengthA=153,lengthB=145,lengthC=0;//mm
     private static final double clipLockPos=0,clipUnlockPos=0;
-    private final int[] servoDegree={270,180,180,270,180,180};
-    private double[] servoTargetDegree;
+    private final int[] servoDegree={270,270,270,270,180,180};
+    private double[] servoTargetDegree=new double[5];
     private double[] servoNowDegree={0,0,0,0,0};
-    private double[] servoDegreeError;
+    private double[] servoDegreeError = new double[5];
     private double[] servoSpeed={0.24,0.24,0.24,0.24,0.24};//sec per 60 degree
     private double servoRunTimeMax =0;
     private final double[] servoZeroPositionDegree={0,0,0,0,0};
@@ -31,12 +33,12 @@ public class SixServoArmController {
     public void initArm(HardwareMap hardwareMap, Telemetry telemetry){
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
-        servo[0] = this.hardwareMap.get(Servo.class,"");
-        servo[1] = this.hardwareMap.get(Servo.class,"");
-        servo[2] = this.hardwareMap.get(Servo.class,"");
-        servo[3] = this.hardwareMap.get(Servo.class,"");
-        servo[4] = this.hardwareMap.get(Servo.class,"");
-        servo[5] = this.hardwareMap.get(Servo.class,"");
+        servo[0] = this.hardwareMap.get(Servo.class,"servos0");
+        servo[1] = this.hardwareMap.get(Servo.class,"servos1");
+        servo[2] = this.hardwareMap.get(Servo.class,"servos2");
+        servo[3] = this.hardwareMap.get(Servo.class,"servos3");
+        servo[4] = this.hardwareMap.get(Servo.class,"servos4");
+        servo[5] = this.hardwareMap.get(Servo.class,"servos5");
         servo[0].setDirection(Servo.Direction.REVERSE);//逆时针
         servo[1].setDirection(Servo.Direction.REVERSE);//逆时针
         servo[2].setDirection(Servo.Direction.FORWARD);//顺时针
@@ -92,7 +94,7 @@ public class SixServoArmController {
         lengthAC = Math.sqrt(length * length + lengthC * lengthC - 2 * length * lengthC * Math.cos(Math.toRadians(Math.abs(alphaDegree))-0.5*Math.PI+radianArmPosition));
         double radianA = Math.acos((lengthA*lengthA+lengthAC*lengthAC-lengthB*lengthB)/(2*lengthA*lengthAC));
         double radianB = Math.acos((lengthA*lengthA+lengthB*lengthB-lengthAC*lengthAC)/(2*lengthA*lengthB));
-        double radianC = 2*Math.PI-radianA-radianB;
+        double radianC = Math.PI-radianA-radianB;
         double radianCRest = Math.acos((lengthAC*lengthAC+lengthC*lengthC-length*length)/(2*lengthAC*lengthC));
         double radianARest = Math.PI*0.5-radianArmPosition-radianC-radianCRest;
         servoTargetDegree[0]=alphaDegree;
@@ -108,13 +110,30 @@ public class SixServoArmController {
             for (int i = 0; i <= 4; i++) {
                 servoPosition[i] = (servoTargetDegree[i] - servoZeroPositionDegree[i]) / servoDegree[i];
                 servoPosition[i] = Math.min(1, Math.max(0, servoPosition[i]));
-                servo[i].setPosition(servoPosition[i]);
+                if(!Double.isNaN(servoPosition[i])) {
+                    servo[i].setPosition(servoPosition[i]);
+                    telemetry.addData(MessageFormat.format("servo{0}", i),servoPosition[i]);
+                }
             }
         }
 
 
     }
     public boolean runToPositionFinished=false;
+
+
+
+    double lengthAC;
+    double length;
+    double alphaDegree=0;
+    double r;
+    double radianA;
+    double radianB;
+    double radianC;
+    double radianARest;
+    double radianCRest;
+
+
     public void setMode(SIX_SERVO_ARM_RUNMODE SIX_SERVO_ARM_MODE){
         this.SIX_SERVO_ARM_MODE = SIX_SERVO_ARM_MODE;
         switch (this.SIX_SERVO_ARM_MODE) {
@@ -132,9 +151,7 @@ public class SixServoArmController {
                     z = (this.z - recentZ) * ratio;
                     runToPositionFinished = false;
                 }
-                double lengthAC;
-                double length;
-                double alphaDegree=0;
+
 
                 if (x == 0 && y > 0)
                     alphaDegree = 90;
@@ -151,14 +168,14 @@ public class SixServoArmController {
                 }
 
 
-                double r = Math.sqrt(x*x+y*y);
+                r = Math.sqrt(x*x+y*y);
                 length = Math.sqrt(r*r+z*z);
                 lengthAC = Math.sqrt(length * length + lengthC * lengthC - 2 * length * lengthC * Math.cos(Math.toRadians(Math.abs(alphaDegree))-0.5*Math.PI+radianArmPosition));
-                double radianA = Math.acos((lengthA*lengthA+lengthAC*lengthAC-lengthB*lengthB)/(2*lengthA*lengthAC));
-                double radianB = Math.acos((lengthA*lengthA+lengthB*lengthB-lengthAC*lengthAC)/(2*lengthA*lengthB));
-                double radianC = 2*Math.PI-radianA-radianB;
-                double radianCRest = Math.acos((lengthAC*lengthAC+lengthC*lengthC-length*length)/(2*lengthAC*lengthC));
-                double radianARest = Math.PI*0.5-radianArmPosition-radianC-radianCRest;
+                radianA = Math.acos((lengthA*lengthA+lengthAC*lengthAC-lengthB*lengthB)/(2*lengthA*lengthAC));
+                radianB = Math.acos((lengthA*lengthA+lengthB*lengthB-lengthAC*lengthAC)/(2*lengthA*lengthB));
+                radianC = 2*Math.PI-radianA-radianB;
+                radianCRest = Math.acos((lengthAC*lengthAC+lengthC*lengthC-length*length)/(2*lengthAC*lengthC));
+                radianARest = Math.PI*0.5-radianArmPosition-radianC-radianCRest;
                 servoTargetDegree[0]=alphaDegree;
                 servoTargetDegree[1]=Math.toDegrees(radianA+radianARest);
                 servoTargetDegree[2]=Math.toDegrees(radianB);
@@ -169,7 +186,10 @@ public class SixServoArmController {
                     servoNowDegree[i] = servoTargetDegree[i];
                     servoPosition[i] = (servoTargetDegree[i]-servoZeroPositionDegree[i])/servoDegree[i];
                     servoPosition[i]=Math.min(1,Math.max(0,servoPosition[i]));
-                    servo[i].setPosition(servoPosition[i]);
+                    if(!Double.isNaN(servoPosition[i])) {
+                        servo[i].setPosition(servoPosition[i]);
+                        telemetry.addData(MessageFormat.format("servo{0}", i),servoPosition[i]);
+                    }
                 }
                 break;
             }case STOP_AND_RESET: {
@@ -177,11 +197,24 @@ public class SixServoArmController {
                 for(int i = 0;i<=4;i++){
                     servoPosition[i] = (servoTargetDegree[i]-servoZeroPositionDegree[i])/servoDegree[i];
                     servoPosition[i]=Math.min(1,Math.max(0,servoPosition[i]));
-                    servo[i].setPosition(servoPosition[i]);
+                    if(!Double.isNaN(servoPosition[i])) {
+                        servo[i].setPosition(servoPosition[i]);
+                        telemetry.addData(MessageFormat.format("servo{0}", i),servoPosition[i]);
+                    }
                 }
                 break;
             }
         }
+        telemetry.addLine(MessageFormat.format("lengthAC:{0}",lengthAC));
+        telemetry.addLine(MessageFormat.format("length:{0}",length));
+        telemetry.addLine(MessageFormat.format("alphaDegree:{0}",alphaDegree));
+        telemetry.addLine(MessageFormat.format("r:{0}",r));
+        telemetry.addLine(MessageFormat.format("radianA:{0}",radianA));
+        telemetry.addLine(MessageFormat.format("radianB:{0}",radianB));
+        telemetry.addLine(MessageFormat.format("radianC:{0}",radianC));
+        telemetry.addLine(MessageFormat.format("radianARest:{0}",radianARest));
+        telemetry.addLine(MessageFormat.format("radianCRest:{0}",radianCRest));
+        telemetry.update();
     }
     public void setClip(boolean lock){
         if(lock) servo[5].setPosition(clipLockPos);
