@@ -38,7 +38,7 @@ public class SixServoArmController {
     }
     private SIX_SERVO_ARM_RUNMODE SIX_SERVO_ARM_MODE;
     private long setLocationTime;
-    private static final double lengthA=153,lengthB=145,lengthC=0;//mm
+    private static final double lengthA=153,lengthB=145,lengthC=10;//mm
     private static final double clipLockPos=0,clipUnlockPos=0;
     private final int[] servoDegree={270,270,270,270,180,180};
     private double[] servoTargetDegree=new double[5];
