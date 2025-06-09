@@ -26,6 +26,7 @@ import android.graphics.Canvas;
 import android.util.Size;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -70,10 +71,15 @@ import java.util.concurrent.atomic.AtomicReference;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-
+@Config
 @TeleOp(name = "Visual_Color_Locator", group = "Test")
 public class CameraVision extends LinearOpMode
 {
+    public static  int blurSize = 10;
+    public static  int erodeSize = 30;
+    public static  int dilateSize = 0;
+    public static int resolutionwidth = 1280;
+    public static int resolutionheight= 1024;
     public static class CameraStreamProcessor implements VisionProcessor, CameraStreamSource {
         private final AtomicReference<Bitmap> lastFrame =
                 new AtomicReference<>(Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565));
@@ -95,7 +101,7 @@ public class CameraVision extends LinearOpMode
         public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight,
                                 float scaleBmpPxToCanvasPx, float scaleCanvasDensity,
                                 Object userContext) {
-            // do nothing
+
         }
 
         @Override
@@ -108,6 +114,10 @@ public class CameraVision extends LinearOpMode
     {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         CameraStreamProcessor processor = new CameraStreamProcessor();
+
+
+
+
         /* Build a "Color Locator" vision processor based on the ColorBlobLocatorProcessor class.
          * - Specify the color range you are looking for.  You can use a predefined color, or create you own color range
          *     .setTargetColorRange(ColorRange.BLUE)                      // use a predefined color match
@@ -153,9 +163,9 @@ public class CameraVision extends LinearOpMode
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
                 .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 1, 1, -1))  // search central 1/4 of camera view
                 .setDrawContours(true)// Show contours on the Stream Preview
-                .setBlurSize(4)// Smooth the transitions between different colors in image
-                .setErodeSize(30)
-                .setDilateSize(0)
+                .setBlurSize(blurSize)// Smooth the transitions between different colors in image
+                .setErodeSize(erodeSize)
+                .setDilateSize(dilateSize)
                 .build();
 
         /*
@@ -173,7 +183,7 @@ public class CameraVision extends LinearOpMode
         VisionPortal portal = new VisionPortal.Builder()
                 .addProcessor(colorLocator)
                 .addProcessor(processor)
-                .setCameraResolution(new Size(1280, 1024))
+                .setCameraResolution(new Size(resolutionwidth, resolutionheight))
 
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
                 .build();
@@ -218,13 +228,23 @@ public class CameraVision extends LinearOpMode
              *     ColorBlobLocatorProcessor.Util.sortByDensity(SortOrder.DESCENDING, blobs);
              *     ColorBlobLocatorProcessor.Util.sortByAspectRatio(SortOrder.DESCENDING, blobs);
              */
-
-            telemetry.addLine(" Area Density Aspect  Center");
+            telemetry.addData("Blur", blurSize);
+            telemetry.addData("Erode", erodeSize);
+            telemetry.addData("Dilate", dilateSize);
+            if(!blobs.isEmpty()){
+                RotatedRect current_running_to =  blobs.get(0).getBoxFit();
+                telemetry.addLine(" Area Density Aspect  Center");
+                telemetry.addData("running to x:", current_running_to.center.x / resolutionwidth);
+                telemetry.addData("running to y:", current_running_to.center.y / resolutionheight);
+                telemetry.addData("running to angle:", current_running_to.angle);
+                telemetry.addData("running to (size):", current_running_to.size.toString());
+            }
 
             // Display the size (area) and center location for each Blob.
             for(ColorBlobLocatorProcessor.Blob b : blobs)
             {
                 RotatedRect boxFit = b.getBoxFit();
+                telemetry.addData("", boxFit.size.area());
                 telemetry.addLine(String.format("%5d  %4.2f   %5.2f  (%3d,%3d)",
                           b.getContourArea(), b.getDensity(), b.getAspectRatio(), (int) boxFit.center.x, (int) boxFit.center.y));
             }
