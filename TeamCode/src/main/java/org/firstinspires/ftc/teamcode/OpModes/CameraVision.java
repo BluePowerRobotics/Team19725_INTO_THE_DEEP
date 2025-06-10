@@ -78,8 +78,8 @@ public class CameraVision extends LinearOpMode
     public static  int blurSize = 10;
     public static  int erodeSize = 30;
     public static  int dilateSize = 0;
-    public static int resolutionwidth = 1280;
-    public static int resolutionheight= 1024;
+    public static int resolutionwidth = 640;
+    public static int resolutionheight= 480;
     public static class CameraStreamProcessor implements VisionProcessor, CameraStreamSource {
         private final AtomicReference<Bitmap> lastFrame =
                 new AtomicReference<>(Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565));
@@ -181,6 +181,7 @@ public class CameraVision extends LinearOpMode
          *      .setCamera(BuiltinCameraDirection.BACK)    ... for a Phone Camera
          */
         VisionPortal portal = new VisionPortal.Builder()
+                //.setStreamFormat(VisionPortal.StreamFormat.YUY2)
                 .addProcessor(colorLocator)
                 .addProcessor(processor)
                 .setCameraResolution(new Size(resolutionwidth, resolutionheight))
@@ -219,7 +220,9 @@ public class CameraVision extends LinearOpMode
              *   A blob's Aspect ratio is the ratio of boxFit long side to short side.
              *   A perfect Square has an aspect ratio of 1.  All others are > 1
              */
-            ColorBlobLocatorProcessor.Util.filterByArea(300, 20000, blobs);  // filter out very small blobs.
+
+            //todo:change this range is reset resolution-----zhz
+            ColorBlobLocatorProcessor.Util.filterByArea(50, 20000, blobs);  // filter out very small blobs.
 
             /*
              * The list of Blobs can be sorted using the same Blob attributes as listed above.
@@ -231,7 +234,10 @@ public class CameraVision extends LinearOpMode
             telemetry.addData("Blur", blurSize);
             telemetry.addData("Erode", erodeSize);
             telemetry.addData("Dilate", dilateSize);
+            telemetry.addData("FPS_Camera", portal.getFps());
+            telemetry.addData("State_Camera", portal.getCameraState().toString());
             if(!blobs.isEmpty()){
+
                 RotatedRect current_running_to =  blobs.get(0).getBoxFit();
                 telemetry.addLine(" Area Density Aspect  Center");
                 telemetry.addData("running to x:", current_running_to.center.x / resolutionwidth);
@@ -243,6 +249,7 @@ public class CameraVision extends LinearOpMode
             // Display the size (area) and center location for each Blob.
             for(ColorBlobLocatorProcessor.Blob b : blobs)
             {
+
                 RotatedRect boxFit = b.getBoxFit();
                 telemetry.addData("", boxFit.size.area());
                 telemetry.addLine(String.format("%5d  %4.2f   %5.2f  (%3d,%3d)",
