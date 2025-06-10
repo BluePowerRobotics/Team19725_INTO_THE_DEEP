@@ -76,10 +76,10 @@ import java.util.concurrent.atomic.AtomicReference;
 public class CameraVision extends LinearOpMode
 {
     public static  int blurSize = 10;
-    public static  int erodeSize = 30;
+    public static  int erodeSize = 5;
     public static  int dilateSize = 0;
-    public static int resolutionwidth = 640;
-    public static int resolutionheight= 480;
+    public static int resolutionwidth = 800;
+    public static int resolutionheight= 600;
     public static class CameraStreamProcessor implements VisionProcessor, CameraStreamSource {
         private final AtomicReference<Bitmap> lastFrame =
                 new AtomicReference<>(Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565));
@@ -181,7 +181,7 @@ public class CameraVision extends LinearOpMode
          *      .setCamera(BuiltinCameraDirection.BACK)    ... for a Phone Camera
          */
         VisionPortal portal = new VisionPortal.Builder()
-                //.setStreamFormat(VisionPortal.StreamFormat.YUY2)
+                .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .addProcessor(colorLocator)
                 .addProcessor(processor)
                 .setCameraResolution(new Size(resolutionwidth, resolutionheight))
