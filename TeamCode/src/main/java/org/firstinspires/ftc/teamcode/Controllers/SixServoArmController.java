@@ -9,6 +9,26 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import java.text.MessageFormat;
 import java.util.Objects;
 
+
+class calculate {
+    public double[] calculate(double x,double y,double z,double a,double b,double c,double alpha4){
+        double theta = 0;
+        if (x>0 && y>0){theta = Math.atan(y/x);}
+        if (x<0 && y>0){theta = Math.PI-Math.atan(y/x);}
+        if (x<0 && y<0){theta = Math.PI+Math.atan(y/x);}
+        if (x<0 && y>0){theta = Math.PI*2-Math.atan(y/x);}
+        double length1 = x-c*Math.sin(alpha4)*Math.cos(theta);
+        double length2 = y-c*Math.sin(alpha4)*Math.sin(theta);
+        double length3 = z+c*Math.cos(alpha4);
+        double length = Math.sqrt(length1*length1+length2*length2+length3*length3);
+        double alpha1 = Math.acos((a*a+length*length-b*b)/2*a*length)+Math.asin(length3/length);
+        double alpha2 = Math.acos((a*a+b*b-length*length)/2*a*b);
+        double alpha3 = Math.acos((b*b+length*length-a*a)/2*b*length)+Math.acos(length3/length);
+        double[] result = {theta,alpha1,alpha2,alpha3};
+        return result;
+    }
+}
+
 public class SixServoArmController {
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
