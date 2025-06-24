@@ -19,7 +19,7 @@
  * SOFTWARE.
  */
 
-package org.firstinspires.ftc.teamcode.OpModes;
+package org.firstinspires.ftc.teamcode.VisualColor;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -76,8 +76,8 @@ import java.util.concurrent.atomic.AtomicReference;
 public class CameraVision extends LinearOpMode
 {
     public static  int blurSize = 10;
-    public static  int erodeSize = 5;
-    public static  int dilateSize = 0;
+    public static  int erodeSize = 7;
+    public static  int dilateSize = 12;
     public static int resolutionwidth = 800;
     public static int resolutionheight= 600;
     public static class CameraStreamProcessor implements VisionProcessor, CameraStreamSource {

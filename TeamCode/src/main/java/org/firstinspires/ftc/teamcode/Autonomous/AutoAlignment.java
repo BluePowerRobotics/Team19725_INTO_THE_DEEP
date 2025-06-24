@@ -29,8 +29,6 @@
 
 package org.firstinspires.ftc.teamcode.Autonomous;
 
-import android.text.Layout;
-
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -38,17 +36,12 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.OpModes.ColorLocator;
-import org.firstinspires.ftc.teamcode.OpModes.ColorReturn;
+import org.firstinspires.ftc.teamcode.VisualColor.ColorLocator;
+import org.firstinspires.ftc.teamcode.VisualColor.ColorReturn;
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
-import org.firstinspires.ftc.vision.VisionPortal;
-
-import org.firstinspires.ftc.teamcode.OpModes.ColorLocator;
-import org.firstinspires.ftc.teamcode.OpModes.ColorReturn;
 
 
 /*

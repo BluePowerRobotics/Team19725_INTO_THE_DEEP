@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpModes;
+package org.firstinspires.ftc.teamcode.VisualColor;
 public class ColorReturn{
     public double x;
     public double y;
