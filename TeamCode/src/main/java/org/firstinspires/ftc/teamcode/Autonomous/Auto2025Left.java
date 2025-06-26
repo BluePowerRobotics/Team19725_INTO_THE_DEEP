@@ -91,7 +91,7 @@ public class Auto2025Left extends LinearOpMode {
 
 
 
-            ArmController armController1 = new ArmController();
+            ArmController armController1 = new ArmController(hardwareMap,telemetry);
 
 
 
@@ -112,7 +112,7 @@ public class Auto2025Left extends LinearOpMode {
 
             // actions that need to happen on init; for instance, a claw tightening.
             //todo 初始化机器
-            armController1.initArm(hardwareMap, gamepad1, gamepad2, telemetry);
+            armController1.initArm();
 
             waitForStart();
 

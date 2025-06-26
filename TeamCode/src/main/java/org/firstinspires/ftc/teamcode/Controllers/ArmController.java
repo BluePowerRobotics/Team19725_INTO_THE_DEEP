@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class ArmController {
 
     private HardwareMap hardwaremap;
+    private Telemetry telemetry;
     private Gamepad gamepad1;
     private Gamepad gamepad2;
 
@@ -26,17 +27,20 @@ public class ArmController {
 
     // ArmController
 
-
+    public ArmController(HardwareMap hardwareMap, Telemetry telemetry) {
+        this.hardwaremap = hardwareMap;
+        this.telemetry = telemetry;
+    }
 
     public boolean initArmInitiated=false;
     public boolean initArmFinished = false;
-    public boolean initArm(HardwareMap hardwareMapRC, Gamepad gamepad1, Gamepad gamepad2, Telemetry telemetry){
+    public boolean initArm(Gamepad gamepad1, Gamepad gamepad2){
+        this.gamepad1 = gamepad1;
+        this.gamepad2 = gamepad2;
+        return initArm();
+    }
+    public boolean initArm(){
         if(!initArmInitiated){
-            hardwaremap = hardwareMapRC;
-            if(!RobotStates.getInstance().isAUTO()) {
-                this.gamepad1 = gamepad1;
-                this.gamepad2 = gamepad2;
-            }
 
 
             initArmInitiated = true;
@@ -46,6 +50,7 @@ public class ArmController {
         }
         return !initArmFinished;
     }
+
     //public class
 
 

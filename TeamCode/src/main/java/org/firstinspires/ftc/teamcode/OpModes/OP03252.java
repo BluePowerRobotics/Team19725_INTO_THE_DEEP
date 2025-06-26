@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.Controllers.RobotStates;
 public class OP03252 extends LinearOpMode {
     //MecanumDrive drive = new MecanumDrive(hardwareMap,new Pose2d(-24,-48,Math.toRadians(180)));
     org.firstinspires.ftc.teamcode.Controllers.ChassisController ChassisController = new ChassisController();// 构建class实例
-    org.firstinspires.ftc.teamcode.Controllers.ArmController ArmController = new ArmController();
+    org.firstinspires.ftc.teamcode.Controllers.ArmController ArmController = new ArmController(hardwareMap, telemetry);
     org.firstinspires.ftc.teamcode.Controllers.ClimbController ClimbController = new ClimbController();
     //static DcMotor leftFront, leftBack, rightBack, rightFront, armMotor;
     //Servo servoe3, servoe4, servoe5;
@@ -135,7 +135,7 @@ public class OP03252 extends LinearOpMode {
         ChassisController.initChassis(hardwareMap, gamepad1,gamepad2,telemetry);
 
         ClimbController.initClimb(hardwareMap,gamepad2,telemetry);
-        while(!armInitFinished) armInitFinished = ArmController.initArm(hardwareMap, gamepad1, gamepad2,telemetry);
+        while(!armInitFinished) armInitFinished = ArmController.initArm(gamepad1, gamepad2);
 
         waitForStart();
 

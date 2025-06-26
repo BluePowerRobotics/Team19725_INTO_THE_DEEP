@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.Controllers.ChassisController;
 public class Auto0513Test extends LinearOpMode {
 
     org.firstinspires.ftc.teamcode.Controllers.ChassisController ChassisController = new ChassisController();// 构建class实例
-    org.firstinspires.ftc.teamcode.Controllers.ArmController ArmController = new ArmController();
+    org.firstinspires.ftc.teamcode.Controllers.ArmController ArmController = new ArmController(hardwareMap, telemetry);// 构建class实例
 
     static RevHubOrientationOnRobot.LogoFacingDirection[] logoFacingDirections = RevHubOrientationOnRobot.LogoFacingDirection
             .values();
