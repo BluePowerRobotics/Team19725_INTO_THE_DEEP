@@ -3,9 +3,11 @@ package org.firstinspires.ftc.teamcode.Controllers;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import java.text.MessageFormat;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 
@@ -75,13 +77,16 @@ class ServoValueOutputter{
 
 
     private double[] servoPosition = new double[6];//当前角度
-    public void setRadians(double[] Radians) {//控制机械臂
+    public void setRadians(double[] Radians,double clipRadian,boolean useAutoCalculator) {//控制机械臂
         for (int i = 0; i <= 3; i++) {
             servoPosition[i] = Math.toDegrees(Radians[i]) + servoZeroPositionDegree[i];
             telemetry.addData("Servo " + i + " Degree", Math.toDegrees(Radians[i]));
             telemetry.addData("Servo " + i + " Position", servoPosition[i]);
             servo[i].setPosition(Math.min(1, Math.max(0, servoPosition[i] / servoDegree[i])));
+            servo[i].setPosition((servoPosition[i] / servoDegree[i]));
+            Range.clip((servoPosition[i] / servoDegree[i]),0, 1);
         }
+        setClipPosition(clipRadian,useAutoCalculator);
     }
     enum ClipPosition {
         LOCKED,
@@ -127,15 +132,7 @@ public class SixServoArmController {
     }
     private SIX_SERVO_ARM_RUNMODE SIX_SERVO_ARM_MODE;
     private long setLocationTime;
-    private double[] servoTargetDegree=new double[5];
-    private double[] servoNowDegree={0,0,0,0,0};
-    private double[] servoDegreeError = new double[5];
-    private double[] servoSpeed={0.24,0.24,0.24,0.24,0.24};//sec per 60 degree
-    private double servoRunTimeMax =0;
-    private final double[] servoZeroPositionDegree={0,0,0,0,0};
 
-    //private final int servoADegree = 270,servoBDegree = 180,servoCDegree = 180,servoDDegree = 270,servoEDegree = 180,servoFDegree = 180;
-    private double[] servoPosition={0,0,0,0,0};
     public SixServoArmController(HardwareMap hardwareMap, Telemetry telemetry){
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
@@ -143,24 +140,48 @@ public class SixServoArmController {
     }
     public void initArm(){
         setMode(SIX_SERVO_ARM_RUNMODE.RUN_WITHOUT_PREDICTOR);
-        setTargetPosition(resetX, resetY, resetZ, 0 * Math.PI);
+        setTargetPosition(resetX, resetY, resetZ, 0 * Math.PI, 0.5 * Math.PI);
     }
 
     final double resetX = 100,resetY = 0,resetZ = 10;
-    double x=resetX,y=resetY,z=resetZ;
-    double recentX=resetX,recentY=resetY,recentZ=resetZ;
+    double targetX = resetX,targetY = resetY,targetZ = resetZ;
     double nowX=resetX,nowY=resetY,nowZ=resetZ;
     double Distance;
+    double servoMoveTime = 0.0;//单位秒
+    private double[] servoSpeed={0.24,0.24,0.24,0.24,0.24};//sec per 60 degree
     //均为向上正方向，向右正方向，向前正方向
     //D为顺时针
-    public void setTargetPosition(double X,double Y,double Z,double alpha4){
+    double targetClipRadian = 0.5 * Math.PI;
+    public void setTargetPosition(double X,double Y,double Z,double alpha4,double clipRadian) {
+        targetX = X;
+        targetY = Y;
+        targetZ = Z;
+        targetClipRadian = clipRadian;
+        setLocationTime = System.currentTimeMillis();
         Distance = Math.sqrt((X-nowX)*(X-nowX)+(Y-nowY)*(Y-nowY)+(Z-nowZ)*(Z-nowZ));
-
+        double[] targetPosition = servoRadianCalculator.calculate(targetX, targetY, targetZ, alpha4);
+        double[] nowPosition = servoRadianCalculator.calculate(nowX, nowY, nowZ, targetClipRadian);
+        double[] servoMoveTime = new double[4];
+        for(int i = 0; i <= 3; i++) {
+            servoMoveTime[i] = Math.toDegrees(targetPosition[i] - nowPosition[i])*(servoSpeed[i]/60.0);
+        }
+        double servoMoveTimeMax = Arrays.stream(servoMoveTime).max().getAsDouble();
+        this.servoMoveTime = servoMoveTimeMax;
     }
+
     public void setMode(SIX_SERVO_ARM_RUNMODE mode) {
         this.SIX_SERVO_ARM_MODE = mode;
-        if (mode == SIX_SERVO_ARM_RUNMODE.RUN_TO_POSITION) {
-            setLocationTime = System.currentTimeMillis();
+        switch(SIX_SERVO_ARM_MODE){
+            case RUN_TO_POSITION:
+                telemetry.addData("SixServoArmController","RUN_TO_POSITION");
+                break;
+            case STOP_AND_RESET:
+                telemetry.addData("SixServoArmController","STOP_AND_RESET");
+                servoValueOutputter.setRadians(servoRadianCalculator.calculate(resetX, resetY, resetZ, 0.5 * Math.PI),targetClipRadian, true);
+                break;
+            case RUN_WITHOUT_PREDICTOR:
+                telemetry.addData("SixServoArmController","RUN_WITHOUT_PREDICTOR");
+                break;
         }
     }
 }
