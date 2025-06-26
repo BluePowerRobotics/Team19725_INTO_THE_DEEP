@@ -37,15 +37,23 @@ import org.firstinspires.ftc.robotcore.external.function.Continuation;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
+import org.firstinspires.ftc.teamcode.VisualColor.model.CubeInfo;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
 import org.firstinspires.ftc.vision.opencv.ColorRange;
+import org.firstinspires.ftc.vision.opencv.ColorSpace;
 import org.firstinspires.ftc.vision.opencv.ImageRegion;
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
+import org.opencv.core.Point;
 import org.opencv.core.RotatedRect;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
 
+
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -72,14 +80,19 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 
 @Config
-@TeleOp(name = "Visual_Color_Locator", group = "Test")
-public class CameraVision extends LinearOpMode
+@TeleOp(name = "Find_Candidate", group = "Test")
+public class FindCandidate extends LinearOpMode
 {
     public static  int blurSize = 10;
     public static  int erodeSize = 7;
     public static  int dilateSize = 12;
     public static int resolutionwidth = 800;
     public static int resolutionheight= 600;
+    public static  int BR = 51;
+    public static  int BG = 35;
+    public static  int BB = 190;
+
+
     public static class CameraStreamProcessor implements VisionProcessor, CameraStreamSource {
         private final AtomicReference<Bitmap> lastFrame =
                 new AtomicReference<>(Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565));
@@ -91,6 +104,7 @@ public class CameraVision extends LinearOpMode
 
         @Override
         public Object processFrame(Mat frame, long captureTimeNanos) {
+            drawXYlines(frame, 50, new Scalar(255, 0, 0), 1); // 在Mat上画网格
             Bitmap b = Bitmap.createBitmap(frame.width(), frame.height(), Bitmap.Config.RGB_565);
             Utils.matToBitmap(frame, b);
             lastFrame.set(b);
@@ -108,14 +122,30 @@ public class CameraVision extends LinearOpMode
         public void getFrameBitmap(Continuation<? extends Consumer<Bitmap>> continuation) {
             continuation.dispatch(bitmapConsumer -> bitmapConsumer.accept(lastFrame.get()));
         }
+        //在Mat上画网格线
+        public static void drawXYlines(Mat frame, int size, Scalar color, int thickness) {
+            if (size <= 0 || color == null || thickness < 1) return; // 参数检查
+            for (int x = 0; x < frame.cols(); x += size) Imgproc.line(frame, new Point(x, 0), new Point(x, frame.rows()), color, thickness);
+            for (int y = 0; y < frame.rows(); y += size) Imgproc.line(frame, new Point(0, y), new Point(frame.cols(), y), color, thickness);
+        }
     }
     @Override
     public void runOpMode()
     {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         CameraStreamProcessor processor = new CameraStreamProcessor();
+        processor.drawXYlines(new Mat(), 50, new Scalar(255, 0, 0), 1); // Draw grid lines on the camera preview
 
 
+
+
+        final ColorRange BLUE = new ColorRange(
+                ColorSpace.YCrCb,
+                new Scalar( 26,   10, 165),
+                new Scalar(255, 127, 255)
+        );
+
+        CubeInfo[] candidates = new CubeInfo[1000];
 
 
         /* Build a "Color Locator" vision processor based on the ColorBlobLocatorProcessor class.
@@ -159,7 +189,7 @@ public class CameraVision extends LinearOpMode
          *                                    "pixels" in the range of 2-4 are suitable for low res images.
          */
         ColorBlobLocatorProcessor colorLocator = new ColorBlobLocatorProcessor.Builder()
-                .setTargetColorRange(ColorRange.BLUE)         // use a predefined color match
+                .setTargetColorRange(BLUE)         // use a predefined color match
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
                 .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 1, 1, -1))  // search central 1/4 of camera view
                 .setDrawContours(true)// Show contours on the Stream Preview
@@ -167,6 +197,12 @@ public class CameraVision extends LinearOpMode
                 .setErodeSize(erodeSize)
                 .setDilateSize(dilateSize)
                 .build();
+//        ColorBlobLocatorProcessor colorLocatorGreen = new ColorBlobLocatorProcessor.Builder()
+//                .setTargetColorRange(ColorRange.GREEN)         // use a predefined color match
+//                .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
+//                .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 1, 1, -1))  // search central 1/4 of camera view
+//                .setDrawContours(true)// Show contours on the Stream Preview
+//                .build();
 
         /*
          * Build a vision portal to run the Color Locator process.
@@ -183,6 +219,7 @@ public class CameraVision extends LinearOpMode
         VisionPortal portal = new VisionPortal.Builder()
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .addProcessor(colorLocator)
+                //.addProcessor(colorLocatorGreen)
                 .addProcessor(processor)
                 .setCameraResolution(new Size(resolutionwidth, resolutionheight))
 
@@ -221,7 +258,7 @@ public class CameraVision extends LinearOpMode
              *   A perfect Square has an aspect ratio of 1.  All others are > 1
              */
 
-            //todo:change this range is reset resolution-----zhz
+            //todo:change this range when reset resolution-----zhz
             ColorBlobLocatorProcessor.Util.filterByArea(50, 20000, blobs);  // filter out very small blobs.
 
             /*
@@ -247,17 +284,48 @@ public class CameraVision extends LinearOpMode
             }
 
             // Display the size (area) and center location for each Blob.
+            int i = 0;
             for(ColorBlobLocatorProcessor.Blob b : blobs)
             {
 
                 RotatedRect boxFit = b.getBoxFit();
-                telemetry.addData("", boxFit.size.area());
-                telemetry.addLine(String.format("%5d  %4.2f   %5.2f  (%3d,%3d)",
-                          b.getContourArea(), b.getDensity(), b.getAspectRatio(), (int) boxFit.center.x, (int) boxFit.center.y));
+                CubeInfo cubeInfo = new CubeInfo(
+                        RadialUndistortion.undistortPoint(boxFit.center.x, boxFit.center.y),
+                        boxFit.size.area(),
+                        b.getDensity(),
+                        boxFit.angle,
+                        boxFit.size.width,
+                        boxFit.size.height
+                );
+
+                candidates[i] = cubeInfo;
+                i++;
+//                telemetry.addData("", boxFit.size.area());
+//                telemetry.addLine(String.format("%5d  %4.2f   %5.2f  (%3d,%3d)",
+//                          b.getContourArea(), b.getDensity(), b.getAspectRatio(), (int) boxFit.center.x, (int) boxFit.center.y));
             }
+
+            Arrays.sort(candidates, new Comparator<CubeInfo>() {
+                @Override
+                public int compare(CubeInfo p1, CubeInfo p2) {
+                    if (p1 == null || p2 == null) {
+                        return 0; // Handle null cases
+                    }
+                    if (Math.abs(p1.DisToCamInMM - p2.DisToCamInMM) >= 5) {
+                        if(p2.DisToCamInMM - p1.DisToCamInMM < 0) { // Sort in descending order by area
+                            return -1;
+                        }
+                        return 1;
+                    }
+                    return (int)(p2.size - p1.size);
+                }
+            });
+            //按距离和面积递减
+
+
             FtcDashboard.getInstance().startCameraStream(processor, 0);
             telemetry.update();
-            sleep(50);
+            //sleep(50);
         }
     }
 }
