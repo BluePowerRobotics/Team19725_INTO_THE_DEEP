@@ -15,13 +15,21 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
+import org.firstinspires.ftc.teamcode.Controllers.ArmController;
+import org.firstinspires.ftc.teamcode.Controllers.ChassisController;
+import org.firstinspires.ftc.teamcode.Controllers.ClimbController;
+import org.firstinspires.ftc.teamcode.Controllers.RobotStates;
 
 @TeleOp
 
 public class OP03252 extends LinearOpMode {
     //MecanumDrive drive = new MecanumDrive(hardwareMap,new Pose2d(-24,-48,Math.toRadians(180)));
+    org.firstinspires.ftc.teamcode.Controllers.ChassisController ChassisController = new ChassisController();// 构建class实例
+    org.firstinspires.ftc.teamcode.Controllers.ArmController ArmController = new ArmController(hardwareMap, telemetry);
+    org.firstinspires.ftc.teamcode.Controllers.ClimbController ClimbController = new ClimbController();
+    //static DcMotor leftFront, leftBack, rightBack, rightFront, armMotor;
+    //Servo servoe3, servoe4, servoe5;
+    MecanumDrive drive = new MecanumDrive(hardwareMap,new Pose2d(-24,-48,Math.toRadians(180)));
     ChassisController ChassisController = new ChassisController();// 构建class实例
     ArmController ArmController = new ArmController();
     ClimbController ClimbController = new ClimbController();
@@ -54,9 +62,11 @@ public class OP03252 extends LinearOpMode {
     public boolean thitalock = false;
     public boolean xhasbeenpressed = false;
     public boolean lthasbeenpressed = false, rthasbeenpressed = false;
-    // servoe5:0.86~1
-    // servoe4:0;0.515;0.95
-    // servoe3:0.7~1
+    /*
+     * servoe5:0.86~1
+     * servoe4:0;0.515;0.95
+     * servoe3:0.7~1
+     */
 
     private void inithardware() {
         // control_Hub = hardwareMap.get(Blinker.class, "Control Hub");
@@ -95,14 +105,10 @@ public class OP03252 extends LinearOpMode {
     }
 
     public void fps_and_tele() {
-        telemetry.addData("leftFront", ChassisController.leftFrontPower);
-        telemetry.addData("leftBack", ChassisController.leftBackPower);
-        telemetry.addData("rightFront", ChassisController.rightFrontPower);
-        telemetry.addData("rightBack", ChassisController.rightBackPower);
 
         telemetry.addData("fps", 1000 / (System.currentTimeMillis() - t));// fps
 
-        telemetry.addData("thita", ChassisController.orientation.getYaw(AngleUnit.DEGREES));
+
         telemetry.addData("move_x_l/旋转--逆-顺+", move_x_l);
         telemetry.addData("move_y_l+move_y_r/前-后+", move_y_l + move_y_r);
         telemetry.addData("move_x_r/左-右+", move_x_r);
@@ -138,13 +144,17 @@ public class OP03252 extends LinearOpMode {
          */
         orientation = imu.getRobotYawPitchRollAngles();
     }
-
+    public boolean armInitFinished = false;
     public void runOpMode() {
         inithardware();
-        ChassisController.initChassis(hardwareMap, gamepad1,gamepad2);
-        ArmController.initArm(hardwareMap, gamepad1, gamepad2,telemetry);
-        ClimbController.initClimb(hardwareMap,gamepad2,telemetry);
+        RobotStates robotStates = RobotStates.getInstance();
+        RobotStates.getInstance().setAUTO(false);
+        RobotStates.getInstance().setCLIMBING(false);
+        RobotStates.getInstance().setMODE(RobotStates.RUNMODE.HIGH_CHAMBER);
+        ChassisController.initChassis(hardwareMap, gamepad1,gamepad2,telemetry);
 
+        ClimbController.initClimb(hardwareMap,gamepad2,telemetry);
+        while(!armInitFinished) armInitFinished = ArmController.initArm(gamepad1, gamepad2);
 
         waitForStart();
 

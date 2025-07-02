@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpModes;
+package org.firstinspires.ftc.teamcode.Controllers;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -16,15 +16,15 @@ public class ClimbController {
     DcMotor climbLeft, climbRight;
     Gamepad gamepad2;
     Telemetry telemetry;
-    public void initClimb(HardwareMap hardwareMaprc, Gamepad gamepad2rc, Telemetry telemetryrc){
-        hardwareMap = hardwareMaprc;
+    public void initClimb(HardwareMap hardwareMapRC, Gamepad gamepad2RC, Telemetry telemetryRC){
+        hardwareMap = hardwareMapRC;
         climbLeft = hardwareMap.get(DcMotor.class,"climbLeft");
         climbRight = hardwareMap.get(DcMotor.class,"climbRight");
         climbLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         climbRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        telemetry = telemetryrc;
+        telemetry = telemetryRC;
         t = System.currentTimeMillis();
-        gamepad2 =gamepad2rc;
+        gamepad2 =gamepad2RC;
         climbLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         climbRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         climbLeft.setTargetPosition(560 * 2);
@@ -36,55 +36,48 @@ public class ClimbController {
             climbLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             climbRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            telemetry.addData("Testing", climbLeft.getCurrentPosition());
+            telemetry.addData("ClimbController:Testing", climbLeft.getCurrentPosition());
             telemetry.update();
         }
         climbLeftLength=climbLeft.getCurrentPosition();
         climbRightLength=climbRight.getCurrentPosition();
         climbLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         climbRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        telemetry.addData("StartToBack", climbLeft.getCurrentPosition());
+        telemetry.addData("ClimbController:StartToBack", climbLeft.getCurrentPosition());
         telemetry.update();
         climbLeft.setTargetPosition(-(int) climbLeftLength);
         climbRight.setTargetPosition(-(int) climbRightLength);
-        while ((climbLeft.getCurrentPosition() + climbLeftLength > 5 || climbLeft.getCurrentPosition() + climbLeftLength < -5)&&(climbRight.getCurrentPosition() + climbRightLength > 5 || climbRight.getCurrentPosition() + climbRightLength < -5)) {
+        while ((climbLeft.getCurrentPosition() + climbLeftLength > 5 || climbLeft.getCurrentPosition() + climbLeftLength < -5)&&(climbRight.getCurrentPosition() + climbRightLength > 5 || climbRight.getCurrentPosition() + climbRightLength < -5)&&System.currentTimeMillis() - t <= 4000) {
             climbLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             climbRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            telemetry.addData("Backing", climbRight.getCurrentPosition());
+            telemetry.addData("ClimbController:Backing", climbRight.getCurrentPosition());
             telemetry.update();
         }
         climbRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         climbLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
-    void climb(){
+    public void climb(){
         telemetry.addData("climbLeftLength",climbLeftLength);
         telemetry.addData("climbRightLength",climbRightLength);
         if(climbUp){
             climbLeft.setTargetPosition(0);
             climbRight.setTargetPosition(0);
-            climbLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            climbRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }else{
             climbLeft.setTargetPosition((int) climbLeftLength);
             climbRight.setTargetPosition((int) climbRightLength);
-            climbLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            climbRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
+        climbLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        climbRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         if (gamepad2.right_bumper) {
-            if (!rbhasbeenpressed) {
-                if (!climbUp)
-                    climbUp = true;
-                else
-                    climbUp = false;
-                rbhasbeenpressed = true;
-            } else {
-                rbhasbeenpressed = true;
-            }
+            if (!rbHasBeenPressed) {
+                climbUp = !climbUp;
+                }
+            rbHasBeenPressed = true;
         } else {
-            rbhasbeenpressed = false;
+            rbHasBeenPressed = false;
         }
     }
-    boolean rbhasbeenpressed=false;
+    boolean rbHasBeenPressed =false;
 
 }

@@ -27,8 +27,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode.OpModes;
+package org.firstinspires.ftc.teamcode.Controllers;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.RoadRunner.GoBildaPinpointDriver;
@@ -89,11 +90,9 @@ public class ChassisController {
     double lock_thita;
 
 
+    public enum CHASSIS_RUNMODE {RUN_TO_LOCATION,RUN_WITHOUT_LOCATOR,STOP_AND_RESET_LOCATOR}
+    private CHASSIS_RUNMODE CHASSIS_MODE = CHASSIS_RUNMODE.RUN_WITHOUT_LOCATOR;
 
-    private int MODE = 0;
-    public static final int RUN_TO_LOCATION= 2;
-    public static final int RUN_WITHOUT_LOCATOR= 1;
-    public static final int STOP_AND_RESET_LOCATOR= 3;
 
     private boolean UseAutoMove = false;
 
@@ -103,37 +102,36 @@ public class ChassisController {
     private int targetLocationR=0;
     private double distanceToTargetLocation=0;
 
-    public void setMode(int CHASSIS_MODE){
-        MODE = CHASSIS_MODE;
+    public void setMode(CHASSIS_RUNMODE CHASSIS_MODE){
+        this.CHASSIS_MODE = CHASSIS_MODE;
 
-
-        if(MODE==STOP_AND_RESET_LOCATOR){
-            UseAutoMove = true;
-
-            initLocator();
-
-
-        } else if (MODE==RUN_TO_LOCATION) {
-            UseAutoMove = true;
-            freshThita();
-            runToLocation(targetLocationX,targetLocationY,targetLocationR,0,maxSpeed);
-        } else if (MODE==RUN_WITHOUT_LOCATOR){
-            UseAutoMove = false;
-        } else{
-            UseAutoMove = false;
-            MODE = RUN_WITHOUT_LOCATOR;
+        switch (this.CHASSIS_MODE) {
+            case RUN_TO_LOCATION:
+                UseAutoMove = true;
+                freshThita();
+                runToLocation(targetLocationX,targetLocationY,targetLocationR,0,maxSpeed);
+                break;
+            case RUN_WITHOUT_LOCATOR:
+                UseAutoMove = false;
+                break;
+            case STOP_AND_RESET_LOCATOR:
+                UseAutoMove = true;
+                initLocator();
+                break;
         }
+
     }
-    public static final int NO_HEAD_MODE = 1;
-    public static final int ORDINARY_MODE = 0;
-    public static final int EXCHANGE_MODE = 2;
-    public void setRunMode(int RunMode){
-        if(RunMode == NO_HEAD_MODE){
-            USE_NO_HEAD_MODE = true;
-        }else if(RunMode == ORDINARY_MODE){
-            USE_NO_HEAD_MODE = false;
-        }else if(RunMode == EXCHANGE_MODE){
-            USE_NO_HEAD_MODE = !USE_NO_HEAD_MODE;
+    public enum OPERATION_RUNMODE{NO_HEAD_MODE,ORDINARY_MODE}
+    public OPERATION_RUNMODE OPERATION_MODE=OPERATION_RUNMODE.ORDINARY_MODE;
+    public void setOperationMode(OPERATION_RUNMODE OPERATION_MODE){
+        this.OPERATION_MODE = OPERATION_MODE;
+        switch (this.OPERATION_MODE) {
+            case NO_HEAD_MODE:
+                USE_NO_HEAD_MODE = true;
+                break;
+            case ORDINARY_MODE:
+                USE_NO_HEAD_MODE = false;
+                break;
         }
     }
 
@@ -150,7 +148,7 @@ public class ChassisController {
 
 
 
-    public boolean climb = false;
+
 
     static RevHubOrientationOnRobot.LogoFacingDirection[] logoFacingDirections = RevHubOrientationOnRobot.LogoFacingDirection
             .values();
@@ -158,9 +156,10 @@ public class ChassisController {
             .values();
     HardwareMap hardwareMap;
     Gamepad gamepad1,gamepad2;
+    Telemetry telemetry;
     IMU imu;
     YawPitchRollAngles orientation;
-    static DcMotor leftFront, leftBack, rightBack, rightFront, armMotor;
+    static DcMotor leftFront, leftBack, rightBack, rightFront;
     int logoFacingDirectionPosition = 0;
     int usbFacingDirectionPosition = 2;
 
@@ -171,8 +170,8 @@ public class ChassisController {
     public double thita = 0;
     public double angletime = 0;
 
-    public void initChassis(HardwareMap hardwareMaprc, Gamepad gamepad1rc, Gamepad gamepad2rc) {
-
+    public void initChassis(HardwareMap hardwareMaprc, Gamepad gamepad1rc, Gamepad gamepad2rc, Telemetry telemetryRC) {
+        telemetry = telemetryRC;
         hardwareMap = hardwareMaprc;
         gamepad1 = gamepad1rc;
         gamepad2 = gamepad2rc;
@@ -201,19 +200,28 @@ public class ChassisController {
 
         RevHubOrientationOnRobot.LogoFacingDirection logo = logoFacingDirections[logoFacingDirectionPosition];
         RevHubOrientationOnRobot.UsbFacingDirection usb = usbFacingDirections[usbFacingDirectionPosition];
-        /*
-         * try {
-         * RevHubOrientationOnRobot orientationOnRobot = new
-         * RevHubOrientationOnRobot(logo, usb);
-         * imu.initialize(new IMU.Parameters(orientationOnRobot));
-         * orientationIsValid = true;
-         * } catch (IllegalArgumentException e) {
-         * orientationIsValid = false;
-         * }
-         */
+        // try {
+        // RevHubOrientationOnRobot orientationOnRobot = new
+        // RevHubOrientationOnRobot(logo, usb);
+        // imu.initialize(new IMU.Parameters(orientationOnRobot));
+        // orientationIsValid = true;
+        // } catch (IllegalArgumentException e) {
+        // orientationIsValid = false;
+        // }
         orientation = imu.getRobotYawPitchRollAngles();
     }
-
+    public void addTelemetry(){
+        telemetry.addData("leftFront", leftFrontPower);
+        telemetry.addData("leftBack", leftBackPower);
+        telemetry.addData("rightFront", rightFrontPower);
+        telemetry.addData("rightBack", rightBackPower);
+        telemetry.addData("thita", orientation.getYaw(AngleUnit.DEGREES));
+        telemetry.addData("px", px);
+        telemetry.addData("py", py);
+        telemetry.addData("omiga", omiga);
+        telemetry.addData("alpha", alpha);
+        telemetry.addData("angle", angle);
+    }
     public void freshThita() {
         updateOrientation();
         thita = orientation.getYaw(AngleUnit.DEGREES);
@@ -429,16 +437,18 @@ public class ChassisController {
                 }
                 r = thitalock();
             }
-            if (gamepad1.left_bumper)
-                lock_thita = 45;
-            else if (gamepad1.right_bumper)
-                lock_thita = 90;
+//            if (gamepad1.left_bumper)
+//                lock_thita = 45;
+//            else if (gamepad1.right_bumper)
+//                lock_thita = 90;
+            //if(SharedStates.getInstance().isCLIMBING()) r = 0;
 
-            if (!USE_NO_HEAD_MODE || climb) {
+            if (!USE_NO_HEAD_MODE) {
                 move(r, y, x);
             } else {
                 noheadmove(r, y, x, speed);
             }
         }
+        addTelemetry();
     }
 }

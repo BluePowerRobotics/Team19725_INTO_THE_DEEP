@@ -4,13 +4,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.Controllers.ChassisController;
 
 @TeleOp
 
@@ -52,9 +52,9 @@ public class OP12122 extends LinearOpMode {
     public int servo_select = 3;
     public double servo_position = 0.5;
     // servos5:0.86~1
-    ArmDirectController armDirectController = new ArmDirectController();
+    //ArmDirectController armDirectController = new ArmDirectController();
     ChassisController chassisController = new ChassisController();
-    EasyClimb easyClimb = new EasyClimb();
+    //EasyClimb easyClimb = new EasyClimb();
 
     private void inithardware() {
         // control_Hub = hardwareMap.get(Blinker.class, "Control Hub");
@@ -97,16 +97,12 @@ public class OP12122 extends LinearOpMode {
         telemetry.addData("move_y_l+move_y_r/前-后+", move_y_l + move_y_r);
         telemetry.addData("move_x_r/左-右+", move_x_r);
         telemetry.addData("degree", degree);
-        telemetry.addData("leftFrontPower", rbmove.leftFrontPower);
-        telemetry.addData("leftBackPower", rbmove.leftBackPower);
-        telemetry.addData("rightBackPower", rbmove.rightBackPower);
-        telemetry.addData("rightFrontPower", rbmove.rightFrontPower);
+//        telemetry.addData("leftFrontPower", rbmove.leftFrontPower);
+//        telemetry.addData("leftBackPower", rbmove.leftBackPower);
+//        telemetry.addData("rightBackPower", rbmove.rightBackPower);
+//        telemetry.addData("rightFrontPower", rbmove.rightFrontPower);
 
-        telemetry.addData("px", rbmove.px);
-        telemetry.addData("py", rbmove.py);
-        telemetry.addData("omiga", rbmove.omiga);
-        telemetry.addData("alpha", rbmove.alpha);
-        telemetry.addData("angle", rbmove.angle);
+
 
         telemetry.addData("servo_select", servo_select);
         telemetry.addData("servo_position", servo_position);
@@ -134,19 +130,19 @@ public class OP12122 extends LinearOpMode {
 
     public void runOpMode() {
         inithardware();
-        armDirectController.initArm(hardwareMap,gamepad2,telemetry);
-        armDirectController.initArmAction();
-        chassisController.initChassis(hardwareMap,gamepad1,gamepad2);
-        easyClimb.initClimb(hardwareMap,gamepad2);
+//        armDirectController.initArm(hardwareMap,gamepad2,telemetry);
+//        armDirectController.initArmAction();
+        chassisController.initChassis(hardwareMap,gamepad1,gamepad2,telemetry);
+        //easyClimb.initClimb(hardwareMap,gamepad2);
         waitForStart();
         while (opModeIsActive()) {
             updateOrientation();
             thita = orientation.getYaw(AngleUnit.DEGREES);
-            armDirectController.armSpinnerController(gamepad2.left_stick_y);
-            armDirectController.armMotorController(-gamepad2.left_trigger+ gamepad2.right_trigger);
-            armDirectController.servoe4Controller(gamepad2.right_stick_y);
-            armDirectController.servoe5Controller(gamepad2.a);
-            armDirectController.servoe2Controller(gamepad2.y);
+//            armDirectController.armSpinnerController(gamepad2.left_stick_y);
+//            armDirectController.armMotorController(-gamepad2.left_trigger+ gamepad2.right_trigger);
+//            armDirectController.servoe4Controller(gamepad2.right_stick_y);
+//            armDirectController.servoe5Controller(gamepad2.a);
+//            armDirectController.servoe2Controller(gamepad2.y);
 
             move_x_l = gamepad1.left_stick_x;
             move_y_l = gamepad1.left_stick_y;
@@ -172,115 +168,115 @@ public class OP12122 extends LinearOpMode {
 
     boolean bhasbeenpressed = false, cliplock = false;
 
-    public void servocontrol() {
-
-        /*
-         * if (gamepad1.b){
-         * if (!bhasbeenpressed){
-         * if (!cliplock) cliplock = true;
-         * else if (cliplock) cliplock = false;
-         * bhasbeenpressed = true;
-         * }else{
-         * bhasbeenpressed = true;
-         * }
-         * }else{
-         * bhasbeenpressed = false;
-         * }
-         * if(cliplock) servos5.setPosition(0.86);
-         * else servos5.setPosition(1);
-         */
-
-        if (gamepad1.a) {
-            if (!ahasbeenpressed) {
-                servo_select++;
-                ahasbeenpressed = true;
-            }
-        } else {
-            ahasbeenpressed = false;
-        }
-        if (servo_select > 5) {
-            servo_select = 3;
-        }
-
-        if (gamepad1.left_bumper) {
-
-            servo_position += 0.005;
-
-        }
-        if (gamepad1.right_bumper) {
-
-            servo_position -= 0.005;
-
-        }
-
-        if (servo_position > 1)
-            servo_position = 1;
-        if (servo_position < 0)
-            servo_position = 0;
-
-        if (servo_select == 3) {
-            servos3.setPosition(servo_position);
-        } else if (servo_select == 4) {
-            servos4.setPosition(servo_position);
-        } else {
-            servos5.setPosition(servo_position);
-        }
-    }
-
-    public void moveselect(double r, double y, double x) {
-        if (gamepad1.y) {
-            if (!yhasbeenpressed) {
-                if (!noheadmode)
-                    noheadmode = true;
-                else if (noheadmode)
-                    noheadmode = false;
-                yhasbeenpressed = true;
-            } else {
-                yhasbeenpressed = true;
-            }
-            rbmove.setthita = thita;
-
-        } else {
-            yhasbeenpressed = false;
-        }
-
-        if (gamepad1.x) {
-            if (!xhasbeenpressed) {
-                if (!thitalock)
-                    thitalock = true;
-                else if (thitalock)
-                    thitalock = false;
-                xhasbeenpressed = true;
-            } else {
-                xhasbeenpressed = true;
-            }
-            rbmove.lock_thita = thita;
-        } else {
-            xhasbeenpressed = false;
-        }
-
-        rbmove.getthita = thita;
-
-        if (thitalock) {
-            r = rbmove.thitalock();
-        } else {
-            if (System.currentTimeMillis() - angletime >= 10) {
-                if (y < 0) {
-                    r = -r;
-                }
-                rbmove.lock_thita -= 2 * r;
-                // if (rbmove.lock_thita<=-180) rbmove.lock_thita +=360;
-                // if (rbmove.lock_thita>=180) rbmove.lock_thita-=360;
-                angletime = System.currentTimeMillis();
-            }
-            r = rbmove.thitalock();
-        }
-
-        if (!noheadmode) {
-            rbmove.move(r, y, x);
-        } else {
-            rbmove.noheadmove(r, y, x, 1);
-        }
-    }
+//    public void servocontrol() {
+//
+//        /*
+//         * if (gamepad1.b){
+//         * if (!bhasbeenpressed){
+//         * if (!cliplock) cliplock = true;
+//         * else if (cliplock) cliplock = false;
+//         * bhasbeenpressed = true;
+//         * }else{
+//         * bhasbeenpressed = true;
+//         * }
+//         * }else{
+//         * bhasbeenpressed = false;
+//         * }
+//         * if(cliplock) servos5.setPosition(0.86);
+//         * else servos5.setPosition(1);
+//         */
+//
+//        if (gamepad1.a) {
+//            if (!ahasbeenpressed) {
+//                servo_select++;
+//                ahasbeenpressed = true;
+//            }
+//        } else {
+//            ahasbeenpressed = false;
+//        }
+//        if (servo_select > 5) {
+//            servo_select = 3;
+//        }
+//
+//        if (gamepad1.left_bumper) {
+//
+//            servo_position += 0.005;
+//
+//        }
+//        if (gamepad1.right_bumper) {
+//
+//            servo_position -= 0.005;
+//
+//        }
+//
+//        if (servo_position > 1)
+//            servo_position = 1;
+//        if (servo_position < 0)
+//            servo_position = 0;
+//
+//        if (servo_select == 3) {
+//            servos3.setPosition(servo_position);
+//        } else if (servo_select == 4) {
+//            servos4.setPosition(servo_position);
+//        } else {
+//            servos5.setPosition(servo_position);
+//        }
+//    }
+//
+//    public void moveselect(double r, double y, double x) {
+//        if (gamepad1.y) {
+//            if (!yhasbeenpressed) {
+//                if (!noheadmode)
+//                    noheadmode = true;
+//                else if (noheadmode)
+//                    noheadmode = false;
+//                yhasbeenpressed = true;
+//            } else {
+//                yhasbeenpressed = true;
+//            }
+//            rbmove.setthita = thita;
+//
+//        } else {
+//            yhasbeenpressed = false;
+//        }
+//
+//        if (gamepad1.x) {
+//            if (!xhasbeenpressed) {
+//                if (!thitalock)
+//                    thitalock = true;
+//                else if (thitalock)
+//                    thitalock = false;
+//                xhasbeenpressed = true;
+//            } else {
+//                xhasbeenpressed = true;
+//            }
+//            rbmove.lock_thita = thita;
+//        } else {
+//            xhasbeenpressed = false;
+//        }
+//
+//        rbmove.getthita = thita;
+//
+//        if (thitalock) {
+//            r = rbmove.thitalock();
+//        } else {
+//            if (System.currentTimeMillis() - angletime >= 10) {
+//                if (y < 0) {
+//                    r = -r;
+//                }
+//                rbmove.lock_thita -= 2 * r;
+//                // if (rbmove.lock_thita<=-180) rbmove.lock_thita +=360;
+//                // if (rbmove.lock_thita>=180) rbmove.lock_thita-=360;
+//                angletime = System.currentTimeMillis();
+//            }
+//            r = rbmove.thitalock();
+//        }
+//
+//        if (!noheadmode) {
+//            rbmove.move(r, y, x);
+//        } else {
+//            rbmove.noheadmove(r, y, x, 1);
+//        }
+//    }
 
 }
