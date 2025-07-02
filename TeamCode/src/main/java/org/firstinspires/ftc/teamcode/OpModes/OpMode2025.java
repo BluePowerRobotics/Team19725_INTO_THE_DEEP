@@ -14,9 +14,11 @@ import org.firstinspires.ftc.teamcode.RoadRunner.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.RoadRunner.tuning.TuningOpModes;
 import org.firstinspires.ftc.teamcode.VisualColor.Alignment;
+import org.firstinspires.ftc.teamcode.Controllers.*;
 
 import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 
@@ -38,8 +40,7 @@ public class OpMode2025 extends LinearOpMode {
     double kpad;
     //ColorLocator colorLocator;
     ChassisController ChassisController=new ChassisController();//构建class实例
-    ArmController ArmController = new ArmController();
-    EasyClimb easyClimb = new EasyClimb();
+    ArmController ArmController = new ArmController(hardwareMap, telemetry);//构建class实例
     //ClimbController climbController = new ClimbController();
 
     Alignment AutoFollow;

@@ -2,10 +2,7 @@ package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
-import com.acmerobotics.roadrunner.Vector2d;
-import com.acmerobotics.roadrunner.ftc.Actions;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 //import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
@@ -19,6 +16,7 @@ import org.firstinspires.ftc.teamcode.Controllers.ArmController;
 import org.firstinspires.ftc.teamcode.Controllers.ChassisController;
 import org.firstinspires.ftc.teamcode.Controllers.ClimbController;
 import org.firstinspires.ftc.teamcode.Controllers.RobotStates;
+import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 
 @TeleOp
 
@@ -30,9 +28,6 @@ public class OP03252 extends LinearOpMode {
     //static DcMotor leftFront, leftBack, rightBack, rightFront, armMotor;
     //Servo servoe3, servoe4, servoe5;
     MecanumDrive drive = new MecanumDrive(hardwareMap,new Pose2d(-24,-48,Math.toRadians(180)));
-    ChassisController ChassisController = new ChassisController();// 构建class实例
-    ArmController ArmController = new ArmController();
-    ClimbController ClimbController = new ClimbController();
     static DcMotor leftFront, leftBack, rightBack, rightFront, armMotor;
     Servo servoe3, servoe4, servoe5;
     static RevHubOrientationOnRobot.LogoFacingDirection[] logoFacingDirections = RevHubOrientationOnRobot.LogoFacingDirection
@@ -114,15 +109,7 @@ public class OP03252 extends LinearOpMode {
         telemetry.addData("move_x_r/左-右+", move_x_r);
         telemetry.addData("degree", degree);
 
-        telemetry.addData("px", ChassisController.px);
-        telemetry.addData("py", ChassisController.py);
-        telemetry.addData("omiga", ChassisController.omiga);
-        telemetry.addData("alpha", ChassisController.alpha);
-        telemetry.addData("angle", ChassisController.angle);
 
-        telemetry.addData("servo_position", ArmController.servo_position);
-
-        telemetry.addData("length", ArmController.motorNowLength / ArmController.motorLength);
 
         telemetry.update();
         t = System.currentTimeMillis();// 获取当前时间

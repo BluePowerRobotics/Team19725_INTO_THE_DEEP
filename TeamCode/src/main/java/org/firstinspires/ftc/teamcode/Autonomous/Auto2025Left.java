@@ -54,7 +54,7 @@ public class Auto2025Left extends LinearOpMode {
 
             MecanumDrive drive = new MecanumDrive(hardwareMap, initialPoseLeft);
 
-            Arm armController = new Arm(hardwareMap,telemetry);
+            //Arm armController = new Arm(hardwareMap,telemetry);
             AutoAlignment autofollow = new AutoAlignment(hardwareMap, drive, telemetry,ifblue);
             //旋转角度的cos和sin的值（0，1）-> 90°
 
