@@ -80,18 +80,35 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 
 @Config
-@TeleOp(name = "Find_Candidate", group = "Test")
+@TeleOp(name = "Find_Candidate_FINISH", group = "Test")
 public class FindCandidate extends LinearOpMode
 {
+
+    public static double MMtoPixel = 1.486;
+    public static double PixeltoMM = 1 / MMtoPixel;
+
+    public static int MidX = 400;
+    public static int MidY = 300;
     public static  int blurSize = 10;
     public static  int erodeSize = 7;
     public static  int dilateSize = 12;
     public static int resolutionwidth = 800;
     public static int resolutionheight= 600;
+
+    public static  int minarea = 2000;
+    public static  int maxarea = 20000;
     public static  int BR = 51;
     public static  int BG = 35;
     public static  int BB = 190;
 
+
+
+
+
+
+
+
+    int CandidateLength = 0;
 
     public static class CameraStreamProcessor implements VisionProcessor, CameraStreamSource {
         private final AtomicReference<Bitmap> lastFrame =
@@ -104,7 +121,7 @@ public class FindCandidate extends LinearOpMode
 
         @Override
         public Object processFrame(Mat frame, long captureTimeNanos) {
-            drawXYlines(frame, 50, new Scalar(255, 0, 0), 1); // 在Mat上画网格
+            drawXYlines(frame, 100, new Scalar(255, 0, 0), 1); // 在Mat上画网格
             Bitmap b = Bitmap.createBitmap(frame.width(), frame.height(), Bitmap.Config.RGB_565);
             Utils.matToBitmap(frame, b);
             lastFrame.set(b);
@@ -259,7 +276,7 @@ public class FindCandidate extends LinearOpMode
              */
 
             //todo:change this range when reset resolution-----zhz
-            ColorBlobLocatorProcessor.Util.filterByArea(50, 20000, blobs);  // filter out very small blobs.
+            ColorBlobLocatorProcessor.Util.filterByArea(minarea, maxarea, blobs);  // filter out very small blobs.
 
             /*
              * The list of Blobs can be sorted using the same Blob attributes as listed above.
@@ -289,8 +306,13 @@ public class FindCandidate extends LinearOpMode
             {
 
                 RotatedRect boxFit = b.getBoxFit();
+                Point tmpp = new Point((boxFit.center.x - MidX) * PixeltoMM, (boxFit.center.y - MidY) * PixeltoMM);
+                telemetry.addData("pre_candidate" + i+ 1, tmpp.toString());
                 CubeInfo cubeInfo = new CubeInfo(
-                        RadialUndistortion.undistortPoint(boxFit.center.x, boxFit.center.y),
+                        i + 1,
+                        //new Point(0,0),
+                        boxFit.center,
+                        //OpenCvUndistortion.openCvUndistortion(boxFit.center.x - MidX, boxFit.center.y - MidY),
                         boxFit.size.area(),
                         b.getDensity(),
                         boxFit.angle,
@@ -305,24 +327,40 @@ public class FindCandidate extends LinearOpMode
 //                          b.getContourArea(), b.getDensity(), b.getAspectRatio(), (int) boxFit.center.x, (int) boxFit.center.y));
             }
 
-            Arrays.sort(candidates, new Comparator<CubeInfo>() {
-                @Override
-                public int compare(CubeInfo p1, CubeInfo p2) {
-                    if (p1 == null || p2 == null) {
-                        return 0; // Handle null cases
-                    }
-                    if (Math.abs(p1.DisToCamInMM - p2.DisToCamInMM) >= 5) {
-                        if(p2.DisToCamInMM - p1.DisToCamInMM < 0) { // Sort in descending order by area
-                            return -1;
-                        }
+
+
+            CandidateLength = i;
+            Arrays.sort(candidates, (p1, p2) -> {
+                if (p1 == null || p2 == null) {
+                    return 0; // Handle null cases
+                }
+                if (Math.abs(p1.DisToCamInMM - p2.DisToCamInMM) >= 0.0001) {        //距离差大于5MM则按距离排序
+                    if(p2.DisToCamInMM - p1.DisToCamInMM < 0) {
                         return 1;
                     }
-                    return (int)(p2.size - p1.size);
+                    return -1;
                 }
+                return (int)(p1.size - p2.size);                 //否则按面积排序
             });
-            //按距离和面积递减
+            //按距离和面积递增
+
+            telemetry.addData("length:", CandidateLength);
+            for(int j = 0; j < candidates.length&&candidates[j] != null; j++){
 
 
+
+                candidates[j].centerpoint = OpenCvUndistortion.openCvUndistortion(candidates[j].centerpoint.x - MidX, candidates[j].centerpoint.y - MidY);
+                candidates[j].centerpoint = new Point(candidates[j].centerpoint.x * PixeltoMM, candidates[j].centerpoint.y * PixeltoMM);
+                int Status = CubeProcessor.ProcessCube(candidates[j]);
+                telemetry.addData("Candidate " + j, "index: %d, Size: %.2f, Density: %.2f, Angle: %.2f, Center: (%.2f, %.2f), Distance: %.2f mm",
+                        candidates[j].index,
+                        candidates[j].size, candidates[j].density, candidates[j].angleDeg,
+                        candidates[j].centerpoint.x, candidates[j].centerpoint.y, candidates[j].DisToCamInMM);
+                //candidates[j].centerpoint = new Point((candidates[j].centerpoint.x - MidX) * PixeltoMM, (candidates[j].centerpoint.y - MidY) * PixeltoMM);
+                //telemetry.addData("New Center " + j + " (mm)", "Center: (%.2f, %.2f)", candidates[j].centerpoint.x, candidates[j].centerpoint.y);
+            }
+
+            //int tmp = 1/0; // 触发异常，测试异常处理
             FtcDashboard.getInstance().startCameraStream(processor, 0);
             telemetry.update();
             //sleep(50);

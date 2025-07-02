@@ -1,0 +1,37 @@
+package org.firstinspires.ftc.teamcode.VisualColor;
+
+import org.firstinspires.ftc.teamcode.VisualColor.model.CubeInfo;
+
+public class CubeProcessor {
+    static int ellipseX = 264; // 不可夹取区椭圆中心点X坐标
+    static int ellipseY = 149; // 不可夹取区椭圆中心点Y坐标
+    static int ellipseA = 194; // 不可夹取区椭圆半长轴
+    static int ellipseB = 134; // 不可夹取区椭圆半短轴
+
+    static int XTolerance = 264; // 可夹取区X轴max
+    static int YTolerance = 149; // 可夹取区Y轴max
+
+    boolean ifInArea = false;
+
+
+
+    //return:     -1  不符合要求
+    //            0: 在可夹取区内
+    //            1: 需要车辆左移
+    //            2: 需要车辆右移
+    //            3: 需要滑轨前移
+
+    public static int ProcessCube(CubeInfo cubeInfo) {
+        double X = cubeInfo.centerpoint.x;
+        double Y = cubeInfo.centerpoint.y;
+        double m1 = (X - ellipseX) * (X - ellipseX) / (ellipseA * ellipseA);
+        double m2 = (Y - ellipseY) * (Y - ellipseY) / (ellipseB * ellipseB);
+        if (m1 + m2 > 1 && X < XTolerance && Y < YTolerance) {
+            // 在可夹取区内
+            boolean ifInArea = true;
+            return 0;
+        }
+        return -1;
+    }
+
+}

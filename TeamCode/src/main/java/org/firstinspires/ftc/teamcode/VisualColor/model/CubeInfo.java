@@ -3,7 +3,8 @@ package org.firstinspires.ftc.teamcode.VisualColor.model;
 import org.opencv.core.Point;
 
 public class CubeInfo {
-    Point centerpoint;
+    public int index;
+    public Point centerpoint;
     public final double size;
     public final double density;
     public final double angleDeg;
@@ -11,7 +12,8 @@ public class CubeInfo {
     public final double rectHeightPx;
     public  final double DisToCamInMM;
 
-    public CubeInfo(Point centerpoint, double size, double density, double angle, double widthPx, double heightPx) {
+    public CubeInfo(int index, Point centerpoint, double size, double density, double angle, double widthPx, double heightPx) {
+        this.index = index;
         this.centerpoint = centerpoint;
         this.size = size;
         this.density = density;
