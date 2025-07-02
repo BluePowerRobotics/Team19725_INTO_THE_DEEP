@@ -27,36 +27,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode.Autonomous;
-
-import android.text.Layout;
-import android.util.Size;
-
-import androidx.annotation.NonNull;
-
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.Action;
+package org.firstinspires.ftc.teamcode.VisualColor;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-//import org.firstinspires.ftc.teamcode.OpModes.ColorLocator;
-//import org.firstinspires.ftc.teamcode.OpModes.ColorReturn;
-import org.firstinspires.ftc.teamcode.VisualColor.ColorLocator;
-import org.firstinspires.ftc.teamcode.VisualColor.ColorReturn;
+
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
-import org.firstinspires.ftc.vision.VisionPortal;
-
-
-import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
-import org.firstinspires.ftc.vision.opencv.ColorRange;
-import org.firstinspires.ftc.vision.opencv.ImageRegion;
-import org.opencv.core.RotatedRect;
-
-import java.util.List;
 
 
 /*
@@ -73,47 +52,27 @@ import java.util.List;
  */
 
 
-public class AutoAlignment {
+
+public class Alignment{
 
     public MecanumDrive drive;
-    Telemetry telemetry;
-    public int cnt = 0;
     ColorLocator colorLocator;
 
-    public AutoAlignment(HardwareMap hardwaremaprc, MecanumDrive driverc, Telemetry telemetryrc, boolean teamcolor){
+    public void init(MecanumDrive driverc, HardwareMap hardwaremaprc, boolean teamcolor){
         drive = driverc;
         boolean ifblue = teamcolor;
         colorLocator = new ColorLocator(hardwaremaprc.get(WebcamName.class, "Webcam 1"), ifblue);
-        telemetry = telemetryrc;
     }
 
-    public class follow implements Action {
-
-        @Override
-        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            telemetry.addData("following", cnt);
-            telemetry.update();
-            ColorReturn lx = colorLocator.LocateAll();
-            double x = lx.x;
-
-            double p_follow = -0.001;
-            double v = p_follow * (x-117);
-            if (x == 999999){
-                cnt++;
-                v = 0;
-            }
-            drive.setDrivePowers(new PoseVelocity2d(
-                    new Vector2d(v,0),
-                    0));
-            if (x >= 100 && x <= 170 || (cnt > 50)){
-                return false;
-            }
-            return true;
-        }
-
-    }
-    public Action follow() {
-        return new AutoAlignment.follow();
+    public void follow() {
+        ColorReturn lx = colorLocator.LocateAll();
+        double x = lx.x;
+        double p_follow = 0.001;
+        double v = p_follow * (x-200);
+        if (x == 999999||x >= 180&&x <= 220){v = 0;}
+        drive.setDrivePowers(new PoseVelocity2d(
+                new Vector2d(v, 0),
+                0));
     }
 }
 
