@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpModes;
+package org.firstinspires.ftc.teamcode.VisualColor;
 /*
  * Copyright (c) 2024 Phil Malone
  *
