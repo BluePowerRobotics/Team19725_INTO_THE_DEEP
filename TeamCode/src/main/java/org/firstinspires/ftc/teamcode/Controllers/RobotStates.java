@@ -1,5 +1,5 @@
 package org.firstinspires.ftc.teamcode.Controllers;
-
+//控制机器人状态
 public class RobotStates {
     // 单例实例
     private static RobotStates instance;
