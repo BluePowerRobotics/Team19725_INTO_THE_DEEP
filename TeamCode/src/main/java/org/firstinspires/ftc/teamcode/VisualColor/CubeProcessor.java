@@ -24,6 +24,9 @@ public class CubeProcessor {
     public static int ProcessCube(CubeInfo cubeInfo) {
         double X = cubeInfo.centerpoint.x;
         double Y = cubeInfo.centerpoint.y;
+        if(Y < 0){
+            return -1;
+        }
         double m1 = (X - ellipseX) * (X - ellipseX) / (ellipseA * ellipseA);
         double m2 = (Y - ellipseY) * (Y - ellipseY) / (ellipseB * ellipseB);
         if (m1 + m2 > 1 && X < XTolerance && Y < YTolerance) {
@@ -31,7 +34,12 @@ public class CubeProcessor {
             boolean ifInArea = true;
             return 0;
         }
-        return -1;
+        if(X > 0){
+            return 1; // 需要车辆左移
+        }
+        else{
+            return 2; // 需要车辆右移
+        }
     }
 
 }

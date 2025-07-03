@@ -101,8 +101,14 @@ public class FindCandidate extends LinearOpMode
     public static  int BG = 35;
     public static  int BB = 190;
 
-
-
+    public CubeInfo[] InsideCandidates = new CubeInfo[100];
+    public int InsideCnt = 0;
+    public CubeInfo[] LeftCandidates = new CubeInfo[100];
+    public int LeftCnt = 0;
+    public CubeInfo[] RightCandidates = new CubeInfo[100];
+    public int RightCnt = 0;
+    public CubeInfo[] FrontCandidates = new CubeInfo[100];
+    public int FrontCnt = 0;
 
 
 
@@ -306,13 +312,9 @@ public class FindCandidate extends LinearOpMode
             {
 
                 RotatedRect boxFit = b.getBoxFit();
-                Point tmpp = new Point((boxFit.center.x - MidX) * PixeltoMM, (boxFit.center.y - MidY) * PixeltoMM);
-                telemetry.addData("pre_candidate" + i+ 1, tmpp.toString());
                 CubeInfo cubeInfo = new CubeInfo(
                         i + 1,
-                        //new Point(0,0),
                         boxFit.center,
-                        //OpenCvUndistortion.openCvUndistortion(boxFit.center.x - MidX, boxFit.center.y - MidY),
                         boxFit.size.area(),
                         b.getDensity(),
                         boxFit.angle,
@@ -322,12 +324,7 @@ public class FindCandidate extends LinearOpMode
 
                 candidates[i] = cubeInfo;
                 i++;
-//                telemetry.addData("", boxFit.size.area());
-//                telemetry.addLine(String.format("%5d  %4.2f   %5.2f  (%3d,%3d)",
-//                          b.getContourArea(), b.getDensity(), b.getAspectRatio(), (int) boxFit.center.x, (int) boxFit.center.y));
             }
-
-
 
             CandidateLength = i;
             Arrays.sort(candidates, (p1, p2) -> {
@@ -346,21 +343,48 @@ public class FindCandidate extends LinearOpMode
 
             telemetry.addData("length:", CandidateLength);
             for(int j = 0; j < candidates.length&&candidates[j] != null; j++){
-
-
-
                 candidates[j].centerpoint = OpenCvUndistortion.openCvUndistortion(candidates[j].centerpoint.x - MidX, candidates[j].centerpoint.y - MidY);
                 candidates[j].centerpoint = new Point(candidates[j].centerpoint.x * PixeltoMM, candidates[j].centerpoint.y * PixeltoMM);
                 int Status = CubeProcessor.ProcessCube(candidates[j]);
-                telemetry.addData("Candidate " + j, "index: %d, Size: %.2f, Density: %.2f, Angle: %.2f, Center: (%.2f, %.2f), Distance: %.2f mm",
-                        candidates[j].index,
-                        candidates[j].size, candidates[j].density, candidates[j].angleDeg,
-                        candidates[j].centerpoint.x, candidates[j].centerpoint.y, candidates[j].DisToCamInMM);
-                //candidates[j].centerpoint = new Point((candidates[j].centerpoint.x - MidX) * PixeltoMM, (candidates[j].centerpoint.y - MidY) * PixeltoMM);
-                //telemetry.addData("New Center " + j + " (mm)", "Center: (%.2f, %.2f)", candidates[j].centerpoint.x, candidates[j].centerpoint.y);
+                if(Status == 0){
+                    InsideCandidates[j] = candidates[j];
+                    InsideCnt++;
+                    telemetry.addData("Candidate " + j, "index: %d, Size: %.2f, Density: %.2f, Angle: %.2f, Center: (%.2f, %.2f), Distance: %.2f mm",
+                            candidates[j].index,
+                            candidates[j].size, candidates[j].density, candidates[j].angleDeg,
+                            candidates[j].centerpoint.x, candidates[j].centerpoint.y, candidates[j].DisToCamInMM);
+                }
+                else if(Status == 1){
+                    LeftCandidates[j] = candidates[j];
+                    LeftCnt++;
+                }
+                else if(Status == 2){
+                    RightCandidates[j] = candidates[j];
+                    RightCnt++;
+                }
+                else if(Status == 3){
+                    FrontCandidates[j] = candidates[j];
+                    FrontCnt++;
+                }
+                else{
+                    int a = 1/0; // 触发异常，测试异常处理
+                    continue;
+                }
             }
 
-            //int tmp = 1/0; // 触发异常，测试异常处理
+
+            if(InsideCnt > 0) {
+                telemetry.addData("Running to", "index: %d, Size: %.2f, Density: %.2f, Angle: %.2f, Center: (%.2f, %.2f), Distance: %.2f mm",
+                        InsideCandidates[0].index,
+                        InsideCandidates[0].size, InsideCandidates[0].density, InsideCandidates[0].angleDeg,
+                        InsideCandidates[0].centerpoint.x, InsideCandidates[0].centerpoint.y, InsideCandidates[0].DisToCamInMM);
+            }
+
+
+
+            telemetry.addData("not inside","left: %d Right: %d", LeftCnt, RightCnt);
+            LeftCnt = 0;
+            RightCnt = 0;
             FtcDashboard.getInstance().startCameraStream(processor, 0);
             telemetry.update();
             //sleep(50);
