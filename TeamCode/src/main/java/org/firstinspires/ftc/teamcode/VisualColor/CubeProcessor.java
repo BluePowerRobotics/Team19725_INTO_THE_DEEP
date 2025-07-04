@@ -3,8 +3,12 @@ package org.firstinspires.ftc.teamcode.VisualColor;
 import org.firstinspires.ftc.teamcode.VisualColor.model.CubeInfo;
 
 public class CubeProcessor {
+
+
+
+    //todo 视摄像头方向调整这里和下面的正负、大于小于
     static int ellipseX = 264; // 不可夹取区椭圆中心点X坐标
-    static int ellipseY = 149; // 不可夹取区椭圆中心点Y坐标
+    static int ellipseY = -149; // 不可夹取区椭圆中心点Y坐标
     static int ellipseA = 194; // 不可夹取区椭圆半长轴
     static int ellipseB = 134; // 不可夹取区椭圆半短轴
 
@@ -24,12 +28,13 @@ public class CubeProcessor {
     public static int ProcessCube(CubeInfo cubeInfo) {
         double X = cubeInfo.centerpoint.x;
         double Y = cubeInfo.centerpoint.y;
-        if(Y < 0){
+        if(Y >= 150){
+            int c = 1/0;
             return -1;
         }
-        double m1 = (X - ellipseX) * (X - ellipseX) / (ellipseA * ellipseA);
-        double m2 = (Y - ellipseY) * (Y - ellipseY) / (ellipseB * ellipseB);
-        if (m1 + m2 > 1 && X < XTolerance && Y < YTolerance) {
+        double m1 = (Math.abs(X) - ellipseX) * (Math.abs(X) - ellipseX) / (ellipseA * ellipseA);
+        double m2 = (Math.abs(Y) - ellipseY) * (Math.abs(Y) - ellipseY) / (ellipseB * ellipseB);
+        if (m1 + m2 > 1 && Math.abs(X) < XTolerance && Math.abs(Y) > YTolerance) {
             // 在可夹取区内
             boolean ifInArea = true;
             return 0;

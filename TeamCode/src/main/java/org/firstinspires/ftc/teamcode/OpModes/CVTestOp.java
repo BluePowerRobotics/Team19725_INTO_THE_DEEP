@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
@@ -15,24 +17,28 @@ import org.firstinspires.ftc.teamcode.Controllers.*;
 
 @TeleOp
 public class CVTestOp extends LinearOpMode {
-    //MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0,0,0));
+
+    MecanumDrive drive;
     FindCandidate CVmoudle = new FindCandidate();
     private DcMotor armMotor;
     @Override
     public void runOpMode() {
-        armMotor = hardwareMap.get(DcMotor.class, "armMotor");
-        armMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+//        armMotor = hardwareMap.get(DcMotor.class, "armMotor");
+//        armMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+//        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // Initialize the camera and other components here
         CVmoudle.init(hardwareMap, telemetry);
+        drive = new MecanumDrive(hardwareMap, new Pose2d(0,0,0));
 
-        waitForStart();
+        //waitForStart();
 
-        while (opModeIsActive()) {
+        while (opModeIsActive() || opModeInInit()) {
             // Process camera frames and detect colors
-            telemetry.addData("running to", CVmoudle.findCandidate().toString());
+            telemetry.addData("running toX", CVmoudle.findCandidate().GoToX);
+            telemetry.addData("running toY", CVmoudle.findCandidate().GoToY);
             if(CVmoudle.findCandidate().suggestion == 1) {
                 telemetry.addData("suggestion", "需要车辆左移");
             }
@@ -51,17 +57,15 @@ public class CVTestOp extends LinearOpMode {
             } else if (gamepad2.left_trigger > 0.1) {
                 armPower = -gamepad2.left_trigger;
             }
-            armMotor.setPower(armPower);
-            telemetry.addData("Arm Position", armMotor.getCurrentPosition());
-            telemetry.addData("Arm Power", armPower);
-//            drive.setDrivePowers(
-//                new PoseVelocity2d(
-//                    new Vector2d(gamepad1.left_stick_x, gamepad1.left_stick_y),
-//                    gamepad1.right_stick_x
-//                )
-//            );
-
-            // Display detected colors and other information
+//            armMotor.setPower(armPower);
+//            telemetry.addData("Arm Position", armMotor.getCurrentPosition());
+//            telemetry.addData("Arm Power", armPower);
+            drive.setDrivePowers(
+                new PoseVelocity2d(
+                    new Vector2d(gamepad1.left_stick_x, gamepad1.left_stick_y),
+                    gamepad1.right_stick_x
+                )
+            );
 
             telemetry.update();
         }

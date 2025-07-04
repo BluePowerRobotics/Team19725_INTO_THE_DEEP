@@ -96,13 +96,14 @@ public class FindCandidate{
 
     int CandidateLength = 0;
 
-    Telemetry telemetry;
+    Telemetry Mytelemetry;
     CameraStreamProcessor processor = new CameraStreamProcessor();
     ColorBlobLocatorProcessor colorLocator;
     VisionPortal portal;
 
     public void init(HardwareMap hardWareMap, Telemetry telerc) {
-        telemetry = new MultipleTelemetry(telerc, FtcDashboard.getInstance().getTelemetry());
+        Mytelemetry = telerc;
+        //telemetry = new MultipleTelemetry(telerc, FtcDashboard.getInstance().getTelemetry());
         colorLocator = new ColorBlobLocatorProcessor.Builder()
                 .setTargetColorRange(BLUE)         // use a predefined color match
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
@@ -163,8 +164,8 @@ public class FindCandidate{
     public ArmAction findCandidate()
     {
         processor.drawXYlines(new Mat(), 50, new Scalar(255, 0, 0), 1); // Draw grid lines on the camera preview
-        telemetry.setMsTransmissionInterval(50);   // Speed up telemetry updates, Just use for debugging.
-        telemetry.setDisplayFormat(Telemetry.DisplayFormat.MONOSPACE);
+        Mytelemetry.setMsTransmissionInterval(50);   // Speed up telemetry updates, Just use for debugging.
+        Mytelemetry.setDisplayFormat(Telemetry.DisplayFormat.MONOSPACE);
 
             // Read the current list
         List<ColorBlobLocatorProcessor.Blob> blobs = colorLocator.getBlobs();
@@ -175,11 +176,11 @@ public class FindCandidate{
         ColorBlobLocatorProcessor.Util.filterByArea(minarea, maxarea, blobs);  // filter out very small blobs.
 
 
-        telemetry.addData("Blur", blurSize);
-        telemetry.addData("Erode", erodeSize);
-        telemetry.addData("Dilate", dilateSize);
-        telemetry.addData("FPS_Camera", portal.getFps());
-        telemetry.addData("State_Camera", portal.getCameraState().toString());
+        Mytelemetry.addData("Blur", blurSize);
+        Mytelemetry.addData("Erode", erodeSize);
+        Mytelemetry.addData("Dilate", dilateSize);
+        Mytelemetry.addData("FPS_Camera", portal.getFps());
+        Mytelemetry.addData("State_Camera", portal.getCameraState().toString());
 
         // Display the size (area) and center location for each Blob.
         int i = 0;
@@ -215,15 +216,15 @@ public class FindCandidate{
         });
             //按距离和面积递增
 
-        telemetry.addData("length:", CandidateLength);
-        for(int j = 0; j < candidates.length&&candidates[j] != null; j++){
+        Mytelemetry.addData("length:", CandidateLength);
+        for(int j = 0; j < CandidateLength; j++){
             candidates[j].centerpoint = OpenCvUndistortion.openCvUndistortion(candidates[j].centerpoint.x - MidX, candidates[j].centerpoint.y - MidY);
             candidates[j].centerpoint = new Point(candidates[j].centerpoint.x * PixeltoMM, candidates[j].centerpoint.y * PixeltoMM);
             int Status = CubeProcessor.ProcessCube(candidates[j]);
             if(Status == 0){
                 InsideCandidates[j] = candidates[j];
                 InsideCnt++;
-                telemetry.addData("Candidate " + j, "index: %d, Size: %.2f, Density: %.2f, Angle: %.2f, Center: (%.2f, %.2f), Distance: %.2f mm",
+                Mytelemetry.addData("Candidate " + j, "(inside) index: %d, Size: %.2f, Density: %.2f, Angle: %.2f, Center: (%.2f, %.2f), Distance: %.2f mm",
                         candidates[j].index,
                         candidates[j].size, candidates[j].density, candidates[j].angleDeg,
                         candidates[j].centerpoint.x, candidates[j].centerpoint.y, candidates[j].DisToCamInMM);
@@ -247,12 +248,12 @@ public class FindCandidate{
         }
 
 
-        if(InsideCnt > 0) {
-            telemetry.addData("Running to", "index: %d, Size: %.2f, Density: %.2f, Angle: %.2f, Center: (%.2f, %.2f), Distance: %.2f mm",
-                    InsideCandidates[0].index,
-                    InsideCandidates[0].size, InsideCandidates[0].density, InsideCandidates[0].angleDeg,
-                    InsideCandidates[0].centerpoint.x, InsideCandidates[0].centerpoint.y, InsideCandidates[0].DisToCamInMM);
-        }
+//        if(InsideCnt > 0 && !(InsideCandidates[0] == null)) {
+//            Mytelemetry.addData("Running to", "index: %d, Size: %.2f, Density: %.2f, Angle: %.2f, Center: (%.2f, %.2f), Distance: %.2f mm",
+//                    InsideCandidates[0].index,
+//                    InsideCandidates[0].size, InsideCandidates[0].density, InsideCandidates[0].angleDeg,
+//                    InsideCandidates[0].centerpoint.x, InsideCandidates[0].centerpoint.y, InsideCandidates[0].DisToCamInMM);
+//        }
 
 
         int Suggestion = 0;
@@ -265,12 +266,13 @@ public class FindCandidate{
         else{
             Suggestion = 0; // 不移动
         }
-        telemetry.addData("not inside","left: %d Right: %d", LeftCnt, RightCnt);
+        Mytelemetry.addData("not inside","left: %d Right: %d", LeftCnt, RightCnt);
 
+        InsideCnt = 0;
         LeftCnt = 0;
         RightCnt = 0;
         FtcDashboard.getInstance().startCameraStream(processor, 0);
-        telemetry.update();
+        //telemetry.update();       已在主程序中统一更新
         if(!(InsideCandidates[0] == null)){
             return new ArmAction(Math.atan((InsideCandidates[0].centerpoint.x) / (InsideCandidates[0].centerpoint.y) * 180 / Math.PI),InsideCandidates[0].angleDeg, InsideCandidates[0].DisToCamInMM, InsideCandidates[0].centerpoint.x, InsideCandidates[0].centerpoint.y, Suggestion);
         }
