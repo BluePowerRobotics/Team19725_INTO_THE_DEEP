@@ -187,12 +187,15 @@ public class FindCandidate{
         for(ColorBlobLocatorProcessor.Blob b : blobs) {
 
             RotatedRect boxFit = b.getBoxFit();
+            Point[] points = b.getContourPoints(); // Get the contour points if needed, but not used here
+            //double angle = CubeProcessor.CalculateRadians(points); // Convert points to clip Radians
+            Mytelemetry.addData("points", points);
             CubeInfo cubeInfo = new CubeInfo(
                     i + 1,
                     boxFit.center,
                     boxFit.size.area(),
                     b.getDensity(),
-                    boxFit.angle,
+                    -1,
                     boxFit.size.width,
                     boxFit.size.height
             );
@@ -274,8 +277,8 @@ public class FindCandidate{
         FtcDashboard.getInstance().startCameraStream(processor, 0);
         //telemetry.update();       已在主程序中统一更新
         if(!(InsideCandidates[0] == null)){
-            return new ArmAction(Math.atan((InsideCandidates[0].centerpoint.x) / (InsideCandidates[0].centerpoint.y) * 180 / Math.PI),InsideCandidates[0].angleDeg, InsideCandidates[0].DisToCamInMM, InsideCandidates[0].centerpoint.x, InsideCandidates[0].centerpoint.y, Suggestion);
+            return new ArmAction(InsideCandidates[0].angleDeg, InsideCandidates[0].DisToCamInMM, InsideCandidates[0].centerpoint.x, InsideCandidates[0].centerpoint.y, Suggestion);
         }
-        return new ArmAction(-1,-1,-1,-1,-1,-1);
+        return new ArmAction(-1,-1,-1,-1,-1);
     }
 }

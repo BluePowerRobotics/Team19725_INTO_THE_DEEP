@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.VisualColor.model;
 
 public class ArmAction {
-    public double ArmAngle;
     public double ClipAngle;
     public double length;
     public double GoToX;
@@ -10,8 +9,7 @@ public class ArmAction {
     //1: 需要车辆左移
     //2: 需要车辆右移
     //3: 需要滑轨前移
-    public ArmAction(double armAngle, double clipAngle, double length, double goToX, double goToY, int suggestion) {
-        this.ArmAngle = armAngle;
+    public ArmAction(double clipAngle, double length, double goToX, double goToY, int suggestion) {
         this.ClipAngle = clipAngle;
         this.length = length;
         this.GoToX = goToX;

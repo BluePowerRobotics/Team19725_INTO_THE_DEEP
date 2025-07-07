@@ -14,6 +14,7 @@ public class InstallerController {
     Telemetry telemetry;
     Servo clipInstallPuller,clipInstaller;
     INSTALL_RUNMODE installStates = INSTALL_RUNMODE.PREPARING;
+    DisSensor disSensor;
     public void initInstaller(HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2, Telemetry telemetry) {
         // Initialize the installer with the provided hardware map and game pads
         // This method can be used to set up any necessary components or configurations
@@ -26,6 +27,9 @@ public class InstallerController {
         clipInstallPuller = this.hardwareMap.get(Servo.class,"");
         clipInstaller.setDirection(Servo.Direction.FORWARD);
         clipInstallPuller.setDirection(Servo.Direction.FORWARD);
+
+        disSensor.init(hardwareMap);
+
         // Example initialization code (to be replaced with actual implementation):
         telemetry.addData("Installer", "Initialization started");
         telemetry.update();
