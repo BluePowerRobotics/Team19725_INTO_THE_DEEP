@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.VisualColor.model.ArmAction;
 
 import java.util.Arrays;
 
@@ -150,6 +151,10 @@ public class SixServoArmController {
     //均为向上正方向，向右正方向，向前正方向
     //D为顺时针
     double targetClipRadian = 0.5 * Math.PI;
+
+    public void setTargetPosition(ArmAction armAction){
+        setTargetPosition(armAction.GoToX,armAction.GoToY,-5,Math.PI, armAction.ClipAngle);
+    };
     public void setTargetPosition(double X,double Y,double Z,double alpha4,double clipRadian) {
         switch (SIX_SERVO_ARM_MODE) {
             case RUN_TO_POSITION:
