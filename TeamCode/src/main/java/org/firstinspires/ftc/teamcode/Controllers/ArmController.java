@@ -16,8 +16,8 @@ public class ArmController {
 
 
 
-    public enum ARM_MODE{BasicArm,SixServoArm}
-    public ARM_MODE USE_ARM_MODE = ARM_MODE.BasicArm;
+//    public enum ARM_MODE{BasicArm,SixServoArm}
+//    public ARM_MODE USE_ARM_MODE = ARM_MODE.BasicArm;
 
 
 

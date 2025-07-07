@@ -84,3 +84,6 @@ lint/tmp/
 /TeamCode/build/*
 /.idea
 /.vscode
+
+# macos
+._*
