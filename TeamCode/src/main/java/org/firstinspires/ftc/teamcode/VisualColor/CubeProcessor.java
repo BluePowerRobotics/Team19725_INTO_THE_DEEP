@@ -55,7 +55,7 @@ public class CubeProcessor {
     public static double CalculateRadians(Point[] points) {
         int MinIndex = 0; // 最小点的索引
         double minY = 10000; // 初始化一个很大的值作为最小Y坐标
-        for(int i = 0; i < points.length; i++) {        // 计算弧度
+        for(int i = 0; i < points.length; i++) {
             if(points[i].y < minY) {
                 minY = points[i].y;
                 MinIndex = i; // 更新最小点的索引
@@ -66,7 +66,7 @@ public class CubeProcessor {
         for(int i = 0; i < points.length; i++) {
             if(i == MinIndex) continue; // 跳过最小点
             double Distance = Math.sqrt(Math.pow(points[i].x - points[MinIndex].x, 2) + Math.pow(points[i].y - points[MinIndex].y, 2));
-            Index_Dis[cnt] = new Pair<>(cnt, Distance);
+            Index_Dis[cnt] = new Pair<>(i, Distance);
             cnt++;
         }
 

@@ -187,15 +187,16 @@ public class FindCandidate{
         for(ColorBlobLocatorProcessor.Blob b : blobs) {
 
             RotatedRect boxFit = b.getBoxFit();
-            Point[] points = b.getContourPoints(); // Get the contour points if needed, but not used here
-            //double angle = CubeProcessor.CalculateRadians(points); // Convert points to clip Radians
-            Mytelemetry.addData("points", points);
+            Point[] Corners = new Point[4]; // Corner points
+            boxFit.points(Corners);// this points() method does not return values, it populates the argument
+            double angle = CubeProcessor.CalculateRadians(Corners); // Convert points to clip Radians
+            //Mytelemetry.addData("points", Corners.length);
             CubeInfo cubeInfo = new CubeInfo(
                     i + 1,
                     boxFit.center,
                     boxFit.size.area(),
                     b.getDensity(),
-                    -1,
+                    angle,
                     boxFit.size.width,
                     boxFit.size.height
             );
