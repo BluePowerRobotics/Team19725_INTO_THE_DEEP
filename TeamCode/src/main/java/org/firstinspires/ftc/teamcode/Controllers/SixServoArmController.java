@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.Controllers;
 
+import androidx.annotation.NonNull;
+
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
@@ -9,12 +13,84 @@ import org.firstinspires.ftc.teamcode.VisualColor.model.ArmAction;
 
 import java.util.Arrays;
 
+class SixServoArmAction{
+    HardwareMap hardwareMap;
+    Telemetry telemetry;
+    ServoRadianCalculator servoRadianCalculator;
+    ServoValueOutputter servoValueOutputter;
+    SixServoArmController sixServoArmController;
+    public SixServoArmAction(HardwareMap hardwareMap,Telemetry telemetry){
+        this.hardwareMap= hardwareMap;
+        this.telemetry= telemetry;
+        sixServoArmController = SixServoArmController.getInstance(hardwareMap,telemetry);
+        servoValueOutputter = sixServoArmController.servoValueOutputter;
+        servoRadianCalculator = sixServoArmController.servoRadianCalculator;
+    }
+    public class SixServoArmInit implements Action{
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet){
+            sixServoArmController.setTargetPosition(-100,1,100,0.1,0.1);
+            return sixServoArmController.setMode();
+        }
+    }
+    public Action SixServoArmInit(){
+        return new SixServoArmInit();
+    }
 
+    public class SixServoArmRunToPosition implements Action{
+        double x,y,z,ArmThreeRadian,ClipRadian;
+        public SixServoArmRunToPosition(double x,double y,double z,double ArmThreeRadian,double ClipRadian){
+            this.x=x;
+            this.y=y;
+            this.z=z;
+            this.ArmThreeRadian = ArmThreeRadian;
+            this.ClipRadian = ClipRadian;
+        }
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet){
+            sixServoArmController.setTargetPosition(x,y,z,ArmThreeRadian,ClipRadian);
+            return sixServoArmController.setMode();
+        }
+    }
+    public Action SixServoArmRunToPosition(double x,double y,double z,double ArmThreeRadian,double ClipRadian){
+        return new SixServoArmRunToPosition(x,y,z,ArmThreeRadian,ClipRadian);
+    }
+    public Action SixServoArmRunToPosition(@NonNull ArmAction armAction){
+        return SixServoArmRunToPosition(armAction.GoToX,armAction.GoToY,-5,Math.PI, armAction.ClipAngle);
+    };
+    ServoValueOutputter.ClipPosition clipPosition;
+    public class SixServoArmSetClip implements Action{
+        boolean initiated = false;
+        long setClipTime = 0;
+        double ClipLockSpendSec = 0.5;
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet){
+            if(!initiated){
+                servoValueOutputter.setClip(clipPosition);
+                setClipTime = System.currentTimeMillis();
+                initiated = true;
+            }
+            return System.currentTimeMillis()-setClipTime<=1000*ClipLockSpendSec;
+        }
+    }
+    public Action SixServoArmSetClip(ServoValueOutputter.ClipPosition clipPosition){
+        this.clipPosition = clipPosition;
+        return new SixServoArmSetClip();
+    }
+}
 class ServoRadianCalculator {
+    private static ServoRadianCalculator instance;
+    public static synchronized ServoRadianCalculator getInstance() {
+        if(instance == null){
+            instance = new ServoRadianCalculator();
+        }
+        return instance;
+    }
+
     double a = 153;
     double b = 145;
     double c = 10;
-    private double[] result = new double[4];
+    private double[] result = {0,0,0,0};
     public double[] calculate(double x,double y,double z,double alpha4){
         double theta = 0;
         if (x>0 && y>0){theta = Math.atan(y/x);}
@@ -47,6 +123,17 @@ class ServoRadianCalculator {
     }
 }
 class ServoValueOutputter{
+    private static ServoValueOutputter instance;
+    public static synchronized ServoValueOutputter getInstance(HardwareMap hardwareMap,Telemetry telemetry,ServoRadianCalculator servoRadianCalculator) {
+        if(instance == null){
+            instance = new ServoValueOutputter(hardwareMap,telemetry,servoRadianCalculator);
+        }
+        return instance;
+    }
+    public static synchronized ServoValueOutputter getInstance() {
+        return instance;
+    }
+
     private ServoRadianCalculator servoRadianCalculator;
     private Telemetry telemetry;
     private HardwareMap hardwareMap;
@@ -121,7 +208,14 @@ class ServoValueOutputter{
 }
 
 public class SixServoArmController {
-    ServoRadianCalculator servoRadianCalculator = new ServoRadianCalculator();
+    private static SixServoArmController instance;
+    public static synchronized SixServoArmController getInstance(HardwareMap hardwareMap,Telemetry telemetry){
+        if(instance == null){
+            instance = new SixServoArmController(hardwareMap,telemetry);
+        }
+        return instance;
+    }
+    ServoRadianCalculator servoRadianCalculator;
     ServoValueOutputter servoValueOutputter;
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
@@ -134,7 +228,8 @@ public class SixServoArmController {
     public SixServoArmController(HardwareMap hardwareMap, Telemetry telemetry){
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
-        servoValueOutputter = new ServoValueOutputter(hardwareMap, telemetry, servoRadianCalculator);
+        servoRadianCalculator = ServoRadianCalculator.getInstance();
+        servoValueOutputter = ServoValueOutputter.getInstance(hardwareMap, telemetry, servoRadianCalculator);
     }
     public void initArm(){
         setMode(SIX_SERVO_ARM_RUNMODE.RUN_WITHOUT_LOCATOR);
@@ -152,7 +247,7 @@ public class SixServoArmController {
     //D为顺时针
     double targetClipRadian = 0.5 * Math.PI;
 
-    public void setTargetPosition(ArmAction armAction){
+    public void setTargetPosition(@NonNull ArmAction armAction){
         setTargetPosition(armAction.GoToX,armAction.GoToY,-5,Math.PI, armAction.ClipAngle);
     };
     public void setTargetPosition(double X,double Y,double Z,double alpha4,double clipRadian) {
@@ -181,6 +276,26 @@ public class SixServoArmController {
                 break;
         }
 
+    }
+
+    public boolean setMode(){
+        boolean states;
+        this.SIX_SERVO_ARM_MODE = SIX_SERVO_ARM_RUNMODE.RUN_TO_POSITION;
+        telemetry.addData("SixServoArmController", "RUN_TO_POSITION");
+        if (System.currentTimeMillis() - setLocationTime >= servoMoveTime * 1000) {
+            nowX = targetX;
+            nowY = targetY;
+            nowZ = targetZ;
+            states = false;
+        } else {
+            double ratio = (System.currentTimeMillis() - setLocationTime) / (servoMoveTime * 1000);
+            nowX = recentX + (targetX - recentX) * ratio;
+            nowY = recentY + (targetY - recentY) * ratio;
+            nowZ = recentZ + (targetZ - recentZ) * ratio;
+            states = true;
+        }
+        servoValueOutputter.setRadians(servoRadianCalculator.calculate(nowX, nowY, nowZ, targetClipRadian), targetClipRadian, true);
+        return states;
     }
 
     public void setMode(SIX_SERVO_ARM_RUNMODE mode) {

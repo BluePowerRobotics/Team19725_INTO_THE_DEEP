@@ -7,12 +7,10 @@ import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.internal.camera.delegating.DelegatingCaptureSequence;
-
-public class IntakeLength{
+class IntakeLengthAction{
 
     HardwareMap hardwareMap;
-    public IntakeLength(HardwareMap hardwareMap){
+    public IntakeLengthAction(HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
         IntakeLengthController.getInstance(hardwareMap);
     }
@@ -45,7 +43,7 @@ public class IntakeLength{
     }
 }
 
-class IntakeLengthController{
+public class IntakeLengthController{
     static IntakeLengthController instance;
 
     private Servo inTakeLengthController;
