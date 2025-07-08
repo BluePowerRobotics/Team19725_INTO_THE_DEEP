@@ -45,6 +45,7 @@ captures/
 
 # For Mac users
 .DS_Store
+._*
 
 # Keystore files
 # Uncomment the following lines if you do not want to check your keystore files in.
@@ -80,5 +81,5 @@ lint/outputs/
 lint/tmp/
 # lint/reports/
 
-
+# IDEA settings
 /.idea
