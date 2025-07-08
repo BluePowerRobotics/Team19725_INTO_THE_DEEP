@@ -1,13 +1,17 @@
-package org.firstinspires.ftc.teamcode.Autonomous;
-
-import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
-import com.acmerobotics.roadrunner.Vector2d;
-
-public class UselessSamples {
-
-    //    public class Lift {
+//package org.firstinspires.ftc.teamcode.Autonomous;
+//
+//import androidx.annotation.NonNull;
+//
+//import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+//import com.acmerobotics.roadrunner.Action;
+//import com.acmerobotics.roadrunner.Pose2d;
+//import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+//import com.acmerobotics.roadrunner.Vector2d;
+//import com.qualcomm.robotcore.hardware.*;
+//import com.acmerobotics.roadrunner.*;
+//public class UselessSamples {
+//
+//        public class Lift {
 //        private DcMotorEx lift;
 //
 //        public Lift(HardwareMap hardwareMap) {
@@ -35,6 +39,8 @@ public class UselessSamples {
 //                    return false;
 //                }
 //            }
+//
+//
 //        }
 //        public Action liftUp() {
 //            return new LiftUp();
@@ -94,21 +100,21 @@ public class UselessSamples {
 //            return new OpenClaw();
 //        }
 //    }
-
-
-
-
-
-
-    ////                    new SequentialAction(
+//
+//
+//
+//
+//
+//
+//    //                    new SequentialAction(
 ////                            trajectoryActionChosentest,
-//                              armController.outPut(),
+////                              armController.outPut(),
 ////                            //claw.openClaw(),
 ////                            //lift.liftDown(),
 ////                            trajectoryActionCloseOutTest
 ////                    ),
-
-
+//
+//
 //    Action trajectoryActionChosentest;
 //            if (startPosition == 1) {
 //        trajectoryActionChosentest = tab1.build();
@@ -119,8 +125,8 @@ public class UselessSamples {
 //    } else {
 //        trajectoryActionChosentest = tab4.build();
 //    }
-
-
+//
+//
 //    TrajectoryActionBuilder Tap1 = drive.actionBuilder(new Pose2d(-25.96, -68.39, Math.toRadians(90.00)))
 //            .splineTo(new Vector2d(-35.44, -25.05), Math.toRadians(178.64))
 //            .splineTo(new Vector2d(-60.49, -59.13), Math.toRadians(225.00));
@@ -155,12 +161,12 @@ public class UselessSamples {
 //    TrajectoryActionBuilder tab4 =
 //            drive.actionBuilder(initialPose)
 //                    .strafeTo(new Vector2d(-60, -70.86));
-    //.strafeToLinearHeading(new Vector2d(100,100), new Rotation2d(0,1));
-    //.splineToConstantHeading(new Vector2d(10,10), new Rotation2d(0,0));
-    //.lineToY(10);
-    //.strafeTo(new Vector2d(10,10));
-
+//    .strafeToLinearHeading(new Vector2d(100,100), new Rotation2d(0,1));
+//    .splineToConstantHeading(new Vector2d(10,10), new Rotation2d(0,0));
+//    .lineToY(10);
+//    .strafeTo(new Vector2d(10,10));
+//
 //    Action trajectoryActionCloseOut = tab4.endTrajectory().fresh()
 //            //.strafeTo(new Vector2d(48, 12))
 //            .build();
-}
+//}

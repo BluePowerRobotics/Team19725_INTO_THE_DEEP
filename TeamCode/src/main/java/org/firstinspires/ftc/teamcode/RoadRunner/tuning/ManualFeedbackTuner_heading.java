@@ -9,8 +9,9 @@ import org.firstinspires.ftc.teamcode.RoadRunner.TankDrive;
 import org.firstinspires.ftc.teamcode.RoadRunner.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.RoadRunner.TwoDeadWheelLocalizer;
 
-public final class ManualFeedbackTuner extends LinearOpMode {
-    public static double DISTANCE = 48;
+public final class ManualFeedbackTuner_heading extends LinearOpMode {
+    public static double DEGREE= 3.1415926;
+    public static double TIME = 1;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -31,42 +32,10 @@ public final class ManualFeedbackTuner extends LinearOpMode {
             while (opModeIsActive()) {
                 Actions.runBlocking(
                     drive.actionBuilder(new Pose2d(0, 0, 0))
-                            .lineToX(DISTANCE)
-                            .waitSeconds(1)
-                            .lineToX(0)
-                            .waitSeconds(1)
-                            .lineToX(DISTANCE)
-                            .waitSeconds(1)
-                            .lineToX(0)
-                            .waitSeconds(1)
-                            .lineToX(DISTANCE)
-                            .waitSeconds(1)
-                            .lineToX(0)
-                            .waitSeconds(1)
-                            .lineToX(DISTANCE)
-                            .waitSeconds(1)
-                            .lineToX(0)
-                            .waitSeconds(1)
-                            .lineToX(DISTANCE)
-                            .waitSeconds(1)
-                            .lineToX(0)
-                            .waitSeconds(1)
-                            .lineToX(DISTANCE)
-                            .waitSeconds(1)
-                            .lineToX(0)
-                            .waitSeconds(1)
-                            .lineToX(DISTANCE)
-                            .waitSeconds(1)
-                            .lineToX(0)
-                            .waitSeconds(1)
-                            .lineToX(DISTANCE)
-                            .waitSeconds(1)
-                            .lineToX(0)
-                            .waitSeconds(1)
-                            .lineToX(DISTANCE)
-                            .waitSeconds(1)
-                            .lineToX(0)
-                            .waitSeconds(1)
+                            .turnTo(DEGREE)
+                            .waitSeconds(TIME)
+                            .turnTo(0)
+                            .waitSeconds(TIME)
                             .build());
             }
         } else if (TuningOpModes.DRIVE_CLASS.equals(TankDrive.class)) {
@@ -86,7 +55,7 @@ public final class ManualFeedbackTuner extends LinearOpMode {
             while (opModeIsActive()) {
                 Actions.runBlocking(
                     drive.actionBuilder(new Pose2d(0, 0, 0))
-                            .lineToX(DISTANCE)
+//                            .lineToX(DISTANCE)
                             .lineToX(0)
                             .build());
             }

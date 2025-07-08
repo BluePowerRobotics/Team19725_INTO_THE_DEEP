@@ -1,6 +1,6 @@
 # Team19725_INTO_THE_DEEP
 
-This is the project of FTC team 19725. 
+This is the project of FTC team 19725.
 
 We use the teamcode in this project to participate in the competition.
 
@@ -50,5 +50,4 @@ It is based on [**road-runner-quickstart**](https://github.com/acmerobotics/road
 
 这个项目适配于FTC *into the deep*赛季.
 
-它是一个基于[**road-runner-quickstart**](https://github.com/acmerobotics/road-runner-quickstart)的项目(你同样可以在GitHub上找到它.).    
-
+它是一个基于[**road-runner-quickstart**](https://github.com/acmerobotics/road-runner-quickstart)的项目(你同样可以在GitHub上找到它.).
