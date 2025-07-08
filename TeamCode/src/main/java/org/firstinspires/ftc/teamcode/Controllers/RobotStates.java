@@ -57,7 +57,7 @@ public class RobotStates {
 
 
     public enum OUTPUT_RUNMODE {
-        WAITING, SCANNING, DOWNING, TAKING, UPPING, PUTTING;
+        WAITING, DOWNING, TAKING, UPPING, PUTTING;
         private static final OUTPUT_RUNMODE[] VALUES = values();
 
         public OUTPUT_RUNMODE next() {
@@ -113,7 +113,7 @@ public class RobotStates {
                     break;
                 case INTAKE_ACTION_2:
                     INTAKE_MODE = INTAKE_RUNMODE.TAKING;
-                    OUTPUT_MODE = OUTPUT_RUNMODE.SCANNING;
+                    OUTPUT_MODE = OUTPUT_RUNMODE.WAITING;
                     INSTALL_MODE = INSTALL_RUNMODE.WAITING;
                     break;
                 case INTAKE_ACTION_3:
