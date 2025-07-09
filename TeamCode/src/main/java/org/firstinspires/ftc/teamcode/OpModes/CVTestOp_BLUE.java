@@ -4,13 +4,15 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
+import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Controllers.ServoValueOutputter;
-import org.firstinspires.ftc.teamcode.Controllers.SixServoArmController;
+import org.firstinspires.ftc.teamcode.Controllers.SixServoArmAction;
 import org.firstinspires.ftc.teamcode.RoadRunner.*;
 import org.firstinspires.ftc.teamcode.VisualColor.*;
 
@@ -18,13 +20,13 @@ import org.firstinspires.ftc.teamcode.VisualColor.*;
 public class CVTestOp_BLUE extends LinearOpMode {
 
     MecanumDrive drive;
-    SixServoArmController sixServoArmController;
-    FindCandidate CVmoudle = new FindCandidate();
+    SixServoArmAction sixServoArmController;
+    FindCandidate CVModule = new FindCandidate();
     private DcMotor armMotor;
     @Override
     public void runOpMode() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        sixServoArmController = new SixServoArmController(hardwareMap, telemetry);
+        sixServoArmController = new SixServoArmAction(hardwareMap, telemetry);
 //        armMotor = hardwareMap.get(DcMotor.class, "armMotor");
 //        armMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 //        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -33,7 +35,7 @@ public class CVTestOp_BLUE extends LinearOpMode {
         // Initialize the camera and other components here
         //***   0:Blue, 1:Red, 2:Yellow
         //todo: 这里的颜色需要根据实际情况调整!!!!!!!
-        CVmoudle.init(hardwareMap, telemetry, 0);
+        CVModule.init(hardwareMap, telemetry, 0);
         drive = new MecanumDrive(hardwareMap, new Pose2d(0,0,0));
 
         //waitForStart();
@@ -54,21 +56,24 @@ public class CVTestOp_BLUE extends LinearOpMode {
                 rbispressed = false;
             }
             if(isIntaking){
-                sixServoArmController.setTargetPosition(CVmoudle.findCandidate());
-            }
-            if(gamepad1.left_bumper){
-                sixServoArmController.servoValueOutputter.setClip(ServoValueOutputter.ClipPosition.LOCKED);
+                Actions.runBlocking(
+                        new SequentialAction(
+                                sixServoArmController.SixServoArmRunToPosition(CVModule.findCandidate()),
+                                sixServoArmController.SixServoArmSetClip(ServoValueOutputter.ClipPosition.LOCKED)
+                        )
+
+                );
             }
             // Process camera frames and detect colors
-            telemetry.addData("running toX", CVmoudle.findCandidate().GoToX);
-            telemetry.addData("running toY", CVmoudle.findCandidate().GoToY);
-            if(CVmoudle.findCandidate().suggestion == 1) {
+            telemetry.addData("running toX", CVModule.findCandidate().GoToX);
+            telemetry.addData("running toY", CVModule.findCandidate().GoToY);
+            if(CVModule.findCandidate().suggestion == 1) {
                 telemetry.addData("suggestion", "需要车辆左移");
             }
-            else if(CVmoudle.findCandidate().suggestion == 2) {
+            else if(CVModule.findCandidate().suggestion == 2) {
                 telemetry.addData("suggestion", "需要车辆右移");
             }
-            else if(CVmoudle.findCandidate().suggestion == 3) {
+            else if(CVModule.findCandidate().suggestion == 3) {
                 telemetry.addData("suggestion", "需要滑轨前移");
             }
             else {
