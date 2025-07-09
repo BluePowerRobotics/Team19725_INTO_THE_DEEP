@@ -34,7 +34,6 @@ public class CubeProcessor {
         double X = cubeInfo.centerpoint.x;
         double Y = cubeInfo.centerpoint.y;
         if(Y >= 150){
-            int c = 1/0;
             return -1;
         }
         double m1 = (Math.abs(X) - ellipseX) * (Math.abs(X) - ellipseX) / (ellipseA * ellipseA);
@@ -44,7 +43,7 @@ public class CubeProcessor {
             boolean ifInArea = true;
             return 0;
         }
-        if(X > 0){
+        if(X < 0){
             return 1; // 需要车辆左移
         }
         else{
