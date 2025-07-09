@@ -73,24 +73,3 @@ public class OutputController {
 
 }
 
-class OutputAction {
-    HardwareMap hardwareMap;
-    public OutputAction(HardwareMap hardwareMap){
-        this.hardwareMap = hardwareMap;
-    }
-    class OutputArmRunToPosition implements Action {
-        double targetHeight;
-        OutputController outputController = OutputController.getInstance(hardwareMap);
-        public OutputArmRunToPosition(double targetHeight){
-            this.targetHeight = targetHeight;
-
-        }
-        @Override
-        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            return outputController.setTargetOutputHeight(targetHeight).update();
-        }
-    }
-    public Action OutputArmRunToPosition(double targetHeight){
-        return new OutputArmRunToPosition(targetHeight);
-    }
-}
