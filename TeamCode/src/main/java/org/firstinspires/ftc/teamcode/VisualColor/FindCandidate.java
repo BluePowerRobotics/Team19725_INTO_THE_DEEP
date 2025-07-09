@@ -92,6 +92,17 @@ public class FindCandidate{
             new Scalar( 26,   10, 165),
             new Scalar(255, 127, 255)
     );
+    public static final ColorRange RED = new ColorRange(
+            ColorSpace.YCrCb,
+            new Scalar( 32, 176,  0),
+            new Scalar(255, 255, 132)
+    );
+    public static final ColorRange YELLOW = new ColorRange(
+            ColorSpace.YCrCb,
+            new Scalar( 32, 128,   0),
+            new Scalar(255, 170, 120)
+    );
+    public static ColorRange TargetColor;
     public CubeInfo[] candidates = new CubeInfo[1000];
 
     int CandidateLength = 0;
@@ -101,11 +112,21 @@ public class FindCandidate{
     ColorBlobLocatorProcessor colorLocator;
     VisionPortal portal;
 
-    public void init(HardwareMap hardWareMap, Telemetry telerc) {
+    public void init(HardwareMap hardWareMap, Telemetry telerc, int ColorMode) {
         Mytelemetry = telerc;
+        if(ColorMode == 0) {
+            TargetColor = BLUE; // 蓝色
+        } else if(ColorMode == 1) {
+            TargetColor = RED; // 红色
+        } else if(ColorMode == 2) {
+            TargetColor = YELLOW; // 黄色
+        } else {
+            Mytelemetry.addData("Error", 1/0);
+            return;
+        }
         //telemetry = new MultipleTelemetry(telerc, FtcDashboard.getInstance().getTelemetry());
         colorLocator = new ColorBlobLocatorProcessor.Builder()
-                .setTargetColorRange(BLUE)         // use a predefined color match
+                .setTargetColorRange(TargetColor)         // use a predefined color match
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
                 .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 1, 1, -1))  // search central 1/4 of camera view
                 .setDrawContours(true)// Show contours on the Stream Preview

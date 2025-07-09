@@ -73,12 +73,18 @@ public final class MecanumDrive {
 
         //todo redo
         //public double trackWidthTicks = 420744.8305413621;
+
+        //todo 如果底盘改了请重新测这个参数
         public double trackWidthTicks =  7057.91691;
 
         // feedforward parameters (in tick units)
+
+
+
+        //todo:  每辆新车都需要重新测量下面三个参数
         public double kS =  0.8110246583214125;
         public double kV = 0.00036096409870482621;
-        public double kA = 0.00012;
+        public double kA = 0.00000000001;
 
         // path profile parameters (in inches)
         public double maxWheelVel = 50;
@@ -90,11 +96,13 @@ public final class MecanumDrive {
         public double maxAngAccel = Math.PI;
 
         // path controller gains
-        public double axialGain = 3;
-        public double lateralGain = 2;
-        public double headingGain = 2; // shared with turn
 
-        public double axialVelGain = 0.1;
+        //todo:  每辆新车都需要重新测量下面六个参数
+        public double axialGain = 0;
+        public double lateralGain = 0;
+        public double headingGain = 0; // shared with turn
+
+        public double axialVelGain = 0;
         public double lateralVelGain = 0.0;
         public double headingVelGain = 0; // shared with turn
     }

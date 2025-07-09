@@ -15,8 +15,8 @@ import org.firstinspires.ftc.teamcode.RoadRunner.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 
 @Config
-@Autonomous(name = "Auto_2025_Left", group = "Autonomous")
-public class Auto2025Left extends LinearOpMode {
+@Autonomous(name = "Auto_2025_Left_Blue", group = "Autonomous")
+public class WRCAutoLeftBlue extends LinearOpMode {
     GoBildaPinpointDriver odo;
     boolean ifblue = true;
 
