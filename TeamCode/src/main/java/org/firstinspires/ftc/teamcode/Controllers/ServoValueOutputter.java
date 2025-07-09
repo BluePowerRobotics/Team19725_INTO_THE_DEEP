@@ -57,7 +57,7 @@ public class ServoValueOutputter{
         }
         setClipPosition(clipRadian,useAutoCalculator);
     }
-    enum ClipPosition {
+    public enum ClipPosition {
         LOCKED,
         UNLOCKED,
         HALF_LOCKED
