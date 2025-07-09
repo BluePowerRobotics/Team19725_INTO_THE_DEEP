@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.Controllers;
 
+import androidx.annotation.NonNull;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -7,15 +10,15 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import org.firstinspires.ftc.teamcode.Controllers.RobotStates.INSTALL_RUNMODE;
-public class InstallerController {
+public class InstallerController{
     HardwareMap hardwareMap;
     Gamepad gamepad1;
     Gamepad gamepad2;
     Telemetry telemetry;
-    Servo clipInstallPuller,clipInstaller;
+    Servo clipInstallPuller,clipInstaller,beamSpinner;
     INSTALL_RUNMODE installStates = INSTALL_RUNMODE.PREPARING;
-    DisSensor disSensor;
-    public void initInstaller(HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2, Telemetry telemetry) {
+    DisSensor disSensor = new DisSensor();
+    public InstallerController(HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2, Telemetry telemetry) {
         // Initialize the installer with the provided hardware map and game pads
         // This method can be used to set up any necessary components or configurations
         // for the installation process.
@@ -23,8 +26,8 @@ public class InstallerController {
         this.hardwareMap = hardwareMap;
         this.gamepad1 = gamepad1;
         this.gamepad2 = gamepad2;
-        clipInstaller = this.hardwareMap.get(Servo.class,"");
-        clipInstallPuller = this.hardwareMap.get(Servo.class,"");
+        clipInstaller = this.hardwareMap.get(Servo.class,"servoc1");
+        clipInstallPuller = this.hardwareMap.get(Servo.class,"servoc0");
         clipInstaller.setDirection(Servo.Direction.FORWARD);
         clipInstallPuller.setDirection(Servo.Direction.FORWARD);
 
@@ -43,6 +46,45 @@ public class InstallerController {
     long prepareStartTime = 0;
     boolean InstallInited = false;
     long installStartTime = 0;
+    public class InstallerPuller implements Action{
+        private boolean initialized = false;
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            double dis = disSensor.getDis();
+            if (!initialized) {
+                clipInstallPuller.setPosition(0);
+                initialized = true;
+            }
+            if (dis > 0) {
+                return true;
+            } else {
+                clipInstallPuller.setPosition(0);
+                return false;
+            }
+        }
+    }
+    public Action installerPuller() {
+        // Create an action to pull the installer
+        return new InstallerPuller();
+    }
+    public class BeamSpinner implements Action{
+        private boolean down;
+        public BeamSpinner(boolean down) {
+            this.down = down;
+        }
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            if (down) {
+                beamSpinner.setPosition(0.8);
+            } else {
+                beamSpinner.setPosition(0);
+            }
+            return false;
+        }
+    }
+    public Action beamSpinner(boolean down) {
+        return new BeamSpinner(down);
+    }
     public void setMode(INSTALL_RUNMODE installStates) {
         // Set the installation mode to the specified run mode
         this.installStates = installStates;
