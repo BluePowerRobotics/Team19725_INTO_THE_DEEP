@@ -137,10 +137,8 @@ public class FindCandidate{
        portal = new VisionPortal.Builder()
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .addProcessor(colorLocator)
-                //.addProcessor(colorLocatorGreen)
                 .addProcessor(processor)
                 .setCameraResolution(new Size(resolutionwidth, resolutionheight))
-
                 .setCamera(hardWareMap.get(WebcamName.class, "Webcam 1"))
                 .build();
     }
@@ -197,9 +195,9 @@ public class FindCandidate{
         ColorBlobLocatorProcessor.Util.filterByArea(minarea, maxarea, blobs);  // filter out very small blobs.
 
 
-        Mytelemetry.addData("Blur", blurSize);
-        Mytelemetry.addData("Erode", erodeSize);
-        Mytelemetry.addData("Dilate", dilateSize);
+//        Mytelemetry.addData("Blur", blurSize);
+//        Mytelemetry.addData("Erode", erodeSize);
+//        Mytelemetry.addData("Dilate", dilateSize);
         Mytelemetry.addData("FPS_Camera", portal.getFps());
         Mytelemetry.addData("State_Camera", portal.getCameraState().toString());
 
@@ -246,6 +244,9 @@ public class FindCandidate{
             candidates[j].centerpoint = OpenCvUndistortion.openCvUndistortion(candidates[j].centerpoint.x - MidX, candidates[j].centerpoint.y - MidY);
             candidates[j].centerpoint = new Point(candidates[j].centerpoint.x * PixeltoMM, candidates[j].centerpoint.y * PixeltoMM);
             int Status = CubeProcessor.ProcessCube(candidates[j]);
+            if(Status == -1){
+                continue; // 不符合要求
+            }
             if(Status == 0){
                 InsideCandidates[j] = candidates[j];
                 InsideCnt++;
@@ -262,13 +263,9 @@ public class FindCandidate{
                 RightCandidates[j] = candidates[j];
                 RightCnt++;
             }
-            else if(Status == 3){
+            else{
                 FrontCandidates[j] = candidates[j];
                 FrontCnt++;
-            }
-            else{
-                //int a = 1/0; // 触发异常，测试异常处理
-                continue;
             }
         }
 
