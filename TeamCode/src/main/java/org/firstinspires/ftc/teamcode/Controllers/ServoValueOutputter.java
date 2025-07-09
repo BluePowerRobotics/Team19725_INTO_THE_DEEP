@@ -24,7 +24,7 @@ public class ServoValueOutputter{
     private Servo[] servo = new Servo[6];
     
     private double[] servoZeroPositionDegree = {0, 0, 0, 0, 0, 0};
-    private int[] servoDegree = {360, 180, 180, 270, 180, 180};//舵机总旋转角度
+    private int[] servoDegree = {315, 270, 270, 270, 270, 180};//舵机总旋转角度
 
     public ServoValueOutputter(HardwareMap hardwareMap,Telemetry telemetry,ServoRadianCalculator servoRadianCalculator) {
         this.servoRadianCalculator = servoRadianCalculator;
@@ -36,7 +36,7 @@ public class ServoValueOutputter{
         servo[3] = this.hardwareMap.get(Servo.class,"servos3");
         servo[4] = this.hardwareMap.get(Servo.class,"servos4");
         servo[5] = this.hardwareMap.get(Servo.class,"servos5");
-        servo[0].setDirection(Servo.Direction.REVERSE);//逆时针
+        servo[0].setDirection(Servo.Direction.FORWARD);//逆时针
         servo[1].setDirection(Servo.Direction.REVERSE);//逆时针
         servo[2].setDirection(Servo.Direction.FORWARD);//顺时针
         servo[3].setDirection(Servo.Direction.FORWARD);//顺时针
@@ -65,13 +65,13 @@ public class ServoValueOutputter{
     public void setClip(ClipPosition clipPosition) {
         switch (clipPosition) {
             case LOCKED:
-                servo[5].setPosition(0); // Assuming 0 is the locked position
+                servo[5].setPosition(0.8); // Assuming 0 is the locked position
                 break;
             case UNLOCKED:
-                servo[5].setPosition(1); // Assuming 1 is the unlocked position
+                servo[5].setPosition(0.3); // Assuming 1 is the unlocked position
                 break;
             case HALF_LOCKED:
-                servo[5].setPosition(0.5); // Assuming 0.5 is the half-locked position
+                servo[5].setPosition(0.69); // Assuming 0.5 is the half-locked position
                 break;
         }
         telemetry.addData("Clip Position", clipPosition);
