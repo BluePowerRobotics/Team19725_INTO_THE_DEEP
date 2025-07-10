@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.VisualColor.model.ArmAction;
 @Config
 @Autonomous(name = "Auto_2025_Right_Red", group = "Autonomous")
 public class WRCAutoRightRed extends LinearOpMode {
+    public static Pose2d EndPose = new Pose2d(0,0,0);
     public void runOpMode() {
         AddTele step1  = new AddTele("step1", 1, telemetry);
         AddTele step2  = new AddTele("step2", 2, telemetry);
@@ -30,17 +31,16 @@ public class WRCAutoRightRed extends LinearOpMode {
         double Heading = Math.toRadians(90);
         Pose2d initialPoseRight = new Pose2d(16.4, -63.5, Heading);
 
-
-
-
         Vector2d OutPutPos0 = new Vector2d(0,-32.5);
         Pose2d OutPut0FinishPos = new Pose2d(6,-32.5, Heading);
         Vector2d OutPutPos1 = new Vector2d(6,-32.5);
         Pose2d OutPut1FinishPos = new Pose2d(6,-32.5, Heading);
         Vector2d IntakePos = new Vector2d(49,-40);
         Pose2d IntakeFinish = new Pose2d(49,-40, Heading);
-        Vector2d ClipPos = new Vector2d(49,-63.5);
-        Pose2d ClipFinish = new Pose2d(49,-63.5, Heading);
+        Vector2d ClipStartPos = new Vector2d(49,-63.5);
+        Pose2d ClipStartFinish = new Pose2d(49,-63.5, Heading);
+        Vector2d ClipFinishPos = new Vector2d(60,-63.5);
+        Pose2d ClipFinishFinish = new Pose2d(60,-63.5, Heading);
 
         //todo
         //    调整出发点位置！！！
@@ -50,23 +50,26 @@ public class WRCAutoRightRed extends LinearOpMode {
 
 
 
-        TrajectoryActionBuilder OutPut0 = drive.actionBuilder(initialPoseRight)
+        TrajectoryActionBuilder OutPut1 = drive.actionBuilder(initialPoseRight)
                 .strafeTo(OutPutPos0);
 
-        Action ActionOutPut0 = OutPut0.build();
+        Action ActionOutPut1 = OutPut1.build();
 
-        TrajectoryActionBuilder Intake1 = OutPut0.endTrajectory().fresh()
+        TrajectoryActionBuilder Intake1 = OutPut1.endTrajectory().fresh()
                 .strafeTo(IntakePos);
         Action ActionIntake1 = Intake1.build();
 
         TrajectoryActionBuilder GetClip = Intake1.endTrajectory().fresh()
-                .strafeTo(ClipPos);
-
+                .strafeTo(ClipStartPos);
         Action ActionGetClip = GetClip.build();
 
-        TrajectoryActionBuilder Output1 = GetClip.endTrajectory().fresh()
+        TrajectoryActionBuilder GetClipFinish = GetClip.endTrajectory().fresh()
+                .strafeTo(ClipFinishPos);
+        Action ActionGetClipFinish = GetClipFinish.build();
+
+        TrajectoryActionBuilder Output2 = GetClipFinish.endTrajectory().fresh()
                 .strafeTo(OutPutPos1);
-        Action ActionOutput1 = Output1.build();
+        Action ActionOutput2 = Output2.build();
 
         FindCandidate CVModule = new FindCandidate();
         SixServoArmAction sixServoArmController = new SixServoArmAction(hardwareMap, telemetry,gamepad2);
@@ -95,11 +98,13 @@ public class WRCAutoRightRed extends LinearOpMode {
 
         Actions.runBlocking(
                 new SequentialAction(
-                        ActionOutPut0,
+                        ActionOutPut1,
                         //output Action
                         ActionIntake1,
                         ActionGetClip,
-                        ActionOutput1
+                        ActionGetClipFinish,
+                        //install action
+                        ActionOutput2
                 )
         );
         while(drive.localizer.getPose().position.x > -7){
@@ -124,6 +129,7 @@ public class WRCAutoRightRed extends LinearOpMode {
                 );
             }
         }
-
-        }
+        EndPose = drive.localizer.getPose();
     }
+}
+
