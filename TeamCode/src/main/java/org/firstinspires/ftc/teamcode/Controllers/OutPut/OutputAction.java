@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Controllers;
+package org.firstinspires.ftc.teamcode.Controllers.OutPut;
 
 import androidx.annotation.NonNull;
 
@@ -26,4 +26,15 @@ public class OutputAction {
     public Action OutputArmRunToPosition(double targetHeight){
         return new OutputArmRunToPosition(targetHeight);
     }
+    class OutputEatIntake implements Action{
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            return OutputController.getInstance().eatIntake();
+        }
+    }
+    public Action OutputEatIntake(){
+        return new OutputEatIntake();
+    }
+    
 }
