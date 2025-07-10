@@ -26,7 +26,7 @@ public class CVTestOp_BLUE extends LinearOpMode {
     @Override
     public void runOpMode() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        sixServoArmController = new SixServoArmAction(hardwareMap, telemetry);
+        sixServoArmController = new SixServoArmAction(hardwareMap, telemetry,gamepad2);
 //        armMotor = hardwareMap.get(DcMotor.class, "armMotor");
 //        armMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 //        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

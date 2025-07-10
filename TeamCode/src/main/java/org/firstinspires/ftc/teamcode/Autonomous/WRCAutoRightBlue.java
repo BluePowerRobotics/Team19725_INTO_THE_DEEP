@@ -69,7 +69,7 @@ public class WRCAutoRightBlue extends LinearOpMode {
             Action ActionOutput1 = Output1.build();
 
             FindCandidate CVModule = new FindCandidate();
-            SixServoArmAction sixServoArmController = new SixServoArmAction(hardwareMap, telemetry);
+            SixServoArmAction sixServoArmController = new SixServoArmAction(hardwareMap, telemetry,gamepad2);
             CVModule.init(hardwareMap, telemetry, 0);
 
             TrajectoryActionBuilder climb2 = drive.actionBuilder(new Pose2d(-33.89, -66.29, Math.toRadians(90.00)))

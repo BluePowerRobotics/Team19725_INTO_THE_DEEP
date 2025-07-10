@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -12,12 +13,14 @@ import org.firstinspires.ftc.teamcode.VisualColor.model.ArmAction;
 public class SixServoArmAction{
     HardwareMap hardwareMap;
     Telemetry telemetry;
+    Gamepad gamepad2;
     ServoRadianCalculator servoRadianCalculator;
     ServoValueOutputter servoValueOutputter;
     SixServoArmController sixServoArmController;
-    public SixServoArmAction(HardwareMap hardwareMap,Telemetry telemetry){
+    public SixServoArmAction(HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad2){
         this.hardwareMap= hardwareMap;
         this.telemetry= telemetry;
+        this.gamepad2 = gamepad2;
         sixServoArmController = SixServoArmController.getInstance(hardwareMap,telemetry);
         servoValueOutputter = sixServoArmController.servoValueOutputter;
         servoRadianCalculator = sixServoArmController.servoRadianCalculator;
@@ -45,6 +48,9 @@ public class SixServoArmAction{
         @Override
         public boolean run(@NonNull TelemetryPacket packet){
             sixServoArmController.setTargetPosition(x,y,z,ArmThreeRadian,ClipRadian);
+            if(gamepad2.right_bumper){
+                return false;
+            }
             return sixServoArmController.setMode();
         }
     }
