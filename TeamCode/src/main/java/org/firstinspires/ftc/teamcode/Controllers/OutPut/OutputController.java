@@ -1,12 +1,10 @@
-package org.firstinspires.ftc.teamcode.Controllers;
+package org.firstinspires.ftc.teamcode.Controllers.OutPut;
 
-import androidx.annotation.NonNull;
-
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.teamcode.Controllers.RobotStates;
 
 public class OutputController {
     public OutputController(HardwareMap hardwareMap){
@@ -70,6 +68,62 @@ public class OutputController {
         outputLengthController.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         return !(Math.abs(outputLengthController.getCurrentPosition()- outputLengthControllerValue)<=2);
     }
+    boolean eatIntakeInitialized=false;
+    long eatIntakeStartTime;
+    public boolean eatIntake(){
+        if(eatIntakeInitialized){
+            eatIntakeStartTime=System.currentTimeMillis();
+            setArmPosition(0);
+            setTargetOutputHeight(0);
+            eatIntakeInitialized=true;
+        }
 
+        if(update()&&(System.currentTimeMillis()-eatIntakeStartTime)>1000){//完成条件判断
+            eatIntakeInitialized=false;
+        }
+        return eatIntakeInitialized;
+    }
+    boolean vomitInstallerInitialized=false;
+    long vomitInstallerStartTime;
+    public boolean vomitInstaller(){
+        if(vomitInstallerInitialized){
+            vomitInstallerStartTime = System.currentTimeMillis();
+            setArmPosition(0);
+            setTargetOutputHeight(0);
+            vomitInstallerInitialized=true;
+        }
+        if(update()&&(System.currentTimeMillis()-vomitInstallerStartTime)>1000){//完成条件判断
+            vomitInstallerInitialized=false;
+        }
+        return vomitInstallerInitialized;
+    }
+    boolean eatInstallerInitialized=false;
+    long eatInstallerStartTime;
+    public boolean eatInstaller(){
+        if(eatInstallerInitialized){
+            eatIntakeStartTime=System.currentTimeMillis();
+            setArmPosition(0);
+            setTargetOutputHeight(0);
+            eatInstallerInitialized=true;
+        }
+        if(update()&&(System.currentTimeMillis()-eatInstallerStartTime)>1000){//完成条件判断
+            eatInstallerInitialized=false;
+        }
+        return eatInstallerInitialized;
+    }
+    boolean throwAwaySampleInitialized=false;
+    long throwAwaySampleStartTime;
+    public boolean throwAwaySample(){
+        if(throwAwaySampleInitialized){
+            throwAwaySampleStartTime=System.currentTimeMillis();
+            setArmPosition(0);
+            setTargetOutputHeight(0);
+            throwAwaySampleInitialized=true;
+        }
+        if(update()&&(System.currentTimeMillis()-throwAwaySampleStartTime)>1000){//完成条件判断
+            throwAwaySampleInitialized=false;
+        }
+        return throwAwaySampleInitialized;
+    }
 }
 
