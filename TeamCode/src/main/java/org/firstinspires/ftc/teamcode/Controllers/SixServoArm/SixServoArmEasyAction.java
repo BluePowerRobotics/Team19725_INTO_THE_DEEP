@@ -6,29 +6,30 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.VisualColor.model.ArmAction;
 
-public class SixServoArmAction{
+public class SixServoArmEasyAction {
     HardwareMap hardwareMap;
     Telemetry telemetry;
     Gamepad gamepad2;
-    ServoRadianCalculator servoRadianCalculator;
+    ServoRadianEasyCalculator servoRadianCalculator;
     ServoValueOutputter servoValueOutputter;
-    SixServoArmController sixServoArmController;
-    public SixServoArmAction(HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad2){
+    SixServoArmEasyController sixServoArmController;
+    public SixServoArmEasyAction(HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad2){
         this.hardwareMap= hardwareMap;
         this.telemetry= telemetry;
         this.gamepad2 = gamepad2;
-        sixServoArmController = SixServoArmController.getInstance(hardwareMap,telemetry);
+        sixServoArmController = SixServoArmEasyController.getInstance(hardwareMap,telemetry);
         servoValueOutputter = sixServoArmController.servoValueOutputter;
         servoRadianCalculator = sixServoArmController.servoRadianCalculator;
     }
     public class SixServoArmInit implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet){
-            sixServoArmController.setTargetPosition(-100,1,100,0.1,0.1);
-            return sixServoArmController.setMode();
+            sixServoArmController.setTargetPosition(-100,1,0.1,0.1);
+            return sixServoArmController.update();
         }
     }
     public Action SixServoArmInit(){
@@ -46,11 +47,11 @@ public class SixServoArmAction{
         }
         @Override
         public boolean run(@NonNull TelemetryPacket packet){
-            sixServoArmController.setTargetPosition(x,y,z,ArmThreeRadian,ClipRadian);
+            sixServoArmController.setTargetPosition(x,y,ArmThreeRadian,ClipRadian);
             if(gamepad2.right_bumper){
                 return false;
             }
-            return sixServoArmController.setMode();
+            return sixServoArmController.update();
         }
     }
     public Action SixServoArmRunToPosition(double x,double y,double z,double ArmThreeRadian,double ClipRadian){
