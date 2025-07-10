@@ -11,9 +11,7 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.Controllers.ArmController;
-import org.firstinspires.ftc.teamcode.Controllers.SixServoArmAction;
-import org.firstinspires.ftc.teamcode.RoadRunner.GoBildaPinpointDriver;
+import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.SixServoArmAction;
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.VisualColor.FindCandidate;
 import org.firstinspires.ftc.teamcode.VisualColor.model.ArmAction;

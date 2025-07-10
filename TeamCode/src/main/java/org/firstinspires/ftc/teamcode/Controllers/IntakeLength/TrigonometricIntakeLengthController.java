@@ -1,52 +1,49 @@
-package org.firstinspires.ftc.teamcode.Controllers;
+package org.firstinspires.ftc.teamcode.Controllers.IntakeLength;
 
-import androidx.annotation.NonNull;
-
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-public class IntakeLengthController{
-    static IntakeLengthController instance;
+
+public class TrigonometricIntakeLengthController implements IntakeLengthControllerInterface {
+    static TrigonometricIntakeLengthController instance;
 
     private Servo inTakeLengthController;
     private HardwareMap hardwaremap;
-    public IntakeLengthController(HardwareMap hardwaremap){
+    public TrigonometricIntakeLengthController(HardwareMap hardwaremap){
         this.hardwaremap = hardwaremap;
         inTakeLengthController = this.hardwaremap.get(Servo.class,"");
     }
     private double armALength=0;
     private double armBLength=0;
-    private double inTakeMinLength=0;//收到最小时相对于默认值的位置（伸出为正）
+    private double inTakeMinLength=0;//收到最小时(重叠时)相对于默认值的位置（伸出为正）
     private double intakeTargetLength;
     private double intakeLengthTargetRadian;
     private double intakeLengthNowRadian;
-
-    public IntakeLengthController setIntakeTargetPosition(double inTakeLength){
+    @Override
+    public TrigonometricIntakeLengthController setIntakeTargetPosition(double inTakeLength){
         intakeTargetLength = inTakeLength;
         intakeLengthTargetRadian = Math.acos((armALength*armALength+(intakeTargetLength +inTakeMinLength)*(intakeTargetLength +inTakeMinLength)-armBLength*armBLength)/(2*armALength*(intakeTargetLength +inTakeMinLength)));
         return instance;
     }
-    public static synchronized IntakeLengthController getInstance(HardwareMap hardwareMap) {
+    public static synchronized TrigonometricIntakeLengthController getInstance(HardwareMap hardwareMap) {
         if (instance == null) {
-            instance = new IntakeLengthController(hardwareMap);
+            instance = new TrigonometricIntakeLengthController(hardwareMap);
         }
         return instance;
     }
-    public static synchronized IntakeLengthController getInstance() {
+    public static synchronized TrigonometricIntakeLengthController getInstance() {
         return instance;
     }
-
-    public IntakeLengthController update(){
+    @Override
+    public TrigonometricIntakeLengthController update(){
         inTakeLengthController.setPosition(intakeLengthTargetRadian /Math.PI);
         setPositionTime = System.currentTimeMillis();
         return instance;
     }
     long setPositionTime = 0;
     double servoSpeed = 0.24;//sec per 60 degree
-
-    public double getIntakeLengthNowRadian(){
+    @Override
+    public double getIntakeLengthCurrentPosition(){
         boolean goBigger,goSmaller;
         goBigger = intakeLengthTargetRadian-intakeLengthNowRadian>0;
         goSmaller = intakeLengthTargetRadian-intakeLengthNowRadian<0;
@@ -60,7 +57,8 @@ public class IntakeLengthController{
         }
         return intakeLengthNowRadian;
     }
-    public double getIntakeLengthTargetRadian(){
+    @Override
+    public double getIntakeLengthTargetPosition(){
         return intakeLengthTargetRadian;
     }
 }

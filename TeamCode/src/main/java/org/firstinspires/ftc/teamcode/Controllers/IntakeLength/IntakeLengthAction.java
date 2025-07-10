@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Controllers;
+package org.firstinspires.ftc.teamcode.Controllers.IntakeLength;
 
 import androidx.annotation.NonNull;
 
@@ -9,17 +9,18 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class IntakeLengthAction{
 
     HardwareMap hardwareMap;
+    IntakeLengthControllerInterface intakeLengthController;
     public IntakeLengthAction(HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
-        IntakeLengthController.getInstance(hardwareMap);
+        intakeLengthController  = new MotorLineIntakeLengthController(hardwareMap);
     }
     double targetPosition;
 
     public class IntakeRunToPosition implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet){
-            IntakeLengthController.getInstance().setIntakeTargetPosition(targetPosition).update();
-            return !(IntakeLengthController.getInstance().getIntakeLengthNowRadian() == IntakeLengthController.getInstance().getIntakeLengthTargetRadian());//true=continue , false = finish
+            intakeLengthController.setIntakeTargetPosition(targetPosition).update();
+            return !(intakeLengthController.getIntakeLengthCurrentPosition() == intakeLengthController.getIntakeLengthTargetPosition());//true=continue , false = finish
         }
 
     }
@@ -31,8 +32,8 @@ public class IntakeLengthAction{
     public class IntakeLengthInit implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet){
-            IntakeLengthController.getInstance().setIntakeTargetPosition(0).update();
-            return !(IntakeLengthController.getInstance().getIntakeLengthNowRadian() == IntakeLengthController.getInstance().getIntakeLengthTargetRadian());
+            intakeLengthController.setIntakeTargetPosition(0).update();
+            return !(intakeLengthController.getIntakeLengthCurrentPosition() == intakeLengthController.getIntakeLengthTargetPosition());
         }
 
     }

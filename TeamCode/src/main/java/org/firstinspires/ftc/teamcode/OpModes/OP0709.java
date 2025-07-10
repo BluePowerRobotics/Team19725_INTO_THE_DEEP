@@ -4,8 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.Controllers.SixServoArmController;
-import org.firstinspires.ftc.teamcode.VisualColor.FindCandidate;
+import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.SixServoArmController;
 
 @TeleOp
 

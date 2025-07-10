@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Controllers;
+package org.firstinspires.ftc.teamcode.Controllers.SixServoArm;
 
 import androidx.annotation.NonNull;
 

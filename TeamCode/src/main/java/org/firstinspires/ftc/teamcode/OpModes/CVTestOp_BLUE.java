@@ -11,8 +11,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.Controllers.ServoValueOutputter;
-import org.firstinspires.ftc.teamcode.Controllers.SixServoArmAction;
+import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.ServoValueOutputter;
+import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.SixServoArmAction;
 import org.firstinspires.ftc.teamcode.RoadRunner.*;
 import org.firstinspires.ftc.teamcode.VisualColor.*;
 

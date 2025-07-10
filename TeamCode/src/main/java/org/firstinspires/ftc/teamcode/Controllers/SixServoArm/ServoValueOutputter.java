@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Controllers;
+package org.firstinspires.ftc.teamcode.Controllers.SixServoArm;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -8,7 +8,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class ServoValueOutputter{
     private static ServoValueOutputter instance;
-    public static synchronized ServoValueOutputter getInstance(HardwareMap hardwareMap, Telemetry telemetry, ServoRadianCalculator servoRadianCalculator) {
+    public static synchronized ServoValueOutputter getInstance(HardwareMap hardwareMap, Telemetry telemetry, ServoRadianCalculatorInterface servoRadianCalculator) {
         if(instance == null){
             instance = new ServoValueOutputter(hardwareMap,telemetry,servoRadianCalculator);
         }
@@ -18,7 +18,7 @@ public class ServoValueOutputter{
         return instance;
     }
 
-    private ServoRadianCalculator servoRadianCalculator;
+    private ServoRadianCalculatorInterface servoRadianCalculator;
     private Telemetry telemetry;
     private HardwareMap hardwareMap;
     private Servo[] servo = new Servo[6];
@@ -26,7 +26,7 @@ public class ServoValueOutputter{
     private double[] servoZeroPositionDegree = {0, 0, 56.7, 90, 0, 0};
     private int[] servoDegree = {315, 270, 270, 270, 270, 180};//舵机总旋转角度
 
-    public ServoValueOutputter(HardwareMap hardwareMap,Telemetry telemetry,ServoRadianCalculator servoRadianCalculator) {
+    public ServoValueOutputter(HardwareMap hardwareMap,Telemetry telemetry,ServoRadianCalculatorInterface servoRadianCalculator) {
         this.servoRadianCalculator = servoRadianCalculator;
         this.telemetry = telemetry;
         this.hardwareMap = hardwareMap;
@@ -84,7 +84,7 @@ public class ServoValueOutputter{
     }
     public void setClipPosition(double radian,boolean useAutoCalculator){
         if(useAutoCalculator){
-            setClipPosition(radian-servoRadianCalculator.getTheta());
+            setClipPosition(radian-servoRadianCalculator.getRadian0());
         }else{
             setClipPosition(radian);
         }

@@ -1,12 +1,8 @@
-package org.firstinspires.ftc.teamcode.Controllers;
+package org.firstinspires.ftc.teamcode.Controllers.SixServoArm;
 
 import androidx.annotation.NonNull;
 
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.VisualColor.model.ArmAction;
@@ -35,7 +31,7 @@ public class SixServoArmController {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
         servoRadianCalculator = ServoRadianCalculator.getInstance();
-        servoValueOutputter = ServoValueOutputter.getInstance(hardwareMap, telemetry, servoRadianCalculator);
+        servoValueOutputter = ServoValueOutputter.getInstance(hardwareMap, telemetry, (ServoRadianCalculatorInterface) servoRadianCalculator);
     }
     public void initArm(){
         setMode(SIX_SERVO_ARM_RUNMODE.RUN_WITHOUT_LOCATOR);
