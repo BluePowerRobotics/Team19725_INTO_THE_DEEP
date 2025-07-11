@@ -36,5 +36,34 @@ public class OutputAction {
     public Action OutputEatIntake(){
         return new OutputEatIntake();
     }
-    
+    class OutputVomitInstaller implements Action{
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            return OutputController.getInstance().vomitInstaller();
+        }
+    }
+    public Action OutputVomitInstaller(){
+        return new OutputVomitInstaller();
+    }
+    class OutputEatInstaller implements Action{
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            return OutputController.getInstance().eatInstaller();
+        }
+    }
+    public Action OutputEatInstaller(){
+        return new OutputEatInstaller();
+    }
+    class OutputThrowAwaySample implements Action{
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            return OutputController.getInstance().throwAwaySample();
+        }
+    }
+    public Action OutputThrowAwaySample(){
+        return new OutputThrowAwaySample();
+    }
 }

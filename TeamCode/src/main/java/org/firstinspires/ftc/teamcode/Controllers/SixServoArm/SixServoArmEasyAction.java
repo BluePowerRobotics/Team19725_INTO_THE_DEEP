@@ -79,4 +79,19 @@ public class SixServoArmEasyAction {
         this.clipPosition = clipPosition;
         return new SixServoArmSetClip();
     }
+    long SixServoArmVomitOutputStartTime;
+    class SixServoArmVomitOutput implements Action{
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            SixServoArmVomitOutputStartTime=System.currentTimeMillis();
+            servoValueOutputter.setRadians(new double[]{0.5 * Math.PI, Math.PI, Math.PI, 0.5 * Math.PI},0,false);
+            if(System.currentTimeMillis()-SixServoArmVomitOutputStartTime>1500)
+                return false;
+            return true;
+        }
+    }
+    public Action SixServoArmVomitOutput (){
+        return new SixServoArmVomitOutput();
+    }
 }
