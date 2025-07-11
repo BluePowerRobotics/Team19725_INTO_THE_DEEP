@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Controllers;
+package org.firstinspires.ftc.teamcode.Controllers.SixServoArm;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -8,7 +8,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class ServoValueOutputter{
     private static ServoValueOutputter instance;
-    public static synchronized ServoValueOutputter getInstance(HardwareMap hardwareMap, Telemetry telemetry, ServoRadianCalculator servoRadianCalculator) {
+    public static synchronized ServoValueOutputter getInstance(HardwareMap hardwareMap, Telemetry telemetry, ServoRadianCalculatorInterface servoRadianCalculator) {
         if(instance == null){
             instance = new ServoValueOutputter(hardwareMap,telemetry,servoRadianCalculator);
         }
@@ -18,29 +18,29 @@ public class ServoValueOutputter{
         return instance;
     }
 
-    private ServoRadianCalculator servoRadianCalculator;
+    private ServoRadianCalculatorInterface servoRadianCalculator;
     private Telemetry telemetry;
     private HardwareMap hardwareMap;
     private Servo[] servo = new Servo[6];
     
-    private double[] servoZeroPositionDegree = {0, 0, 0, 0, 0, 0};
+    private double[] servoZeroPositionDegree = {0, 0, 56.7, 90, 0, 0};
     private int[] servoDegree = {315, 270, 270, 270, 270, 180};//舵机总旋转角度
 
-    public ServoValueOutputter(HardwareMap hardwareMap,Telemetry telemetry,ServoRadianCalculator servoRadianCalculator) {
+    public ServoValueOutputter(HardwareMap hardwareMap,Telemetry telemetry,ServoRadianCalculatorInterface servoRadianCalculator) {
         this.servoRadianCalculator = servoRadianCalculator;
         this.telemetry = telemetry;
         this.hardwareMap = hardwareMap;
-        servo[0] = this.hardwareMap.get(Servo.class,"servos0");
-        servo[1] = this.hardwareMap.get(Servo.class,"servos1");
-        servo[2] = this.hardwareMap.get(Servo.class,"servos2");
-        servo[3] = this.hardwareMap.get(Servo.class,"servos3");
-        servo[4] = this.hardwareMap.get(Servo.class,"servos4");
-        servo[5] = this.hardwareMap.get(Servo.class,"servos5");
+        servo[0] = this.hardwareMap.get(Servo.class,"servoe0");
+        servo[1] = this.hardwareMap.get(Servo.class,"servoe1");
+        servo[2] = this.hardwareMap.get(Servo.class,"servoe2");
+        servo[3] = this.hardwareMap.get(Servo.class,"servoe3");
+        servo[4] = this.hardwareMap.get(Servo.class,"servoe4");
+        servo[5] = this.hardwareMap.get(Servo.class,"servoe5");
         servo[0].setDirection(Servo.Direction.FORWARD);//逆时针
         servo[1].setDirection(Servo.Direction.REVERSE);//逆时针
         servo[2].setDirection(Servo.Direction.FORWARD);//顺时针
         servo[3].setDirection(Servo.Direction.FORWARD);//顺时针
-        servo[4].setDirection(Servo.Direction.FORWARD);
+        servo[4].setDirection(Servo.Direction.REVERSE);
         servo[5].setDirection(Servo.Direction.FORWARD);//夹取
     }
 
@@ -84,7 +84,7 @@ public class ServoValueOutputter{
     }
     public void setClipPosition(double radian,boolean useAutoCalculator){
         if(useAutoCalculator){
-            setClipPosition(radian-servoRadianCalculator.getTheta());
+            setClipPosition(radian-servoRadianCalculator.getRadian0());
         }else{
             setClipPosition(radian);
         }

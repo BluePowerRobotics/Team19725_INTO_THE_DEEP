@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Controllers;
+package org.firstinspires.ftc.teamcode.Controllers.SixServoArm;
 
 public class ServoRadianCalculator {
     private static ServoRadianCalculator instance;
@@ -31,16 +31,16 @@ public class ServoRadianCalculator {
         result = new double[]{theta,alpha1,alpha2,alpha3};
         return result;
     }
-    public double getTheta() {
+    public double getRadian0() {
         return result[0];
     }
-    public double getAlpha1() {
+    public double getRadian1() {
         return result[1];
     }
-    public double getAlpha2() {
+    public double getRadian2() {
         return result[2];
     }
-    public double getAlpha3() {
+    public double getRadian3() {
         return result[3];
     }
 }

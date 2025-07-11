@@ -153,7 +153,7 @@ public class InstallerController{
 
                 if(!InstallInited) {
                     // Perform any necessary preparation tasks here
-                    // For example, initializing components or setting up configurations
+                    // For examp le, initializing components or setting up configurations
                     telemetry.addData("Installer", "install init");
                     telemetry.update();
                     installStartTime = System.currentTimeMillis();

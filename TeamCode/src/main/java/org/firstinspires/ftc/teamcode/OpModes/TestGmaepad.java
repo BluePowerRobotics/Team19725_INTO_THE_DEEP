@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 public class TestGmaepad extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
+        waitForStart();
         while( opModeIsActive() ) {
             telemetry.addData("Left Stick X", gamepad1.left_stick_x);
             telemetry.addData("Left Stick Y", gamepad1.left_stick_y);
@@ -18,6 +19,7 @@ public class TestGmaepad extends LinearOpMode {
             telemetry.addData("B Button", gamepad1.b);
             telemetry.addData("X Button", gamepad1.x);
             telemetry.addData("Y Button", gamepad1.y);
+            telemetry.addData("Dpad_down",gamepad1.dpad_down);
             telemetry.update();
         }
     }

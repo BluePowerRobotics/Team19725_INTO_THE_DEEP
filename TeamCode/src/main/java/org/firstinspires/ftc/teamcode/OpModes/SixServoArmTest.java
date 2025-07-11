@@ -2,9 +2,8 @@ package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.Controllers.SixServoArmController;
+import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.SixServoArmController;
 
 @TeleOp(name = "SixServoArmTest",group = "Test")
 public class SixServoArmTest extends LinearOpMode {

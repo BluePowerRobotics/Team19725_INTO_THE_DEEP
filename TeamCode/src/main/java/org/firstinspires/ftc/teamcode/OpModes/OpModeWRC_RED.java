@@ -6,24 +6,23 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.Controllers.ArmController;
+import org.firstinspires.ftc.teamcode.Controllers.ChassisController;
 import org.firstinspires.ftc.teamcode.RoadRunner.Drawing;
 import org.firstinspires.ftc.teamcode.RoadRunner.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.RoadRunner.tuning.TuningOpModes;
 import org.firstinspires.ftc.teamcode.VisualColor.Alignment;
-import org.firstinspires.ftc.teamcode.Controllers.*;
-
-import com.acmerobotics.roadrunner.ftc.FlightRecorder;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 
 
 @TeleOp(name = "OpMode2025")
-public class OpMode2025 extends LinearOpMode {
+public class OpModeWRC_RED extends LinearOpMode {
 
     //12
     FlightRecorder recorder;
@@ -55,11 +54,11 @@ public class OpMode2025 extends LinearOpMode {
     private void initall(){
         kpad = 1;
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        Pose2d  initposeRedLeft = new Pose2d(-23.62,-70.86,64);
-        Pose2d  initposeRedRight = new Pose2d(+23.62,-70.86,90);
-        Pose2d  initposeBlueLeft = new Pose2d(+23.62,70.86,-90);
-        Pose2d initposeBlueRight = new Pose2d(-23.62,70.86,-90);
-        drive = new MecanumDrive(hardwareMap, initposeRedLeft);
+//        Pose2d  initposeRedLeft = new Pose2d(-23.62,-70.86,64);
+//        Pose2d  initposeRedRight = new Pose2d(+23.62,-70.86,90);
+//        Pose2d  initposeBlueLeft = new Pose2d(+23.62,70.86,-90);
+//        Pose2d initposeBlueRight = new Pose2d(-23.62,70.86,-90);
+        drive = new MecanumDrive(hardwareMap, );
         //telemetry.addData("设置tele", 1);
         //drive.settele(telemetry);
 //        armSpinner = hardwareMap.get(DcMotor.class, "armSpinner");
