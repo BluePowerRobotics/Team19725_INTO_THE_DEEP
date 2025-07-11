@@ -4,7 +4,7 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.SixServoArmController;
+import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.*;
 import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.SixServoArmEasyAction;
 
 @TeleOp(name = "SixServoArmTest",group = "Test")
@@ -13,7 +13,7 @@ public class SixServoArmTest extends LinearOpMode {
     void initHardwareMap() {
         // 初始化硬件映射
         // 这里可以添加初始化代码，例如获取硬件组件等
-        Actions.runBlocking(sixServoArmController.SixServoArmInit());
+        sixServoArmController.initArm();
 
 
     }
