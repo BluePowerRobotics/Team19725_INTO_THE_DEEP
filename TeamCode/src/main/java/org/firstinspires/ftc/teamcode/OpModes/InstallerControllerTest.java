@@ -14,8 +14,9 @@ public class InstallerControllerTest extends LinearOpMode {
         Actions.runBlocking(
 
                 new SequentialAction(
+                        installerController.clipInstaller(false),
                         installerController.installerPuller(),
-                        installerController.beamSpinner(false)
+                        installerController.beamSpinner(1)
                 )
         );
     }

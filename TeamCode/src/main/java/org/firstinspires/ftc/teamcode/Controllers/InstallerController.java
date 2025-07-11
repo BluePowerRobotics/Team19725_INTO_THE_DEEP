@@ -15,7 +15,7 @@ public class InstallerController{
     Gamepad gamepad1;
     Gamepad gamepad2;
     Telemetry telemetry;
-    Servo clipInstallPuller,clipInstaller,beamSpinner;
+    Servo clipInstaller,clipInstallPuller,beamSpinner;
     INSTALL_RUNMODE installStates = INSTALL_RUNMODE.PREPARING;
     DisSensor disSensor = new DisSensor();
     public InstallerController(HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2, Telemetry telemetry) {
@@ -26,26 +26,48 @@ public class InstallerController{
         this.hardwareMap = hardwareMap;
         this.gamepad1 = gamepad1;
         this.gamepad2 = gamepad2;
-        clipInstaller = this.hardwareMap.get(Servo.class,"servoc1");
-        clipInstallPuller = this.hardwareMap.get(Servo.class,"servoc0");
+        clipInstaller = this.hardwareMap.get(Servo.class,"servoc0");
+        clipInstallPuller = this.hardwareMap.get(Servo.class,"servoc1");
+        beamSpinner = this.hardwareMap.get(Servo.class,"servoc2");
         clipInstaller.setDirection(Servo.Direction.FORWARD);
         clipInstallPuller.setDirection(Servo.Direction.FORWARD);
+        beamSpinner.setDirection(Servo.Direction.FORWARD);
 
         disSensor.init(hardwareMap);
 
         // Example initialization code (to be replaced with actual implementation):
         telemetry.addData("Installer", "Initialization started");
-        telemetry.update();
-
         // Perform any setup tasks here...
-
         telemetry.addData("Installer", "Initialization complete");
-        telemetry.update();
     }
     boolean PrepareInited = false;
     long prepareStartTime = 0;
     boolean InstallInited = false;
     long installStartTime = 0;
+    public class ClipInstaller implements Action{
+        private boolean install;
+        public ClipInstaller(boolean install) {
+            this.install = install;
+        }
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            if (gamepad1.x) {
+                install = true;
+            } else if (gamepad1.y){
+                install = false;
+            }
+            if (install) {
+                clipInstaller.setPosition(0.8);
+            } else {
+                clipInstaller.setPosition(0);
+            }
+            telemetry.addData("Clip Installer", clipInstaller.getPosition());
+            return true;
+        }
+    }
+    public Action clipInstaller(boolean install) {
+        return new ClipInstaller(install);
+    }
     public class InstallerPuller implements Action{
         private boolean initialized = false;
         @Override
@@ -57,10 +79,16 @@ public class InstallerController{
             }
             if (dis > 0) {
                 return true;
-            } else {
-                clipInstallPuller.setPosition(0);
-                return false;
             }
+            if (gamepad1.x) {
+                clipInstallPuller.setPosition(1);
+            } else if (gamepad1.y) {
+                clipInstallPuller.setPosition(0);
+            } else {
+                clipInstallPuller.setPosition(0.5);
+            }
+            telemetry.addData("Clip Install Puller", clipInstallPuller.getPosition());
+            return true;
         }
     }
     public Action installerPuller() {
@@ -68,22 +96,31 @@ public class InstallerController{
         return new InstallerPuller();
     }
     public class BeamSpinner implements Action{
-        private boolean down;
-        public BeamSpinner(boolean down) {
-            this.down = down;
+        private int beamPosition;
+        public BeamSpinner(int beanPosition) {
+            this.beamPosition = beanPosition;
         }
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            if (down) {
+            if (gamepad1.left_bumper) {
+                beamPosition = 2;
+            } else if (gamepad1.right_bumper) {
+                beamPosition = 3;
+            }
+            if (beamPosition == 1) {
                 beamSpinner.setPosition(0.8);
-            } else {
+            } else if (beamPosition == 2) {
+                beamSpinner.setPosition(0.6);
+            } else if (beamPosition == 3) {
                 beamSpinner.setPosition(0);
             }
-            return false;
+            telemetry.addData("Beam Spinner", beamSpinner.getPosition());
+            telemetry.update();
+            return true;
         }
     }
-    public Action beamSpinner(boolean down) {
-        return new BeamSpinner(down);
+    public Action beamSpinner(int beamPosition) {
+        return new BeamSpinner(beamPosition);
     }
     public void setMode(INSTALL_RUNMODE installStates) {
         // Set the installation mode to the specified run mode
