@@ -1,17 +1,20 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.SixServoArmController;
+import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.SixServoArmEasyAction;
 
 @TeleOp(name = "SixServoArmTest",group = "Test")
 public class SixServoArmTest extends LinearOpMode {
-    SixServoArmController sixServoArmController = new SixServoArmController(hardwareMap, telemetry);
+    SixServoArmEasyAction sixServoArmController = new SixServoArmEasyAction(hardwareMap, telemetry, gamepad2);
     void initHardwareMap() {
         // 初始化硬件映射
         // 这里可以添加初始化代码，例如获取硬件组件等
-        sixServoArmController.initArm();
+        Actions.runBlocking(sixServoArmController.SixServoArmInit());
+
 
     }
     @Override

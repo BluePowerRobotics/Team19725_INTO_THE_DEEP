@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.Autonomous.WRCAutoRightBlue;
 import org.firstinspires.ftc.teamcode.Autonomous.WRCAutoRightRed;
 import org.firstinspires.ftc.teamcode.Controllers.ArmController;
 import org.firstinspires.ftc.teamcode.Controllers.ChassisController;
-import org.firstinspires.ftc.teamcode.Controllers.InstallerController;
+import org.firstinspires.ftc.teamcode.Controllers.Installer.* ;
 import org.firstinspires.ftc.teamcode.Controllers.IntakeLength.MotorLineIntakeLengthController;
 import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.ServoValueOutputter;
 import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.SixServoArmAction;

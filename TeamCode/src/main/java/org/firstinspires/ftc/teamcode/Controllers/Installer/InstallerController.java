@@ -5,18 +5,25 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.sun.tools.javac.code.Attribute;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import org.firstinspires.ftc.teamcode.Controllers.DisSensor;
 import org.firstinspires.ftc.teamcode.Controllers.RobotStates.INSTALL_RUNMODE;
 public class InstallerController{
+    boolean isUpping = false;
+    double Not_Installing = 0;
+    double Install_Finished = 0.2;
+    double InstallPos = 80;
+    double ClipLength = 10;
+    int CurrentNum = 1;
     HardwareMap hardwareMap;
     Gamepad gamepad1;
     Gamepad gamepad2;
     Telemetry telemetry;
     Servo clipInstaller,clipInstallPuller,beamSpinner;
-    INSTALL_RUNMODE installStates = INSTALL_RUNMODE.PREPARING;
+    INSTALL_RUNMODE installStates = INSTALL_RUNMODE.WAITING;
     DisSensor disSensor = new DisSensor();
     public InstallerController(HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2, Telemetry telemetry) {
         // Initialize the installer with the provided hardware map and game pads
@@ -45,81 +52,25 @@ public class InstallerController{
         telemetry.update();
     }
     boolean PrepareInited = false;
-    long prepareStartTime = 0;
+    long UpStartTime = 0;
     boolean InstallInited = false;
     long installStartTime = 0;
-    public void InstallBack(){
-        clipInstaller.setPosition(0);
+    public void SetCurrentNum(int currentNum) {
+        // Set the current number of clip
+        this.CurrentNum = currentNum;
     }
-    public void Install(){
-        clipInstaller.setPosition(0.8);
-    }
-
-    public class ClipInstaller {
-        private boolean install;
-        public ClipInstaller(boolean install) {
-            this.install = install;
-        }
-        public boolean run(@NonNull TelemetryPacket packet) {
-            if (gamepad1.a) {
-                install = true;
-            } else if (gamepad1.b){
-                install = false;
-            }
-            if (install) {
-                clipInstaller.setPosition(0.8);
-            } else {
-                clipInstaller.setPosition(0);
-            }
-            telemetry.addData("Clip Installer", clipInstaller.getPosition());
-            return true;
-        }
-    }
-    public class InstallerPuller extends LinearOpMode{
-        private boolean initialized = false;
-        @Override
-        public boolean run(@NonNull TelemetryPacket packet) {
-            double dis = disSensor.getDis();
-            if (!initialized) {
-                clipInstallPuller.setPosition(0);
-                initialized = true;
-            }
-            if (dis > 0) {
-                return true;
-            }
-            if (gamepad1.x) {
-                clipInstallPuller.setPosition(1);
-            } else if (gamepad1.y) {
-                clipInstallPuller.setPosition(0);
-            } else {
-                clipInstallPuller.setPosition(0.5);
-            }
-            telemetry.addData("Clip Install Puller", clipInstallPuller.getPosition());
-            return true;
-        }
-    }
-    public class BeamSpinner extends LinearOpMode{
-        private int beamPosition;
-        public BeamSpinner(int beanPosition) {
-            this.beamPosition = beanPosition;
-        }
-        @Override
-        public boolean run(@NonNull TelemetryPacket packet) {
-            if (gamepad1.left_bumper) {
-                beamPosition = 2;
-            } else if (gamepad1.right_bumper) {
-                beamPosition = 3;
-            }
-            if (beamPosition == 1) {
+    public void BeamSpinner(boolean ifdown){
+        if (ifdown) {
+            if(!isUpping){
                 beamSpinner.setPosition(0.8);
-            } else if (beamPosition == 2) {
-                beamSpinner.setPosition(0.6);
-            } else if (beamPosition == 3) {
+                UpStartTime = System.currentTimeMillis();
+                isUpping = true;
+            }
+            if(System.currentTimeMillis() - UpStartTime > 500 && System.currentTimeMillis() - UpStartTime < 1000){
                 beamSpinner.setPosition(0);
             }
-            telemetry.addData("Beam Spinner", beamSpinner.getPosition());
-            telemetry.update();
-            return true;
+        } else {
+            beamSpinner.setPosition(0.6);
         }
     }
     public void setMode(INSTALL_RUNMODE installStates) {
@@ -127,45 +78,30 @@ public class InstallerController{
         this.installStates = installStates;
         switch (this.installStates) {
             case WAITING:
-                PrepareInited = false;
-                clipInstallPuller.setPosition(0.5);
-                clipInstaller.setPosition(0);
-                break;
-            case PREPARING:
-                clipInstaller.setPosition(0);
-                if(!PrepareInited) {
-                    // Perform any necessary preparation tasks here
-                    // For example, initializing components or setting up configurations
-                    telemetry.addData("Installer", "Preparing for installation");
-                    telemetry.update();
-                    prepareStartTime = System.currentTimeMillis();
-                    PrepareInited = true;
+                clipInstaller.setPosition(Not_Installing);
+                clipInstallPuller.setPosition(1);
+                if(disSensor.getDis() > InstallPos){
+                    clipInstallPuller.setPosition(0.5);
                 }
-                if(System.currentTimeMillis()-prepareStartTime < 1000) {
+                break;
+            case EATING:
+                clipInstallPuller.setPosition(0);
+                if(disSensor.getDis() < (6 - CurrentNum) * ClipLength) {
+                    clipInstallPuller.setPosition(0.5);
+                    this.installStates = INSTALL_RUNMODE.WAITING;
+                } else {
                     clipInstallPuller.setPosition(0);
-                    telemetry.addData("Installer", "Preparing");
-                    telemetry.update();
                 }
                 break;
             case INSTALLING:
-                PrepareInited = false;
-                clipInstallPuller.setPosition(0.5);
-
-                if(!InstallInited) {
-                    // Perform any necessary preparation tasks here
-                    // For examp le, initializing components or setting up configurations
-                    telemetry.addData("Installer", "install init");
-                    telemetry.update();
-                    installStartTime = System.currentTimeMillis();
-                    InstallInited = true;
+                clipInstaller.setPosition(Install_Finished);
+                break;
+            case BACKING:
+                if(disSensor.getDis() > InstallPos + 10) {
+                    clipInstallPuller.setPosition(0.5);
                 }
-                if(System.currentTimeMillis()-installStartTime < 1000) {
-                    clipInstaller.setPosition(0.8);
-                    telemetry.addData("Installer", "Installing");
-                    telemetry.update();
-                }else{
-                    clipInstaller.setPosition(0);
-                    telemetry.addData("Installer", "Installation complete");
+                else{
+                    clipInstallPuller.setPosition(1);
                 }
                 break;
         }

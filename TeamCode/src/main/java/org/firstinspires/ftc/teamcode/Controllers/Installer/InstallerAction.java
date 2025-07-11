@@ -18,7 +18,7 @@ public class InstallerAction {
     Gamepad gamepad2;
     Telemetry telemetry;
     Servo clipInstaller,clipInstallPuller,beamSpinner;
-    INSTALL_RUNMODE installStates = INSTALL_RUNMODE.PREPARING;
+    INSTALL_RUNMODE installStates = INSTALL_RUNMODE.WAITING;
     DisSensor disSensor = new DisSensor();
     public InstallerAction(HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2, Telemetry telemetry) {
         // Initialize the installer with the provided hardware map and game pads
@@ -122,7 +122,7 @@ public class InstallerAction {
                 clipInstallPuller.setPosition(0.5);
                 clipInstaller.setPosition(0);
                 break;
-            case PREPARING:
+            case EATING:
                 clipInstaller.setPosition(0);
                 if(!PrepareInited) {
                     // Perform any necessary preparation tasks here

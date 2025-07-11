@@ -79,7 +79,7 @@ public class RobotStates {
     INTAKE_RUNMODE INTAKE_MODE;
 
     public enum INSTALL_RUNMODE {
-        WAITING, PREPARING, INSTALLING;
+        WAITING, EATING, INSTALLING,BACKING;
         private static final INSTALL_RUNMODE[] VALUES = values();
 
         public INSTALL_RUNMODE next() {
@@ -123,7 +123,7 @@ public class RobotStates {
                 case INSTALL_ACTION_1:
                     INTAKE_MODE = INTAKE_RUNMODE.PUTTING_INSTALL;
                     OUTPUT_MODE = OUTPUT_RUNMODE.WAITING;
-                    INSTALL_MODE = INSTALL_RUNMODE.PREPARING;
+                    INSTALL_MODE = INSTALL_RUNMODE.EATING;
                     break;
                 case INSTALL_ACTION_2:
                     INTAKE_MODE = INTAKE_RUNMODE.WAITING;
