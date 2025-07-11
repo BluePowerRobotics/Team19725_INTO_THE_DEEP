@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.Controllers.SixServoArm;
 
-import static java.lang.Double.NaN;
+import static java.lang.Double.isNaN;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
