@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.SixServoArmEasyCon
 
 @TeleOp(name = "SixServoArmTest",group = "Test")
 public class SixServoArmTest extends LinearOpMode {
-    SixServoArmEasyController sixServoArmController = new SixServoArmEasyController(hardwareMap, telemetry);
+    SixServoArmEasyController sixServoArmController =SixServoArmEasyController.getInstance(hardwareMap, telemetry);
     void initHardwareMap() {
         // 初始化硬件映射
         // 这里可以添加初始化代码，例如获取硬件组件等

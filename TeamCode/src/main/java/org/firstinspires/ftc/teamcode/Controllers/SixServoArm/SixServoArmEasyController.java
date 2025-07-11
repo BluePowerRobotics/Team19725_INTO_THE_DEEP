@@ -52,7 +52,7 @@ public class SixServoArmEasyController {
 
     public SixServoArmEasyController setTargetPosition(@NonNull ArmAction armAction){
         setTargetPosition(armAction.GoToX,armAction.GoToY,Math.PI, armAction.ClipAngle);
-        return instance;
+        return getInstance(hardwareMap,telemetry);
     }
     public SixServoArmEasyController setTargetPosition(double X,double Y,double alpha4,double clipRadian) {
         targetX = X;
@@ -69,7 +69,7 @@ public class SixServoArmEasyController {
         this.servoMoveTime = Arrays.stream(servoMoveNeedTime).max().getAsDouble();
         recentX = nowX;
         recentY = nowY;
-        return instance;
+        return getInstance(hardwareMap,telemetry);
     }
     public boolean update(){
         boolean states;
