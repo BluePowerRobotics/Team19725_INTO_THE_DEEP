@@ -53,6 +53,7 @@ public class ServoValueEasyOutputter {
             servoPosition[i] = Math.toDegrees(Radians[i]) + servoZeroPositionDegree[i];
             telemetry.addData("Servo " + i + " Degree", Math.toDegrees(Radians[i]));
             telemetry.addData("Servo " + i + " Position", servoPosition[i]);
+            telemetry.update();
             if(servoPosition[i]==NaN) servoPosition[i]=0;
             servo[i].setPosition(Math.min(1, Math.max(0, servoPosition[i] / servoDegree[i])));
             servo[i].setPosition((servoPosition[i] / servoDegree[i]));
