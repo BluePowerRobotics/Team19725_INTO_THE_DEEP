@@ -18,7 +18,7 @@ public class SixServoArmEasyController {
         return instance;
     }
     public ServoRadianEasyCalculator servoRadianCalculator;
-    public ServoValueOutputter servoValueOutputter;
+    public ServoValueEasyOutputter servoValueOutputter;
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
     public enum SIX_SERVO_ARM_RUNMODE{
@@ -31,7 +31,7 @@ public class SixServoArmEasyController {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
         servoRadianCalculator = ServoRadianEasyCalculator.getInstance();
-        servoValueOutputter = ServoValueOutputter.getInstance(hardwareMap, telemetry, (ServoRadianCalculatorInterface) servoRadianCalculator);
+        servoValueOutputter = ServoValueEasyOutputter.getInstance(hardwareMap, telemetry,servoRadianCalculator);
     }
     public void initArm(){
         SixServoArmEasyController.getInstance(hardwareMap,telemetry);
