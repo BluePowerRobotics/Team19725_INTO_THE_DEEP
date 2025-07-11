@@ -15,7 +15,7 @@ public class SixServoArmEasyAction {
     Telemetry telemetry;
     Gamepad gamepad2;
     ServoRadianEasyCalculator servoRadianCalculator;
-    ServoValueOutputter servoValueOutputter;
+    ServoValueEasyOutputter servoValueOutputter;
     SixServoArmEasyController sixServoArmController;
     public SixServoArmEasyAction(HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad2){
         this.hardwareMap= hardwareMap;
@@ -60,7 +60,7 @@ public class SixServoArmEasyAction {
     public Action SixServoArmRunToPosition(@NonNull ArmAction armAction){
         return SixServoArmRunToPosition(armAction.GoToX,armAction.GoToY,-5,Math.PI, armAction.ClipAngle);
     };
-    ServoValueOutputter.ClipPosition clipPosition;
+    ServoValueEasyOutputter.ClipPosition clipPosition;
     public class SixServoArmSetClip implements Action{
         boolean initiated = false;
         long setClipTime = 0;
@@ -75,7 +75,7 @@ public class SixServoArmEasyAction {
             return System.currentTimeMillis()-setClipTime<=1000*ClipLockSpendSec;
         }
     }
-    public Action SixServoArmSetClip(ServoValueOutputter.ClipPosition clipPosition){
+    public Action SixServoArmSetClip(ServoValueEasyOutputter.ClipPosition clipPosition){
         this.clipPosition = clipPosition;
         return new SixServoArmSetClip();
     }
