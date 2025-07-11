@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.Controllers.SixServoArm;
 
-import static java.lang.Double.NaN;
+import static java.lang.Double.isNaN;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -54,7 +54,7 @@ public class ServoValueEasyOutputter {
             telemetry.addData("Servo " + i + " Degree", Math.toDegrees(Radians[i]));
             telemetry.addData("Servo " + i + " Position", servoPosition[i]);
             telemetry.update();
-            if(servoPosition[i]==NaN) servoPosition[i]=0;
+            if(isNaN(servoPosition[i])) servoPosition[i]=0;
             servo[i].setPosition(Math.min(1, Math.max(0, servoPosition[i] / servoDegree[i])));
             servo[i].setPosition((servoPosition[i] / servoDegree[i]));
             Range.clip((servoPosition[i] / servoDegree[i]),0, 1);
