@@ -12,20 +12,18 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Autonomous.WRCAutoRightBlue;
+import org.firstinspires.ftc.teamcode.Controllers.Installer.InstallerController;
 import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.ServoValueOutputter;
 import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.SixServoArmAction;
 import org.firstinspires.ftc.teamcode.RoadRunner.Drawing;
 import org.firstinspires.ftc.teamcode.RoadRunner.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.RoadRunner.tuning.TuningOpModes;
-import org.firstinspires.ftc.teamcode.VisualColor.Alignment;
 import org.firstinspires.ftc.teamcode.Controllers.*;
 import org.firstinspires.ftc.teamcode.Controllers.IntakeLength.*;
 import org.firstinspires.ftc.teamcode.VisualColor.FindCandidate;
 
 import com.acmerobotics.roadrunner.ftc.FlightRecorder;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 
 
 @TeleOp(name = "OpModeWRC_BLUE")

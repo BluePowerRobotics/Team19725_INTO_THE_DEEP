@@ -1,14 +1,14 @@
-package org.firstinspires.ftc.teamcode.Controllers;
+package org.firstinspires.ftc.teamcode.Controllers.Installer;
 
 import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+import org.firstinspires.ftc.teamcode.Controllers.DisSensor;
 import org.firstinspires.ftc.teamcode.Controllers.RobotStates.INSTALL_RUNMODE;
 public class InstallerController{
     HardwareMap hardwareMap;
@@ -37,23 +37,33 @@ public class InstallerController{
 
         // Example initialization code (to be replaced with actual implementation):
         telemetry.addData("Installer", "Initialization started");
+        telemetry.update();
+
         // Perform any setup tasks here...
+
         telemetry.addData("Installer", "Initialization complete");
+        telemetry.update();
     }
     boolean PrepareInited = false;
     long prepareStartTime = 0;
     boolean InstallInited = false;
     long installStartTime = 0;
-    public class ClipInstaller implements Action{
+    public void InstallBack(){
+        clipInstaller.setPosition(0);
+    }
+    public void Install(){
+        clipInstaller.setPosition(0.8);
+    }
+
+    public class ClipInstaller {
         private boolean install;
         public ClipInstaller(boolean install) {
             this.install = install;
         }
-        @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            if (gamepad1.x) {
+            if (gamepad1.a) {
                 install = true;
-            } else if (gamepad1.y){
+            } else if (gamepad1.b){
                 install = false;
             }
             if (install) {
@@ -65,10 +75,7 @@ public class InstallerController{
             return true;
         }
     }
-    public Action clipInstaller(boolean install) {
-        return new ClipInstaller(install);
-    }
-    public class InstallerPuller implements Action{
+    public class InstallerPuller extends LinearOpMode{
         private boolean initialized = false;
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
@@ -91,11 +98,7 @@ public class InstallerController{
             return true;
         }
     }
-    public Action installerPuller() {
-        // Create an action to pull the installer
-        return new InstallerPuller();
-    }
-    public class BeamSpinner implements Action{
+    public class BeamSpinner extends LinearOpMode{
         private int beamPosition;
         public BeamSpinner(int beanPosition) {
             this.beamPosition = beanPosition;
@@ -118,9 +121,6 @@ public class InstallerController{
             telemetry.update();
             return true;
         }
-    }
-    public Action beamSpinner(int beamPosition) {
-        return new BeamSpinner(beamPosition);
     }
     public void setMode(INSTALL_RUNMODE installStates) {
         // Set the installation mode to the specified run mode
