@@ -53,7 +53,7 @@ public class OpModeWRC_BLUE extends LinearOpMode {
     InstallerController installerController;
     MotorLineIntakeLengthController intakeLengthController;
     SixServoArmAction sixServoArmController;
-    OutputController outputController;
+    //OutputController outputController;
     FindCandidate CVModule;
     private void initall(){
         kpad = 1;
@@ -65,7 +65,7 @@ public class OpModeWRC_BLUE extends LinearOpMode {
         installerController = new InstallerController(hardwareMap, gamepad1, gamepad2, telemetry);
         intakeLengthController = new MotorLineIntakeLengthController(hardwareMap);
         sixServoArmController = new SixServoArmAction(hardwareMap, telemetry, gamepad2);
-        outputController = new OutputController(hardwareMap);
+        //outputController = new OutputController(hardwareMap);
         CVModule = new FindCandidate();
         //todo: 这里的颜色需要根据实际情况调整!!!!!!!
         CVModule.init(hardwareMap, telemetry, 0);
@@ -215,7 +215,7 @@ public class OpModeWRC_BLUE extends LinearOpMode {
         }
 
         if(gamepad2.b){
-            outputController.setTargetOutputHeight(100);
+            //outputController.setTargetOutputHeight(100);
         }
     }
 
