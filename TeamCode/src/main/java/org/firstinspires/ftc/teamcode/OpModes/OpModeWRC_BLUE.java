@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Autonomous.WRCAutoRightBlue;
 import org.firstinspires.ftc.teamcode.Controllers.Installer.InstallerController;
-import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.ServoValueOutputter;
+import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.ServoValueEasyOutputter;
 import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.SixServoArmAction;
 import org.firstinspires.ftc.teamcode.RoadRunner.Drawing;
 import org.firstinspires.ftc.teamcode.RoadRunner.GoBildaPinpointDriver;
@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.RoadRunner.tuning.TuningOpModes;
 import org.firstinspires.ftc.teamcode.Controllers.*;
 import org.firstinspires.ftc.teamcode.Controllers.IntakeLength.*;
+import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.*;
 import org.firstinspires.ftc.teamcode.VisualColor.FindCandidate;
 
 import com.acmerobotics.roadrunner.ftc.FlightRecorder;
@@ -30,7 +31,7 @@ import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 public class OpModeWRC_BLUE extends LinearOpMode {
 
     //12
-    ServoValueOutputter.ClipPosition CurrentClipPosition = ServoValueOutputter.ClipPosition.UNLOCKED;
+    ServoValueEasyOutputter.ClipPosition CurrentClipPosition = ServoValueEasyOutputter.ClipPosition.UNLOCKED;
     FlightRecorder recorder;
     GoBildaPinpointDriver odo;
     MecanumDrive drive;
@@ -52,7 +53,7 @@ public class OpModeWRC_BLUE extends LinearOpMode {
     ChassisController chassisController;
     InstallerController installerController;
     MotorLineIntakeLengthController intakeLengthController;
-    SixServoArmAction sixServoArmController;
+    SixServoArmEasyAction sixServoArmEasyController;
     //OutputController outputController;
     FindCandidate CVModule;
     private void initall(){
@@ -64,12 +65,12 @@ public class OpModeWRC_BLUE extends LinearOpMode {
         chassisController.initChassis(hardwareMap, gamepad1, gamepad2, telemetry);
         installerController = new InstallerController(hardwareMap, gamepad1, gamepad2, telemetry);
         intakeLengthController = new MotorLineIntakeLengthController(hardwareMap);
-        sixServoArmController = new SixServoArmAction(hardwareMap, telemetry, gamepad2);
+        sixServoArmEasyController = new SixServoArmEasyAction(hardwareMap, telemetry, gamepad2);
         //outputController = new OutputController(hardwareMap);
         CVModule = new FindCandidate();
         //todo: 这里的颜色需要根据实际情况调整!!!!!!!
         CVModule.init(hardwareMap, telemetry, 0);
-        Actions.runBlocking(sixServoArmController.SixServoArmInit());
+        Actions.runBlocking(sixServoArmEasyController.SixServoArmInit());
         double t = System.currentTimeMillis(); // 获取当前时间
         //硬件初始化
     }
@@ -180,28 +181,28 @@ public class OpModeWRC_BLUE extends LinearOpMode {
                 pad2_rbispressed = true;
             }
             if (System.currentTimeMillis() - t > 1000) {
-                CurrentClipPosition = ServoValueOutputter.ClipPosition.HALF_LOCKED;
+                CurrentClipPosition = ServoValueEasyOutputter.ClipPosition.HALF_LOCKED;
             }
         } else {
             if (System.currentTimeMillis() - t < 500) {
-                if (CurrentClipPosition == ServoValueOutputter.ClipPosition.LOCKED) {
-                    CurrentClipPosition = ServoValueOutputter.ClipPosition.UNLOCKED;
+                if (CurrentClipPosition == ServoValueEasyOutputter.ClipPosition.LOCKED) {
+                    CurrentClipPosition = ServoValueEasyOutputter.ClipPosition.UNLOCKED;
                 }else {
-                    CurrentClipPosition = ServoValueOutputter.ClipPosition.LOCKED;
+                    CurrentClipPosition = ServoValueEasyOutputter.ClipPosition.LOCKED;
                 }
             }
             pad2_rbispressed = false;
         }
         Actions.runBlocking(
                 new SequentialAction(
-                        sixServoArmController.SixServoArmSetClip(CurrentClipPosition)
+                        sixServoArmEasyController.SixServoArmSetClip(CurrentClipPosition)
                 )
         );
 
         if(gamepad2.left_bumper){
             Actions.runBlocking(
                     new SequentialAction(
-                            sixServoArmController.SixServoArmRunToPosition(CVModule.findCandidate())
+                            sixServoArmEasyController.SixServoArmRunToPosition(CVModule.findCandidate())
                     )
             );
         }
@@ -232,6 +233,7 @@ public class OpModeWRC_BLUE extends LinearOpMode {
             while (opModeIsActive()) {
                 move();
                 controllers();
+                teleprint();
             }
         }
     }

@@ -39,7 +39,7 @@ public class ServoValueEasyOutputter {
         servo[4] = this.hardwareMap.get(Servo.class,"servoe4");
         servo[5] = this.hardwareMap.get(Servo.class,"servoe5");
         servo[0].setDirection(Servo.Direction.FORWARD);//逆时针
-        servo[1].setDirection(Servo.Direction.REVERSE);//逆时针
+        servo[1].setDirection(Servo.Direction.FORWARD);//逆时针
         servo[2].setDirection(Servo.Direction.FORWARD);//顺时针
         servo[3].setDirection(Servo.Direction.FORWARD);//顺时针
         servo[4].setDirection(Servo.Direction.REVERSE);
@@ -54,9 +54,8 @@ public class ServoValueEasyOutputter {
             telemetry.addData("Servo " + i + " Degree", Math.toDegrees(Radians[i]));
             telemetry.addData("Servo " + i + " Position", servoPosition[i]);
             telemetry.update();
-            if(servoPosition[i]==NaN) servoPosition[i]=0;
+            if(Double.isNaN(servoPosition[i])) servoPosition[i]=0;
             servo[i].setPosition(Math.min(1, Math.max(0, servoPosition[i] / servoDegree[i])));
-            servo[i].setPosition((servoPosition[i] / servoDegree[i]));
             Range.clip((servoPosition[i] / servoDegree[i]),0, 1);
         }
         setClipPosition(clipRadian,useAutoCalculator);

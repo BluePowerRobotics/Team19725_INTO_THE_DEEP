@@ -25,9 +25,10 @@ public class ServoRadianEasyCalculator {
         else if (x==0 && y>0){radian0 = Math.PI*0.5;}
         else if (x==0 && y<0){radian0 = Math.PI*1.5;}
         double r = Math.sqrt(Math.pow(x,2)+Math.pow(y,2));
-        double radian1 = Math.acos(Math.pow(a,2)+Math.pow(r,2)-Math.pow(b,2)/(2*a*r));
-        double radian2 = Math.acos(Math.pow(a,2)+Math.pow(b,2)-Math.pow(r,2)/(2*a*b));
-        double radian3 = Math.acos(Math.pow(b,2)+Math.pow(r,2)-Math.pow(a,2)/(2*b*r))+Math.PI;
+//        double radian1 = Math.acos((Math.pow(a,2)+Math.pow(r,2)-Math.pow(b,2))/(2*a*r));
+        double radian1 = Math.PI/2;
+        double radian2 = Math.acos((Math.pow(a,2)+Math.pow(b,2)-Math.pow(r,2))/(2*a*b));
+        double radian3 = Math.acos((Math.pow(b,2)+Math.pow(r,2)-Math.pow(a,2))/(2*b*r))+Math.PI/2;
         result = new double[]{radian0,radian1,radian2,radian3};
         return result;
     }
