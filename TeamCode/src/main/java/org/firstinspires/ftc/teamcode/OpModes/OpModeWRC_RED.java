@@ -30,7 +30,7 @@ import org.firstinspires.ftc.teamcode.VisualColor.Alignment;
 import org.firstinspires.ftc.teamcode.VisualColor.FindCandidate;
 
 
-@TeleOp(name = "OpMode2025")
+@TeleOp(name = "OpModeWRC_RED")
 public class OpModeWRC_RED extends LinearOpMode {
 
     //12

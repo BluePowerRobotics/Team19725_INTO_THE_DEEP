@@ -22,9 +22,9 @@ public class SixServoArmTest extends LinearOpMode {
         initHardwareMap();
         waitForStart();
         while (opModeIsActive()) {
-            sixServoArmController.setTargetPosition(200 * gamepad1.left_stick_x, 200 * gamepad1.left_stick_y,
-                    Math.PI, 0.5 * Math.PI);
-            sixServoArmController.update();
+//            sixServoArmController.setTargetPosition(200 * gamepad1.left_stick_x, 200 * gamepad1.left_stick_y,
+//                    Math.PI, 0.5 * Math.PI);
+//            sixServoArmController.update();
             sleep(200);
         }
     }

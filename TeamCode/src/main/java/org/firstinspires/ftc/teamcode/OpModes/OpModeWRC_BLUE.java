@@ -160,11 +160,11 @@ public class OpModeWRC_BLUE extends LinearOpMode {
         FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
     private  void controllers() {
-        if (gamepad1.left_trigger > 0.1) {
-//            installerController.;
+        if (gamepad1.b) {
+            installerController.BeamSpinner(false);
         }
-        if (gamepad1.right_trigger > 0.1) {
-            //    installerController.;
+        if (gamepad1.a) {
+            installerController.BeamSpinner(true);
         }
 
 
