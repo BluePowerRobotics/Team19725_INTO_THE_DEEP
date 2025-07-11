@@ -14,9 +14,9 @@ public class ServoValueEasyOutputter {
         }
         return instance;
     }
-    public static synchronized ServoValueEasyOutputter getInstance() {
-        return instance;
-    }
+    //public static synchronized ServoValueEasyOutputter getInstance() {
+    //    return instance;
+    //}
 
     private ServoRadianEasyCalculator servoRadianCalculator;
     private Telemetry telemetry;
