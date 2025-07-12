@@ -50,7 +50,7 @@ public class ServoValueEasyOutputter {
     private double[] servoPosition = new double[6];//当前角度
     public void setRadians(double[] Radians,double clipRadian,boolean useAutoCalculator) {//控制机械臂
         for (int i = 0; i <= 3; i++) {
-            servoPosition[i] = Math.toDegrees(Radians[i]) + servoZeroPositionDegree[i];
+            servoPosition[i] = Math.toDegrees(Radians[i]) - servoZeroPositionDegree[i];
             telemetry.addData("Servo " + i + " Degree", Math.toDegrees(Radians[i]));
             telemetry.addData("Servo " + i + " Position", servoPosition[i]);
             telemetry.update();
