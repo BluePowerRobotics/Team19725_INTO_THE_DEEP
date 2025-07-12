@@ -9,9 +9,9 @@ import org.firstinspires.ftc.teamcode.Controllers.RobotStates;
 public class OutputController {
     public OutputController(HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
-        outputPositionController = hardwareMap.get(Servo.class,"");
-        outputClipController = hardwareMap.get(Servo.class,"");
-        outputLengthController = hardwareMap.get(DcMotor.class,"");
+        outputPositionController = this.hardwareMap.get(Servo.class,"");
+        outputClipController = this.hardwareMap.get(Servo.class,"");
+        outputLengthController = this.hardwareMap.get(DcMotor.class,"");
     }
     private Servo outputPositionController, outputClipController;
     private DcMotor outputLengthController;
@@ -68,62 +68,222 @@ public class OutputController {
         outputLengthController.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         return !(Math.abs(outputLengthController.getCurrentPosition()- outputLengthControllerValue)<=2);
     }
-    boolean eatIntakeInitialized=false;
-    long eatIntakeStartTime;
+    boolean[] eatIntakeCheckPointInitialized = {false,false};
+    long eatIntakeCheckPointStartTime;
+    boolean[] eatIntakeCheckPointPassed=eatIntakeCheckPointInitialized;
+    //吃掉intake送过来的sample
     public boolean eatIntake(){
-        if(eatIntakeInitialized){
-            eatIntakeStartTime=System.currentTimeMillis();
+        if(eatIntakeCheckPointInitialized[0]){
+            eatIntakeCheckPointStartTime =System.currentTimeMillis();
             setArmPosition(0);
             setTargetOutputHeight(0);
-            eatIntakeInitialized=true;
-        }
+            //action 1
 
-        if(update()&&(System.currentTimeMillis()-eatIntakeStartTime)>1000){//完成条件判断
-            eatIntakeInitialized=false;
+
+
+
+
+
+            eatIntakeCheckPointInitialized[0] =true;
         }
-        return eatIntakeInitialized;
+        if(!eatIntakeCheckPointPassed[0]){
+            if(update()&&(System.currentTimeMillis()- eatIntakeCheckPointStartTime)>1000){//完成条件判断
+                eatIntakeCheckPointPassed[0]=true;
+            }
+        }
+        if(eatIntakeCheckPointInitialized[1]&&eatIntakeCheckPointPassed[0]){
+            eatIntakeCheckPointStartTime =System.currentTimeMillis();
+            setArmPosition(0);
+            setTargetOutputHeight(0);
+            //action 2
+
+
+
+
+
+
+
+            eatIntakeCheckPointInitialized[1] =true;
+        }
+        if(!eatIntakeCheckPointPassed[1]){
+            if(update()&&(System.currentTimeMillis()- eatIntakeCheckPointStartTime)>1000){//完成条件判断
+                eatIntakeCheckPointPassed[1]=true;
+            }
+        }
+        boolean allCheckPointPassed=true;
+        for(int i=0;i< eatIntakeCheckPointPassed.length;i++){
+            if (eatIntakeCheckPointPassed[i] == false)
+                allCheckPointPassed = false;
+        }
+        if(allCheckPointPassed){
+            for(int i=0;i< eatIntakeCheckPointPassed.length;i++){
+                eatIntakeCheckPointPassed[i] = false;
+            }
+            eatIntakeCheckPointInitialized = eatIntakeCheckPointPassed;
+        }
+        return !allCheckPointPassed;
     }
-    boolean vomitInstallerInitialized=false;
-    long vomitInstallerStartTime;
+
+
+
+    boolean[] vomitInstallerCheckPointInitialized = {false,false};
+    long vomitInstallerCheckPointStartTime;
+    boolean[] vomitInstallerCheckPointPassed=vomitInstallerCheckPointInitialized;
+    //把吃到的sample吐给installer
     public boolean vomitInstaller(){
-        if(vomitInstallerInitialized){
-            vomitInstallerStartTime = System.currentTimeMillis();
+        if(vomitInstallerCheckPointInitialized[0]){
+            vomitInstallerCheckPointStartTime =System.currentTimeMillis();
             setArmPosition(0);
             setTargetOutputHeight(0);
-            vomitInstallerInitialized=true;
+            //action 1
+
+
+
+
+
+
+
+            vomitInstallerCheckPointInitialized[0] =true;
         }
-        if(update()&&(System.currentTimeMillis()-vomitInstallerStartTime)>1000){//完成条件判断
-            vomitInstallerInitialized=false;
+        if(!vomitInstallerCheckPointPassed[0]){
+            if(update()&&(System.currentTimeMillis()- vomitInstallerCheckPointStartTime)>1000){//完成条件判断
+                vomitInstallerCheckPointPassed[0]=true;
+            }
         }
-        return vomitInstallerInitialized;
+        if(vomitInstallerCheckPointInitialized[1]&&vomitInstallerCheckPointPassed[0]){
+            vomitInstallerCheckPointStartTime =System.currentTimeMillis();
+            setArmPosition(0);
+            setTargetOutputHeight(0);
+            //action 2
+
+
+
+
+
+
+            vomitInstallerCheckPointInitialized[1] =true;
+        }
+        if(!vomitInstallerCheckPointPassed[1]){
+            if(update()&&(System.currentTimeMillis()- vomitInstallerCheckPointStartTime)>1000){//完成条件判断
+                vomitInstallerCheckPointPassed[1]=true;
+            }
+        }
+        boolean allCheckPointPassed=true;
+        for(int i=0;i< vomitInstallerCheckPointPassed.length;i++){
+            if (vomitInstallerCheckPointPassed[i] == false)
+                allCheckPointPassed = false;
+        }
+        if(allCheckPointPassed){
+            for(int i=0;i< vomitInstallerCheckPointPassed.length;i++){
+                vomitInstallerCheckPointPassed[i] = false;
+            }
+            vomitInstallerCheckPointInitialized = vomitInstallerCheckPointPassed;
+        }
+        return !allCheckPointPassed;
     }
-    boolean eatInstallerInitialized=false;
-    long eatInstallerStartTime;
+    boolean[] eatInstallerCheckPointInitialized = {false,false};
+    long eatInstallerCheckPointStartTime;
+    boolean[] eatInstallerCheckPointPassed=eatInstallerCheckPointInitialized;
+    //吃掉installer送过来的sample
     public boolean eatInstaller(){
-        if(eatInstallerInitialized){
-            eatIntakeStartTime=System.currentTimeMillis();
+        if(eatInstallerCheckPointInitialized[0]){
+            eatInstallerCheckPointStartTime =System.currentTimeMillis();
             setArmPosition(0);
             setTargetOutputHeight(0);
-            eatInstallerInitialized=true;
+            //action 1
+
+
+
+
+
+            eatInstallerCheckPointInitialized[0] =true;
         }
-        if(update()&&(System.currentTimeMillis()-eatInstallerStartTime)>1000){//完成条件判断
-            eatInstallerInitialized=false;
+        if(!eatInstallerCheckPointPassed[0]){
+            if(update()&&(System.currentTimeMillis()- eatInstallerCheckPointStartTime)>1000){//完成条件判断
+                eatInstallerCheckPointPassed[0]=true;
+            }
         }
-        return eatInstallerInitialized;
+        if(eatInstallerCheckPointInitialized[1]&&eatInstallerCheckPointPassed[0]){
+            eatInstallerCheckPointStartTime =System.currentTimeMillis();
+            setArmPosition(0);
+            setTargetOutputHeight(0);
+            //action 2
+
+
+
+
+
+            eatInstallerCheckPointInitialized[1] =true;
+        }
+        if(!eatInstallerCheckPointPassed[1]){
+            if(update()&&(System.currentTimeMillis()- eatInstallerCheckPointStartTime)>1000){//完成条件判断
+                eatInstallerCheckPointPassed[1]=true;
+            }
+        }
+        boolean allCheckPointPassed=true;
+        for(int i=0;i< eatInstallerCheckPointPassed.length;i++){
+            if (eatInstallerCheckPointPassed[i] == false)
+                allCheckPointPassed = false;
+        }
+        if(allCheckPointPassed){
+            for(int i=0;i< eatInstallerCheckPointPassed.length;i++){
+                eatInstallerCheckPointPassed[i] = false;
+            }
+            eatInstallerCheckPointInitialized = eatInstallerCheckPointPassed;
+        }
+        return !allCheckPointPassed;
     }
-    boolean throwAwaySampleInitialized=false;
-    long throwAwaySampleStartTime;
+    boolean[] throwAwaySampleCheckPointInitialized = {false,false};
+    long throwAwaySampleCheckPointStartTime;
+    boolean[] throwAwaySampleCheckPointPassed=throwAwaySampleCheckPointInitialized;
+    //把吃掉的sample丢掉
     public boolean throwAwaySample(){
-        if(throwAwaySampleInitialized){
-            throwAwaySampleStartTime=System.currentTimeMillis();
+        if(throwAwaySampleCheckPointInitialized[0]){
+            throwAwaySampleCheckPointStartTime =System.currentTimeMillis();
             setArmPosition(0);
             setTargetOutputHeight(0);
-            throwAwaySampleInitialized=true;
+            //action 1
+
+
+
+
+
+            throwAwaySampleCheckPointInitialized[0] =true;
         }
-        if(update()&&(System.currentTimeMillis()-throwAwaySampleStartTime)>1000){//完成条件判断
-            throwAwaySampleInitialized=false;
+        if(!throwAwaySampleCheckPointPassed[0]){
+            if(update()&&(System.currentTimeMillis()- throwAwaySampleCheckPointStartTime)>1000){//完成条件判断
+                throwAwaySampleCheckPointPassed[0]=true;
+            }
         }
-        return throwAwaySampleInitialized;
+        if(throwAwaySampleCheckPointInitialized[1]&&throwAwaySampleCheckPointPassed[0]){
+            throwAwaySampleCheckPointStartTime =System.currentTimeMillis();
+            setArmPosition(0);
+            setTargetOutputHeight(0);
+            //action 2
+
+
+
+
+
+            throwAwaySampleCheckPointInitialized[1] =true;
+        }
+        if(!throwAwaySampleCheckPointPassed[1]){
+            if(update()&&(System.currentTimeMillis()- throwAwaySampleCheckPointStartTime)>1000){//完成条件判断
+                throwAwaySampleCheckPointPassed[1]=true;
+            }
+        }
+        boolean allCheckPointPassed=true;
+        for(int i=0;i< throwAwaySampleCheckPointPassed.length;i++){
+            if (throwAwaySampleCheckPointPassed[i] == false)
+                allCheckPointPassed = false;
+        }
+        if(allCheckPointPassed){
+            for(int i=0;i< throwAwaySampleCheckPointPassed.length;i++){
+                throwAwaySampleCheckPointPassed[i] = false;
+            }
+            throwAwaySampleCheckPointInitialized = throwAwaySampleCheckPointPassed;
+        }
+        return !allCheckPointPassed;
     }
 }
 
