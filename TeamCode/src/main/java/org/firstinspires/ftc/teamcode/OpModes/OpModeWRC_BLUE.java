@@ -35,8 +35,6 @@ public class OpModeWRC_BLUE extends LinearOpMode {
     FlightRecorder recorder;
     GoBildaPinpointDriver odo;
     MecanumDrive drive;
-
-    DcMotor IntakeLengthController = null;
     boolean pad1_lbispressed = false;
     boolean pad1_rbispressed = false;
     long pad2xpressTime = 0;
@@ -73,6 +71,7 @@ public class OpModeWRC_BLUE extends LinearOpMode {
 
     ChassisController chassisController;
     InstallerController installerController;
+    boolean ifBeamDown = false;
     MotorLineIntakeLengthController intakeLengthController;
     SixServoArmEasyAction sixServoArmEasyController;
     //OutputController outputController;
@@ -84,10 +83,14 @@ public class OpModeWRC_BLUE extends LinearOpMode {
         drive = new MecanumDrive(hardwareMap, WRCAutoRightBlue.EndPose);
         chassisController = new ChassisController();
         chassisController.initChassis(hardwareMap, gamepad1, gamepad2, telemetry);
+
+
         installerController = new InstallerController(hardwareMap, gamepad1, gamepad2, telemetry);
+        installerController.setMode(RobotStates.INSTALL_RUNMODE.WAITING);
+
+
         intakeLengthController = new MotorLineIntakeLengthController(hardwareMap);
         sixServoArmEasyController = new SixServoArmEasyAction(hardwareMap, telemetry, gamepad2);
-        IntakeLengthController = hardwareMap.get(DcMotor.class, "IntakeLengthMotor");
         //outputController = new OutputController(hardwareMap);
         CVModule = new FindCandidate();
         //todo: 这里的颜色需要根据实际情况调整!!!!!!!
@@ -150,7 +153,10 @@ public class OpModeWRC_BLUE extends LinearOpMode {
         }
         drive.updatePoseEstimate();
     }
+    long nowtime=0;
     private void teleprint(){
+        telemetry.addData("simpleFPS", 1000/(System.currentTimeMillis() - nowtime));
+        nowtime = System.currentTimeMillis();
         telemetry.addData("ifSlow", ifslow);
         telemetry.addData("ifRoadRunner", ifRoadRunner);
         if(ifSixServoArm){
@@ -176,7 +182,7 @@ public class OpModeWRC_BLUE extends LinearOpMode {
 //        String velocity = String.format(Locale.US,"{XVel: %.3f, YVel: %.3f, HVel: %.3f}", vel.getX(DistanceUnit.MM), vel.getY(DistanceUnit.MM), vel.getHeading(AngleUnit.DEGREES));
 //        telemetry.addData("Velocity", velocity);
         telemetry.addLine();
-
+        telemetry.addData("InstallerState", installerController.getInstallStates());
         telemetry.update();
 
         TelemetryPacket packet = new TelemetryPacket();
@@ -201,12 +207,6 @@ public class OpModeWRC_BLUE extends LinearOpMode {
         }
         else{
             installerController.SinglePullerControl(0.5);
-        }
-        if(gamepad1.left_trigger > 0.1){
-            IntakeLengthController.setPower(1);
-        }
-        if(gamepad1.right_trigger > 0.1){
-            IntakeLengthController.setPower(-1);
         }
 //        intakeLengthController.SetFowardSpeed(gamepad2.left_trigger);
 //        intakeLengthController.SetBackwardSpeed(gamepad2.right_trigger);
@@ -233,9 +233,7 @@ public class OpModeWRC_BLUE extends LinearOpMode {
             pad2_rbispressed = false;
         }
         Actions.runBlocking(
-                new SequentialAction(
-                        sixServoArmEasyController.SixServoArmSetClip(CurrentClipPosition)
-                )
+                sixServoArmEasyController.SixServoArmSetClip(CurrentClipPosition)
         );
 
         if(gamepad2.left_bumper && ifSixServoArm){
@@ -247,14 +245,24 @@ public class OpModeWRC_BLUE extends LinearOpMode {
         }
 
         if(gamepad2.a){
-            //installerController.
+            installerController.setMode(RobotStates.INSTALL_RUNMODE.EATING);
         }
-
         if(gamepad2.y){
-            //installerController.setInstallerPosition(InstallerController.InstallerPosition.INSTALLER_UP);
+            installerController.Install();
         }
+        if(gamepad1.b){
+            ifBeamDown = false;
+            installerController.BeamSpinner(ifBeamDown);
+        }
+        if(gamepad1.a){
+            ifBeamDown = true;
+            installerController.BeamSpinner(ifBeamDown);
+        }
+        installerController.run();
+
 
         if(gamepad2.b){
+            installerController.setMode(RobotStates.INSTALL_RUNMODE.BACKING);
             //outputController.setTargetOutputHeight(100);
         }
     }
