@@ -13,6 +13,12 @@ import org.firstinspires.ftc.teamcode.Controllers.DisSensor;
 import org.firstinspires.ftc.teamcode.Controllers.RobotStates.INSTALL_RUNMODE;
 
 public class InstallerAction {
+    public boolean isUpping = false;
+    double InstallPos = 233;
+    double SixthClipInstallPos = 58;
+    double ClipLength = 25;
+    double SpitDis = 40;
+    int CurrentNum = 1;
     HardwareMap hardwareMap;
     Gamepad gamepad1;
     Gamepad gamepad2;
@@ -71,6 +77,9 @@ public class InstallerAction {
     }
     public class InstallerPuller implements Action{
         private boolean initialized = false;
+        int state = 0;
+        double ClipPosition;
+        long UpstartTime;
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
             double dis = disSensor.getDis();
@@ -78,12 +87,59 @@ public class InstallerAction {
                 clipInstallPuller.setPosition(0);
                 initialized = true;
             }
-            if (dis > 0) {
-                return true;
-            } else {
-                clipInstallPuller.setPosition(0.5);
+            while (CurrentNum <= 6) {
+                if (state == 0) {
+                    ClipPosition = SixthClipInstallPos + (6 - CurrentNum) * ClipLength;
+                    clipInstallPuller.setPosition(1);
+                    UpstartTime = System.currentTimeMillis();
+                    state = 1;
+                    telemetry.addData("Puller", "Moving to clip: " + CurrentNum);
+                    return true;
+                }
+                if (state == 1) {
+                    if (dis <= ClipPosition ||
+                            System.currentTimeMillis() - UpstartTime > 2000) {
+
+                        clipInstallPuller.setPosition(0.5);
+                        state = 2;
+                        telemetry.addData("Puller", "Reached clip: " + CurrentNum);
+                    }
+                    return true;
+                }
+                if (state == 2) {
+                    clipInstallPuller.setPosition(0.5);
+                    if (dis >= InstallPos ||
+                            System.currentTimeMillis() - UpstartTime > 2000 * 2) {
+
+                        state = 3;
+                        telemetry.addData("Puller", "Returned to center");
+                    }
+                    return true;
+                }
+                if (state == 3) {
+                    clipInstallPuller.setPosition(1);
+                    if (dis <= InstallPos - SpitDis ||
+                            System.currentTimeMillis() - UpstartTime > 2000 * 3) {
+                        clipInstallPuller.setPosition(0);
+                        state = 4;
+                        telemetry.addData("Puller", "Spit specimen");
+                    }
+                    return true;
+                }
+                if (state == 4) {
+                    clipInstallPuller.setPosition(0.5);
+                    if (dis >= InstallPos ||
+                            System.currentTimeMillis() - UpstartTime > 2000 * 4) {
+                        clipInstallPuller.setPosition(0.5);
+                        telemetry.addData("Puller", "Final center");
+                        return false;
+                    }
+                    return true;
+                }
+                telemetry.addData("Clip Install Puller", "Pulling clip " + CurrentNum);
+                telemetry.update();
+                CurrentNum++;
             }
-            telemetry.addData("Clip Install Puller", clipInstallPuller.getPosition());
             return false;
         }
     }
@@ -91,27 +147,35 @@ public class InstallerAction {
         // Create an action to pull the installer
         return new InstallerPuller();
     }
+    long UpStartTime = 0;
     public class BeamSpinner implements Action{
-        private final int beamPosition;
-        public BeamSpinner(int beanPosition) {
-            this.beamPosition = beanPosition;
+        private final boolean ifdown;
+        public BeamSpinner(boolean ifdown) {
+            this.ifdown = ifdown;
         }
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            if (beamPosition == 1) {
-                beamSpinner.setPosition(0.8);
-            } else if (beamPosition == 2) {
-                beamSpinner.setPosition(0.6);
-            } else if (beamPosition == 3) {
-                beamSpinner.setPosition(0);
+            if (ifdown) {
+                isUpping = false;
+                beamSpinner.setPosition(0.08);
+            }
+            else {
+                beamSpinner.setPosition(0.3);
+                if(!isUpping){
+                    UpStartTime = System.currentTimeMillis();
+                    isUpping = true;
+                }
+                if(System.currentTimeMillis() - UpStartTime > 300 && System.currentTimeMillis() - UpStartTime < 1000){
+                    beamSpinner.setPosition(0.10);
+                }
             }
             telemetry.addData("Beam Spinner", beamSpinner.getPosition());
             telemetry.update();
             return false;
         }
     }
-    public Action beamSpinner(int beamPosition) {
-        return new BeamSpinner(beamPosition);
+    public Action beamSpinner(boolean ifdown) {
+        return new BeamSpinner(ifdown);
     }
     public void setMode(INSTALL_RUNMODE installStates) {
         // Set the installation mode to the specified run mode
