@@ -45,7 +45,7 @@ public class InstallerActionTest extends LinearOpMode {
             telemetry.addData("currentnum", installerController.getCurrentNum());
             telemetry.addData("ifdown", ifdown);
             telemetry.addData("dis" , installerController.disSensor.getDis());
-            telemetry.addData("state", installerController.getInstallStates());
+            telemetry.addData("InstallerState", installerController.getInstallStates());
             telemetry.update();
             installerController.run();
 

@@ -17,8 +17,14 @@ import org.firstinspires.ftc.teamcode.Controllers.RobotStates.INSTALL_RUNMODE;
 @Config
 public class InstallerController{
     public boolean isUpping = false;
+
+
+
+    //todo: find out the correct values for these constants
     public static double Not_Installing = 0;
     public static double Install_Finished = 0.2;
+
+
     double InstallPos = 233;
     double SixthClipInstallPos = 58;
     double ClipLength = 25;
@@ -59,10 +65,6 @@ public class InstallerController{
     long UpStartTime = 0;
     boolean InstallInited = false;
     long installStartTime = 0;
-    public void SetCurrentNum(int currentNum) {
-        // Set the current number of clip
-        this.CurrentNum = currentNum;
-    }
     public int getCurrentNum() {
         // Set the current number of clip
         return CurrentNum;
@@ -93,11 +95,10 @@ public class InstallerController{
 
         clipInstallPuller.setPosition(position);
     }
-    public void SingleInstallerControl(double position) {
-        // Control the clip installation puller servo to the specified speed
-
-        clipInstaller.setPosition(position);
+    public void Install() {
+        clipInstaller.setPosition(Install_Finished);
     }
+
     public void SingleBeamSpinnerControl(double position) {
         // Control the clip installation puller servo to the specified speed
 
@@ -108,7 +109,6 @@ public class InstallerController{
         this.installStates = installStates;
         switch (this.installStates) {
             case WAITING:
-
                 clipInstaller.setPosition(Not_Installing);
                 if(disSensor.getDis() > InstallPos){
                     clipInstallPuller.setPosition(0.5);
@@ -137,6 +137,7 @@ public class InstallerController{
                 }
                 else{
                     clipInstallPuller.setPosition(0);
+                    this.installStates = INSTALL_RUNMODE.WAITING;
                 }
                 break;
         }
@@ -169,6 +170,8 @@ public class InstallerController{
             case BACKING:
                 if(disSensor.getDis() > InstallPos + 40) {
                     clipInstallPuller.setPosition(0.5);
+                    this.installStates = INSTALL_RUNMODE.WAITING;
+
                 }
                 else{
                     clipInstallPuller.setPosition(0);
