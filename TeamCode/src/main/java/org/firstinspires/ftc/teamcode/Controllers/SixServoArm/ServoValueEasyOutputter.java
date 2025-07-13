@@ -92,4 +92,7 @@ public class ServoValueEasyOutputter {
             setClipPosition(radian);
         }
     }
+    public void SingleServoControl(int servoIndex, double position) {
+        servo[servoIndex].setPosition(position);
+    }
 }

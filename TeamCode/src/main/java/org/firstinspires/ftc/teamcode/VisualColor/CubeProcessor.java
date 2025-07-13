@@ -33,7 +33,7 @@ public class CubeProcessor {
     public static int ProcessCube(CubeInfo cubeInfo) {
         double X = cubeInfo.centerpoint.x;
         double Y = cubeInfo.centerpoint.y;
-        if(Y >= 150){
+        if(Y >= 10){
             return -1;
         }
         double m1 = (Math.abs(X) - ellipseX) * (Math.abs(X) - ellipseX) / (ellipseA * ellipseA);
