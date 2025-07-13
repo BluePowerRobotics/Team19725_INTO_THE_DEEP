@@ -150,7 +150,10 @@ public class OpModeWRC_BLUE extends LinearOpMode {
         }
         drive.updatePoseEstimate();
     }
+    long nowtime=0;
     private void teleprint(){
+        telemetry.addData("simpleFPS", 1000/(System.currentTimeMillis() - nowtime));
+        nowtime = System.currentTimeMillis();
         telemetry.addData("ifSlow", ifslow);
         telemetry.addData("ifRoadRunner", ifRoadRunner);
         if(ifSixServoArm){
