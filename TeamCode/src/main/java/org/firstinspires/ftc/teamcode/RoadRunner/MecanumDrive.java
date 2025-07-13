@@ -69,7 +69,7 @@ public final class MecanumDrive {
         // drive model parameters
         public double inPerTick = 0.0019835881;
         //public double lateralInPerTick = inPerTick;
-        public double lateralInPerTick =  0.0016399617676092588;
+        public double lateralInPerTick =  0.0019835881;
 
         //todo redo
         //public double trackWidthTicks = 420744.8305413621;
@@ -98,13 +98,13 @@ public final class MecanumDrive {
         // path controller gains
 
         //todo:  每辆新车都需要重新测量下面六个参数
-        public double axialGain = 6;
-        public double lateralGain = 4;
-        public double headingGain = 4; // shared with turn
+        public double axialGain = 9;
+        public double lateralGain = 9;
+        public double headingGain = 14; // shared with turn
 
         public double axialVelGain = 0.2;
-        public double lateralVelGain = 0.0;
-        public double headingVelGain = 0; // shared with turn
+        public double lateralVelGain = 1;
+        public double headingVelGain = 1; // shared with turn
     }
 
     public static Params PARAMS = new Params();

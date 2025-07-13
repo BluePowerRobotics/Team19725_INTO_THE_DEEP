@@ -11,11 +11,9 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Autonomous.WRCAutoRightBlue;
 import org.firstinspires.ftc.teamcode.Controllers.Installer.InstallerController;
 import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.ServoValueEasyOutputter;
-import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.SixServoArmAction;
 import org.firstinspires.ftc.teamcode.RoadRunner.Drawing;
 import org.firstinspires.ftc.teamcode.RoadRunner.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
@@ -26,6 +24,7 @@ import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.*;
 import org.firstinspires.ftc.teamcode.VisualColor.FindCandidate;
 
 import com.acmerobotics.roadrunner.ftc.FlightRecorder;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 
 @TeleOp(name = "OpModeWRC_BLUE")
@@ -36,6 +35,8 @@ public class OpModeWRC_BLUE extends LinearOpMode {
     FlightRecorder recorder;
     GoBildaPinpointDriver odo;
     MecanumDrive drive;
+
+    DcMotor IntakeLengthController = null;
     boolean pad1_lbispressed = false;
     boolean pad1_rbispressed = false;
     long pad2xpressTime = 0;
@@ -86,11 +87,12 @@ public class OpModeWRC_BLUE extends LinearOpMode {
         installerController = new InstallerController(hardwareMap, gamepad1, gamepad2, telemetry);
         intakeLengthController = new MotorLineIntakeLengthController(hardwareMap);
         sixServoArmEasyController = new SixServoArmEasyAction(hardwareMap, telemetry, gamepad2);
+        IntakeLengthController = hardwareMap.get(DcMotor.class, "IntakeLengthMotor");
         //outputController = new OutputController(hardwareMap);
         CVModule = new FindCandidate();
         //todo: 这里的颜色需要根据实际情况调整!!!!!!!
         CVModule.init(hardwareMap, telemetry, 0);
-        Actions.runBlocking(sixServoArmEasyController.SixServoArmInit());
+        //Actions.runBlocking(sixServoArmEasyController.SixServoArmInit());
         double t = System.currentTimeMillis(); // 获取当前时间
         //硬件初始化
     }
@@ -156,13 +158,11 @@ public class OpModeWRC_BLUE extends LinearOpMode {
         }
         else{
             telemetry.addData("ServoSelected(0-5)", servo_select);
+            telemetry.addData("ServoPosition", servo_position);
         }
 
         telemetry.addData("xpad(实际上是y轴)", -gamepad1.left_stick_y * kpad);
         telemetry.addData("ypad(实际上是x轴)", -gamepad1.left_stick_x * kpad);
-
-        telemetry.addData("xencoder", odo.getEncoderX());
-        telemetry.addData("yencoder", odo.getEncoderY());
         Pose2d pose = drive.localizer.getPose();
         telemetry.addData("x", pose.position.x);
         telemetry.addData("y", pose.position.y);
@@ -176,9 +176,6 @@ public class OpModeWRC_BLUE extends LinearOpMode {
 //        String velocity = String.format(Locale.US,"{XVel: %.3f, YVel: %.3f, HVel: %.3f}", vel.getX(DistanceUnit.MM), vel.getY(DistanceUnit.MM), vel.getHeading(AngleUnit.DEGREES));
 //        telemetry.addData("Velocity", velocity);
         telemetry.addLine();
-//        telemetry.addData("角度", colorLocator.LocateAll().angle);
-//        telemetry.addData("X", colorLocator.LocateAll().x);
-//        telemetry.addData("Y", colorLocator.LocateAll().y);
 
         telemetry.update();
 
@@ -196,7 +193,21 @@ public class OpModeWRC_BLUE extends LinearOpMode {
             installerController.BeamSpinner(true);
         }
 
-
+        if(gamepad1.left_trigger > 0.1){
+            installerController.SinglePullerControl(0.5 - gamepad1.left_trigger*0.5);
+        }
+        else if(gamepad1.right_trigger > 0.1){
+            installerController.SinglePullerControl(0.5 + gamepad1.right_trigger*0.5);
+        }
+        else{
+            installerController.SinglePullerControl(0.5);
+        }
+        if(gamepad1.left_trigger > 0.1){
+            IntakeLengthController.setPower(1);
+        }
+        if(gamepad1.right_trigger > 0.1){
+            IntakeLengthController.setPower(-1);
+        }
 //        intakeLengthController.SetFowardSpeed(gamepad2.left_trigger);
 //        intakeLengthController.SetBackwardSpeed(gamepad2.right_trigger);
 
@@ -256,66 +267,67 @@ public class OpModeWRC_BLUE extends LinearOpMode {
                 pad2_xispressed = true;
             }
         } else {
-            if(System.currentTimeMillis() - t > 1000) {
                 if (ifSixServoArm) {
                     ifSixServoArm = false;
                 } else {
                     ifSixServoArm = true;
                 }
-            }
-            pad1_lbispressed = false;
+
+            pad2_xispressed = false;
         }
     }
     public void SingleServoControl() {
-        if(gamepad2.left_stick_button) {
-            if (!pad2_lstickispressed) {
-                servo_select--;
-                pad2_lstickispressed = true;
-                ifGivenCommand = false; // Reset command flag when changing servo selection
+        if(!ifSixServoArm) {
+            if(gamepad2.left_stick_button) {
+                if (!pad2_lstickispressed) {
+                    servo_select--;
+                    pad2_lstickispressed = true;
+                    ifGivenCommand = false; // Reset command flag when changing servo selection
+                }
+            } else {
+                pad2_lstickispressed = false;
             }
-        } else {
-            pad2_lstickispressed = false;
-        }
-        if(gamepad2.right_stick_button) {
-            if (!pad2_rstickispressed) {
-                servo_select++;
-                pad2_rstickispressed = true;
-                ifGivenCommand = false;
+            if(gamepad2.right_stick_button) {
+                if (!pad2_rstickispressed) {
+                    servo_select++;
+                    pad2_rstickispressed = true;
+                    ifGivenCommand = false;
+                }
+            } else {
+                pad2_rstickispressed = false;
             }
-        } else {
-            pad2_rstickispressed = false;
-        }
-        if (servo_select < 0) {
-            servo_select = 5;
-        }
-        if(servo_select > 5){
-            servo_select = 0;
-        }
+            if (servo_select < 0) {
+                servo_select = 4;
+            }
+            if(servo_select > 4){
+                servo_select = 0;
+            }
 
-        if(gamepad2.left_stick_x > 0.1 && gamepad2.left_stick_x < 0.6) {
-            servo_position += 0.01;
-            ifGivenCommand = true;
-        }
-        else if(gamepad2.left_stick_x < -0.1 && gamepad2.left_stick_x > -0.6) {
-            servo_position -= 0.01;
-            ifGivenCommand = true;
-        }
-        if(gamepad2.left_stick_x > 0.6) {
-            servo_position += 0.08;
-            ifGivenCommand = true;
-        }
-        else if(gamepad2.left_stick_x <-0.6) {
-            servo_position -= 0.08;
-            ifGivenCommand = true;
-        }
+            if(gamepad2.left_stick_x > 0.1 && gamepad2.left_stick_x < 0.6) {
+                servo_position += 0.01;
+                ifGivenCommand = true;
+            }
+            else if(gamepad2.left_stick_x < -0.1 && gamepad2.left_stick_x > -0.6) {
+                servo_position -= 0.01;
+                ifGivenCommand = true;
+            }
+            if(gamepad2.left_stick_x > 0.6) {
+                servo_position += 0.08;
+                ifGivenCommand = true;
+            }
+            else if(gamepad2.left_stick_x <-0.6) {
+                servo_position -= 0.08;
+                ifGivenCommand = true;
+            }
 
-        if (servo_position > 1)
-            servo_position = 1;
-        if (servo_position < 0)
-            servo_position = 0;
+            if (servo_position > 1)
+                servo_position = 1;
+            if (servo_position < 0)
+                servo_position = 0;
 
-        if(ifGivenCommand){
-            ServoValueEasyOutputter.getInstance(hardwareMap, telemetry,ServoRadianEasyCalculator.getInstance()).SingleServoControl(servo_select, servo_position);
+            if(ifGivenCommand){
+                ServoValueEasyOutputter.getInstance(hardwareMap, telemetry,ServoRadianEasyCalculator.getInstance()).SingleServoControl(servo_select, servo_position);
+            }
         }
     }
 
@@ -338,4 +350,5 @@ public class OpModeWRC_BLUE extends LinearOpMode {
             }
         }
     }
+
 }

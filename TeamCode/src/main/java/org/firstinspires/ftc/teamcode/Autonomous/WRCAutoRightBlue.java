@@ -31,9 +31,9 @@ public class WRCAutoRightBlue extends LinearOpMode {
             double Heading = Math.toRadians(90);
             Pose2d initialPoseRight = new Pose2d(16.4, -63.5, Heading);
 
-            Vector2d OutPutPos0 = new Vector2d(0,-32.5);
+            Vector2d OutPutPos0 = new Vector2d(0,-33);
             Pose2d OutPut0FinishPos = new Pose2d(6,-32.5, Heading);
-            Vector2d OutPutPos1 = new Vector2d(6,-32.5);
+            Vector2d OutPutPos1 = new Vector2d(6,-33);
             Pose2d OutPut1FinishPos = new Pose2d(6,-32.5, Heading);
             Vector2d IntakePos = new Vector2d(49,-40);
             Pose2d IntakeFinish = new Pose2d(49,-40, Heading);
@@ -71,9 +71,9 @@ public class WRCAutoRightBlue extends LinearOpMode {
                     .strafeTo(OutPutPos1);
             Action ActionOutput2 = Output2.build();
 
-            FindCandidate CVModule = new FindCandidate();
-            SixServoArmAction sixServoArmController = new SixServoArmAction(hardwareMap, telemetry,gamepad2);
-            CVModule.init(hardwareMap, telemetry, 0);
+//            FindCandidate CVModule = new FindCandidate();
+//            SixServoArmAction sixServoArmController = new SixServoArmAction(hardwareMap, telemetry,gamepad2);
+//            CVModule.init(hardwareMap, telemetry, 0);
 
             TrajectoryActionBuilder climb2 = drive.actionBuilder(new Pose2d(-33.89, -66.29, Math.toRadians(90.00)))
                     .splineTo(new Vector2d(-33.89, -10.38), Math.toRadians(90.00))
@@ -87,10 +87,10 @@ public class WRCAutoRightBlue extends LinearOpMode {
 
             // actions that need to happen on init; for instance, a claw tightening.
             //todo 初始化机器
-            CVModule.init(hardwareMap, telemetry, 0);
-            Actions.runBlocking(
-                    sixServoArmController.SixServoArmInit()
-            );
+//            CVModule.init(hardwareMap, telemetry, 0);
+//            Actions.runBlocking(
+//                    sixServoArmController.SixServoArmInit()
+//            );
 
             waitForStart();
 
@@ -107,28 +107,28 @@ public class WRCAutoRightBlue extends LinearOpMode {
                             ActionOutput2
                     )
             );
-            while(drive.localizer.getPose().position.x > -7){
-                ArmAction armAction = CVModule.findCandidate();
-                if(armAction.suggestion == -1){
-                    drive.setDrivePowers(
-                            new PoseVelocity2d(
-                                    new Vector2d(0, -0.2),
-                                    0
-                            )
-                    );
-                }
-                else{
-                    drive.setDrivePowers(
-                            new PoseVelocity2d(
-                                    new Vector2d(0, 0),
-                                    0
-                            )
-                    );
-                    Actions.runBlocking(
-                            sixServoArmController.SixServoArmRunToPosition(armAction)
-                    );
-                }
-            }
+//            while(drive.localizer.getPose().position.x > -7){
+//                ArmAction armAction = CVModule.findCandidate();
+//                if(armAction.suggestion == -1){
+//                    drive.setDrivePowers(
+//                            new PoseVelocity2d(
+//                                    new Vector2d(0, -0.2),
+//                                    0
+//                            )
+//                    );
+//                }
+//                else{
+//                    drive.setDrivePowers(
+//                            new PoseVelocity2d(
+//                                    new Vector2d(0, 0),
+//                                    0
+//                            )
+//                    );
+//                    Actions.runBlocking(
+//                            sixServoArmController.SixServoArmRunToPosition(armAction)
+//                    );
+//                }
+//            }
             EndPose = drive.localizer.getPose();
         }
     }

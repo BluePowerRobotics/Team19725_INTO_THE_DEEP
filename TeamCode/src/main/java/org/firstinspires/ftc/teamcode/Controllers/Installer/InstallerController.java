@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.Controllers.Installer;
 
 import androidx.annotation.NonNull;
+
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -12,10 +14,11 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Controllers.DisSensor;
 import org.firstinspires.ftc.teamcode.Controllers.RobotStates;
 import org.firstinspires.ftc.teamcode.Controllers.RobotStates.INSTALL_RUNMODE;
+@Config
 public class InstallerController{
-    boolean isUpping = false;
-    double Not_Installing = 0;
-    double Install_Finished = 0.2;
+    public boolean isUpping = false;
+    public static double Not_Installing = 0;
+    public static double Install_Finished = 0.2;
     double InstallPos = 233;
     double SixthClipInstallPos = 58;
     double ClipLength = 25;
@@ -68,18 +71,37 @@ public class InstallerController{
 
     public void BeamSpinner(boolean ifdown){
         if (ifdown) {
-            if(!isUpping) {
-                beamSpinner.setPosition(0.08);
-            }
+            isUpping = false;
+            beamSpinner.setPosition(0.08);
         }
         else {
              beamSpinner.setPosition(0.3);
-             UpStartTime = System.currentTimeMillis();
-             isUpping = true;
+             if(!isUpping){
+                 UpStartTime = System.currentTimeMillis();
+                 isUpping = true;
+             }
              if(System.currentTimeMillis() - UpStartTime > 300 && System.currentTimeMillis() - UpStartTime < 1000){
-                 beamSpinner.setPosition(0.135);
+                 beamSpinner.setPosition(0.10);
+                 this.CurrentNum = 1;
+
             }
         }
+    }
+
+    public void SinglePullerControl(double position) {
+        // Control the clip installation puller servo to the specified speed
+
+        clipInstallPuller.setPosition(position);
+    }
+    public void SingleInstallerControl(double position) {
+        // Control the clip installation puller servo to the specified speed
+
+        clipInstaller.setPosition(position);
+    }
+    public void SingleBeamSpinnerControl(double position) {
+        // Control the clip installation puller servo to the specified speed
+
+        beamSpinner.setPosition(position);
     }
     public void setMode(INSTALL_RUNMODE installStates) {
         // Set the installation mode to the specified run mode
@@ -98,8 +120,10 @@ public class InstallerController{
             case EATING:
                 clipInstallPuller.setPosition(1);
                 if(disSensor.getDis() < SixthClipInstallPos + (6 - CurrentNum) * ClipLength) {
+                    this.CurrentNum++;
                     clipInstallPuller.setPosition(0.5);
                     this.installStates = INSTALL_RUNMODE.WAITING;
+
                 } else {
                     clipInstallPuller.setPosition(1);
                 }
@@ -132,6 +156,7 @@ public class InstallerController{
             case EATING:
                 clipInstallPuller.setPosition(1);
                 if(disSensor.getDis() < SixthClipInstallPos + (6 - CurrentNum) * ClipLength) {
+                    this.CurrentNum++;
                     clipInstallPuller.setPosition(0.5);
                     this.installStates = INSTALL_RUNMODE.WAITING;
                 } else {
@@ -151,4 +176,5 @@ public class InstallerController{
                 break;
         }
     }
+
 }
