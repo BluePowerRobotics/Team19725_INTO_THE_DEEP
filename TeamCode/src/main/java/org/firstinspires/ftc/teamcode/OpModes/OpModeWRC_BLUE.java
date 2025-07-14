@@ -22,6 +22,7 @@ import org.firstinspires.ftc.teamcode.Controllers.*;
 import org.firstinspires.ftc.teamcode.Controllers.IntakeLength.*;
 import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.*;
 import org.firstinspires.ftc.teamcode.VisualColor.FindCandidate;
+import org.firstinspires.ftc.teamcode.VisualColor.model.ArmAction;
 
 import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -63,6 +64,11 @@ public class OpModeWRC_BLUE extends LinearOpMode {
 
     double kpad;
     public double t = 0;//当前时间
+
+
+
+
+
     public double move_x_l;
     public double move_y_l;
     public double move_x_r;
@@ -76,6 +82,8 @@ public class OpModeWRC_BLUE extends LinearOpMode {
     SixServoArmEasyAction sixServoArmEasyController;
     //OutputController outputController;
     FindCandidate CVModule;
+    int FrameCnt = 0;
+    ArmAction Sum = new ArmAction(0,0,0,0,0);
     private void initall(){
         kpad = 1;
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -237,11 +245,29 @@ public class OpModeWRC_BLUE extends LinearOpMode {
         );
 
         if(gamepad2.left_bumper && ifSixServoArm){
-            Actions.runBlocking(
-                    new SequentialAction(
-                            sixServoArmEasyController.SixServoArmRunToPosition(CVModule.findCandidate())
-                    )
+            FrameCnt++;
+            ArmAction armAction = CVModule.findCandidate();
+            Sum = new ArmAction(
+                    Sum.ClipAngle += armAction.ClipAngle,
+                    Sum.length += armAction.length,
+                    Sum.GoToX += armAction.GoToX,
+                    Sum.GoToY += armAction.GoToY,
+                    armAction.suggestion
             );
+            if(FrameCnt > 5){
+                ArmAction averageAction = new ArmAction(
+                        Sum.ClipAngle / FrameCnt,
+                        Sum.length / FrameCnt,
+                        Sum.GoToX / FrameCnt,
+                        Sum.GoToY / FrameCnt,
+                        Sum.suggestion
+                );
+                Actions.runBlocking(
+                        sixServoArmEasyController.SixServoArmRunToPosition(averageAction)
+                );
+                FrameCnt = 0;
+            }
+
         }
 
         if(gamepad2.a){

@@ -11,12 +11,8 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.Autonomous.WRCAutoRightBlue;
 import org.firstinspires.ftc.teamcode.Autonomous.WRCAutoRightRed;
-import org.firstinspires.ftc.teamcode.Controllers.ArmController;
 import org.firstinspires.ftc.teamcode.Controllers.ChassisController;
 import org.firstinspires.ftc.teamcode.Controllers.Installer.* ;
 import org.firstinspires.ftc.teamcode.Controllers.IntakeLength.MotorLineIntakeLengthController;
@@ -26,7 +22,6 @@ import org.firstinspires.ftc.teamcode.RoadRunner.Drawing;
 import org.firstinspires.ftc.teamcode.RoadRunner.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.RoadRunner.tuning.TuningOpModes;
-import org.firstinspires.ftc.teamcode.VisualColor.Alignment;
 import org.firstinspires.ftc.teamcode.VisualColor.FindCandidate;
 
 

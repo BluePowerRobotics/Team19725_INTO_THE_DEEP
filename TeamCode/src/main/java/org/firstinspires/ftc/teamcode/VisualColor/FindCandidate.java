@@ -112,6 +112,8 @@ public class FindCandidate{
     ColorBlobLocatorProcessor colorLocator;
     VisionPortal portal;
 
+    private OpenCvUndistortion UndistortionTool = new OpenCvUndistortion();
+
     public void init(HardwareMap hardWareMap, Telemetry telerc, int ColorMode) {
         Mytelemetry = telerc;
         if(ColorMode == 0) {
@@ -141,6 +143,7 @@ public class FindCandidate{
                 .setCameraResolution(new Size(resolutionwidth, resolutionheight))
                 .setCamera(hardWareMap.get(WebcamName.class, "Webcam 1"))
                 .build();
+        FtcDashboard.getInstance().startCameraStream(processor, 0);
     }
 
     public static class CameraStreamProcessor implements VisionProcessor, CameraStreamSource {
@@ -182,7 +185,7 @@ public class FindCandidate{
 
     public ArmAction findCandidate()
     {
-        processor.drawXYlines(new Mat(), 50, new Scalar(255, 0, 0), 1); // Draw grid lines on the camera preview
+        //processor.drawXYlines(new Mat(), 50, new Scalar(255, 0, 0), 1); // Draw grid lines on the camera preview
         Mytelemetry.setMsTransmissionInterval(50);   // Speed up telemetry updates, Just use for debugging.
         Mytelemetry.setDisplayFormat(Telemetry.DisplayFormat.MONOSPACE);
 
@@ -241,7 +244,7 @@ public class FindCandidate{
 
         Mytelemetry.addData("length:", CandidateLength);
         for(int j = 0; j < CandidateLength; j++){
-            candidates[j].centerpoint = OpenCvUndistortion.openCvUndistortion(candidates[j].centerpoint.x - MidX, candidates[j].centerpoint.y - MidY);
+            candidates[j].centerpoint = UndistortionTool.openCvUndistortion(candidates[j].centerpoint.x - MidX, candidates[j].centerpoint.y - MidY);
             candidates[j].centerpoint = new Point(candidates[j].centerpoint.x * PixeltoMM, candidates[j].centerpoint.y * PixeltoMM);
             int Status = CubeProcessor.ProcessCube(candidates[j]);
             if(Status == -1){
@@ -270,14 +273,6 @@ public class FindCandidate{
         }
 
 
-//        if(InsideCnt > 0 && !(InsideCandidates[0] == null)) {
-//            Mytelemetry.addData("Running to", "index: %d, Size: %.2f, Density: %.2f, Angle: %.2f, Center: (%.2f, %.2f), Distance: %.2f mm",
-//                    InsideCandidates[0].index,
-//                    InsideCandidates[0].size, InsideCandidates[0].density, InsideCandidates[0].angleDeg,
-//                    InsideCandidates[0].centerpoint.x, InsideCandidates[0].centerpoint.y, InsideCandidates[0].DisToCamInMM);
-//        }
-
-
         int Suggestion = 0;
         if(LeftCnt > RightCnt){
             Suggestion = 1; // 左移
@@ -285,15 +280,12 @@ public class FindCandidate{
         else if(RightCnt > LeftCnt){
             Suggestion = 2; // 右移
         }
-        else{
-            Suggestion = 0; // 不移动
-        }
         Mytelemetry.addData("not inside","left: %d Right: %d", LeftCnt, RightCnt);
 
         InsideCnt = 0;
         LeftCnt = 0;
         RightCnt = 0;
-        FtcDashboard.getInstance().startCameraStream(processor, 0);
+
         //telemetry.update();       已在主程序中统一更新
         if(!(InsideCandidates[0] == null)){
             return new ArmAction(InsideCandidates[0].angleDeg, InsideCandidates[0].DisToCamInMM, InsideCandidates[0].centerpoint.x, InsideCandidates[0].centerpoint.y, Suggestion);
