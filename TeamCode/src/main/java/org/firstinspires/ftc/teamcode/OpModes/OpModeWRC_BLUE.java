@@ -301,12 +301,13 @@ public class OpModeWRC_BLUE extends LinearOpMode {
                 pad2_xispressed = true;
             }
         } else {
+            if(pad2_xispressed){
                 if (ifSixServoArm) {
                     ifSixServoArm = false;
                 } else {
                     ifSixServoArm = true;
                 }
-
+            }
             pad2_xispressed = false;
         }
     }
