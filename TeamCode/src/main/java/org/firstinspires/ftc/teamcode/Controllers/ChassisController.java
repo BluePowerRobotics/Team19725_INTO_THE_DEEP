@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode.Controllers;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.SixServoArmEasyController;
 import org.firstinspires.ftc.teamcode.RoadRunner.GoBildaPinpointDriver;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -183,7 +184,7 @@ public class ChassisController {
                                                                // Configuration.
         rightBack = hardwareMap.get(DcMotor.class, "rightBack");
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
-
+        
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -410,10 +411,7 @@ public class ChassisController {
 
             if (gamepad1.x) {
                 if (!xhasbeenpressed) {
-                    if (!thitalock)
-                        thitalock = true;
-                    else if (thitalock)
-                        thitalock = false;
+                    thitalock=!thitalock;
                     xhasbeenpressed = true;
                 } else {
                     xhasbeenpressed = true;

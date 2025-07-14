@@ -9,7 +9,7 @@ public class MotorLineIntakeLengthController implements IntakeLengthControllerIn
     HardwareMap hardwareMap;
     static IntakeLengthControllerInterface instance;
     DcMotor Motor;
-    private final double intakeLengthControllerNumberPerCycle =0, intakeLengthControllerMMPerCycle =0;
+    private final double intakeLengthControllerNumberPerCycle = 252, intakeLengthControllerMMPerCycle =30*Math.PI;
     public MotorLineIntakeLengthController(HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
         Motor=hardwareMap.get(DcMotor.class,"IntakeLengthMotor");
@@ -45,5 +45,22 @@ public class MotorLineIntakeLengthController implements IntakeLengthControllerIn
     @Override
     public double getIntakeLengthTargetPosition() {
         return IntakeLengthTargetPosition;
+    }
+    public long testZeroPositionTime=0;
+    public boolean testZeroPositionInited=false;
+    public int testZeroPositionLastPos=0;
+    public boolean testZeroPosition(){
+        if(testZeroPositionInited) {
+            testZeroPositionTime = System.currentTimeMillis();
+            testZeroPositionInited=true;
+        }
+        Motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Motor.setPower(-0.5);
+        if((Motor.getCurrentPosition()==testZeroPositionLastPos)&&(System.currentTimeMillis()-testZeroPositionTime>200)){
+            testZeroPositionInited= false;
+            return false;
+        }else{
+            return true;
+        }
     }
 }

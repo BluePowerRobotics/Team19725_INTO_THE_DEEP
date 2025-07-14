@@ -19,9 +19,9 @@ public class ServoRadianEasyCalculator {
     public double[] calculate(double x,double y,double clipHeadingRadian){
         double radian0 = 0;
         if (x>0 && y>0){radian0 = Math.atan(y/x);}
-        else if (x<0 && y>0){radian0 = Math.PI-Math.atan(y/x);}
-        else if (x<0 && y<0){radian0 = Math.PI+Math.atan(y/x);}
-        else if (x>0 && y<0){radian0 = Math.PI*2-Math.atan(y/x);}
+        else if (x<0 && y>0){radian0 = Math.PI-Math.atan(Math.abs(y/x));}
+        else if (x<0 && y<0){radian0 = Math.PI+Math.atan(Math.abs(y/x));}
+        else if (x>0 && y<0){radian0 = Math.PI*2-Math.atan(Math.abs(y/x));}
         else if (x==0 && y>0){radian0 = Math.PI*0.5;}
         else if (x==0 && y<0){radian0 = Math.PI*1.5;}
         double r = Math.sqrt(Math.pow(x,2)+Math.pow(y,2));
