@@ -257,7 +257,7 @@ public class OpModeWRC_BLUE extends LinearOpMode {
                         Sum.GoToY / FrameCnt,
                         Sum.suggestion
                 );
-                sixServoArmEasyController.setTargetPosition(averageAction);
+                sixServoArmEasyController.setTargetPosition(averageAction).update();
                 FrameCnt = 0;
             }
 
