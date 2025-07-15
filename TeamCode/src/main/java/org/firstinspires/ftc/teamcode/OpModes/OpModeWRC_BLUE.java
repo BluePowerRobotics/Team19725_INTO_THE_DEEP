@@ -79,7 +79,8 @@ public class OpModeWRC_BLUE extends LinearOpMode {
     InstallerController installerController;
     boolean ifBeamDown = false;
     MotorLineIntakeLengthController intakeLengthController;
-    SixServoArmEasyAction sixServoArmEasyController;
+    SixServoArmEasyController sixServoArmEasyController;
+    ServoValueEasyOutputter servoValueOutputter;
     //OutputController outputController;
     FindCandidate CVModule;
     int FrameCnt = 0;
@@ -98,7 +99,8 @@ public class OpModeWRC_BLUE extends LinearOpMode {
 
 
         intakeLengthController = new MotorLineIntakeLengthController(hardwareMap);
-        sixServoArmEasyController = new SixServoArmEasyAction(hardwareMap, telemetry, gamepad2);
+        sixServoArmEasyController = new SixServoArmEasyController(hardwareMap, telemetry);
+        servoValueOutputter = new ServoValueEasyOutputter(hardwareMap, telemetry, ServoRadianEasyCalculator.getInstance());
         //outputController = new OutputController(hardwareMap);
         CVModule = new FindCandidate();
         //todo: 这里的颜色需要根据实际情况调整!!!!!!!
@@ -200,12 +202,7 @@ public class OpModeWRC_BLUE extends LinearOpMode {
         FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
     private  void controllers() {
-        if (gamepad1.b) {
-            installerController.BeamSpinner(false);
-        }
-        if (gamepad1.a) {
-            installerController.BeamSpinner(true);
-        }
+
 
         if(gamepad1.left_trigger > 0.1){
             installerController.SinglePullerControl(0.5 - gamepad1.left_trigger*0.5);
@@ -240,9 +237,7 @@ public class OpModeWRC_BLUE extends LinearOpMode {
             }
             pad2_rbispressed = false;
         }
-        Actions.runBlocking(
-                sixServoArmEasyController.SixServoArmSetClip(CurrentClipPosition)
-        );
+        servoValueOutputter.setClip(CurrentClipPosition);
 
         if(gamepad2.left_bumper && ifSixServoArm){
             FrameCnt++;
@@ -262,30 +257,24 @@ public class OpModeWRC_BLUE extends LinearOpMode {
                         Sum.GoToY / FrameCnt,
                         Sum.suggestion
                 );
-                Actions.runBlocking(
-                        sixServoArmEasyController.SixServoArmRunToPosition(averageAction)
-                );
+                sixServoArmEasyController.setTargetPosition(averageAction);
                 FrameCnt = 0;
             }
 
         }
-
+        if (gamepad1.b) {
+            installerController.BeamSpinner(false);
+        }
+        if (gamepad1.a) {
+            installerController.BeamSpinner(true);
+        }
         if(gamepad2.a){
             installerController.setMode(RobotStates.INSTALL_RUNMODE.EATING);
         }
         if(gamepad2.y){
             installerController.Install();
         }
-        if(gamepad1.b){
-            ifBeamDown = false;
-            installerController.BeamSpinner(ifBeamDown);
-        }
-        if(gamepad1.a){
-            ifBeamDown = true;
-            installerController.BeamSpinner(ifBeamDown);
-        }
         installerController.run();
-
 
         if(gamepad2.b){
             installerController.setMode(RobotStates.INSTALL_RUNMODE.BACKING);
