@@ -13,6 +13,7 @@ public class MotorLineIntakeLengthController implements IntakeLengthControllerIn
     public MotorLineIntakeLengthController(HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
         Motor=hardwareMap.get(DcMotor.class,"IntakeLengthMotor");
+        Motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
     public static synchronized IntakeLengthControllerInterface getInstance(HardwareMap hardwareMap){
         if(instance==null){
@@ -63,4 +64,9 @@ public class MotorLineIntakeLengthController implements IntakeLengthControllerIn
             return true;
         }
     }
+    public void SingleMotorControl(double Power){
+        Motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Motor.setPower(Power);
+    }
+
 }
