@@ -19,7 +19,7 @@
  * SOFTWARE.
  */
 
-package org.firstinspires.ftc.teamcode.VisualColor;
+package org.firstinspires.ftc.teamcode.Vision;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -27,9 +27,6 @@ import android.util.Size;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -38,8 +35,8 @@ import org.firstinspires.ftc.robotcore.external.function.Continuation;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
-import org.firstinspires.ftc.teamcode.VisualColor.model.ArmAction;
-import org.firstinspires.ftc.teamcode.VisualColor.model.CubeInfo;
+import org.firstinspires.ftc.teamcode.Vision.model.ArmAction;
+import org.firstinspires.ftc.teamcode.Vision.model.CubeInfo;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
@@ -55,7 +52,6 @@ import org.opencv.imgproc.Imgproc;
 
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -131,10 +127,10 @@ public class FindCandidate{
                 .setTargetColorRange(TargetColor)         // use a predefined color match
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
                 .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 1, 1, -1))  // search central 1/4 of camera view
-                .setDrawContours(true)// Show contours on the Stream Preview
-                .setBlurSize(blurSize)// Smooth the transitions between different colors in image
-                .setErodeSize(erodeSize)
-                .setDilateSize(dilateSize)
+                .setDrawContours(true)
+                .setBlurSize(blurSize)//模糊
+                .setErodeSize(erodeSize)//腐蚀
+                .setDilateSize(dilateSize)//膨胀
                 .build();
        portal = new VisionPortal.Builder()
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)

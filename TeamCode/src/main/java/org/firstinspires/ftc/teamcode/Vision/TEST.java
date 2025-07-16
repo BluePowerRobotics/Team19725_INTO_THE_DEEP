@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.VisualColor;
+package org.firstinspires.ftc.teamcode.Vision;
 
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.VisualColor.model.CubeInfo;
+import org.firstinspires.ftc.teamcode.Vision.model.CubeInfo;
 import org.opencv.core.Point;
 
 @Config

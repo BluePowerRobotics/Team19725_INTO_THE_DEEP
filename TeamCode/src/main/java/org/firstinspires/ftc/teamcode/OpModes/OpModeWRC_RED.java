@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.RoadRunner.Drawing;
 import org.firstinspires.ftc.teamcode.RoadRunner.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.RoadRunner.tuning.TuningOpModes;
-import org.firstinspires.ftc.teamcode.VisualColor.FindCandidate;
+import org.firstinspires.ftc.teamcode.Vision.FindCandidate;
 
 
 @TeleOp(name = "OpModeWRC_RED")

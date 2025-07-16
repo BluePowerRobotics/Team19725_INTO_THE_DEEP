@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.ServoValueOutputter;
 import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.SixServoArmAction;
 import org.firstinspires.ftc.teamcode.RoadRunner.*;
-import org.firstinspires.ftc.teamcode.VisualColor.*;
+import org.firstinspires.ftc.teamcode.Vision.*;
 
 @TeleOp
 public class CVTestOp_BLUE extends LinearOpMode {

@@ -5,9 +5,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
-import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -21,11 +19,10 @@ import org.firstinspires.ftc.teamcode.RoadRunner.tuning.TuningOpModes;
 import org.firstinspires.ftc.teamcode.Controllers.*;
 import org.firstinspires.ftc.teamcode.Controllers.IntakeLength.*;
 import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.*;
-import org.firstinspires.ftc.teamcode.VisualColor.FindCandidate;
-import org.firstinspires.ftc.teamcode.VisualColor.model.ArmAction;
+import org.firstinspires.ftc.teamcode.Vision.FindCandidate;
+import org.firstinspires.ftc.teamcode.Vision.model.ArmAction;
 
 import com.acmerobotics.roadrunner.ftc.FlightRecorder;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 
 @TeleOp(name = "OpModeWRC_BLUE")

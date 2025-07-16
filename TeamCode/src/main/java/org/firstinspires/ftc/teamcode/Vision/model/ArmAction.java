@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.VisualColor.model;
+package org.firstinspires.ftc.teamcode.Vision.model;
 
 public class ArmAction {
     public double ClipAngle;

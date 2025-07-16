@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode.VisualColor;
+package org.firstinspires.ftc.teamcode.Vision;
 
 import android.util.Pair;
 
-import org.firstinspires.ftc.teamcode.VisualColor.model.CubeInfo;
+import org.firstinspires.ftc.teamcode.Vision.model.CubeInfo;
 import org.opencv.core.Point;
 
 import java.util.Arrays;

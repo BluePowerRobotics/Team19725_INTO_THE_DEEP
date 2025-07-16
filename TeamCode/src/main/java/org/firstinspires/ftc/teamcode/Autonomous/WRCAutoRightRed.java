@@ -13,8 +13,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.SixServoArmAction;
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
-import org.firstinspires.ftc.teamcode.VisualColor.FindCandidate;
-import org.firstinspires.ftc.teamcode.VisualColor.model.ArmAction;
+import org.firstinspires.ftc.teamcode.Vision.FindCandidate;
+import org.firstinspires.ftc.teamcode.Vision.model.ArmAction;
 
 @Config
 @Autonomous(name = "Auto_2025_Right_Red", group = "Autonomous")
