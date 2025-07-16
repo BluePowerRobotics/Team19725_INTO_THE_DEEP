@@ -14,7 +14,7 @@ public class ServoRadianEasyCalculator {
     double c = 125;//useless
     private double[] result = {0,0,0,0};
     //去除z轴方向控制，保持为0
-
+    public double h=0;
     //水平向上为0，顺时针增加，[0Pi,Pi]
     public double[] calculate(double x,double y,double clipHeadingRadian){
         double radian0 = 0;
@@ -24,11 +24,13 @@ public class ServoRadianEasyCalculator {
         else if (x>0 && y<0){radian0 = Math.PI*2-Math.atan(Math.abs(y/x));}
         else if (x==0 && y>0){radian0 = Math.PI*0.5;}
         else if (x==0 && y<0){radian0 = Math.PI*1.5;}
-        double r = Math.sqrt(Math.pow(x,2)+Math.pow(y,2));
+        double fake_r = Math.sqrt(Math.pow(x,2)+Math.pow(y,2));
+        double r=fake_r+18*Math.pow(Math.E,(-Math.pow((0.012*fake_r-1.67),2)))+5;
         double radian1 = Math.acos((Math.pow(a,2)+Math.pow(r,2)-Math.pow(b,2))/(2*a*r));
         //double radian1 = Math.PI/2;
         double radian2 = Math.acos((Math.pow(a,2)+Math.pow(b,2)-Math.pow(r,2))/(2*a*b));
         double radian3 = Math.acos((Math.pow(b,2)+Math.pow(r,2)-Math.pow(a,2))/(2*b*r))+1.5*Math.PI-clipHeadingRadian;
+        //radian1-=Math.atan2(h,r);
         result = new double[]{radian0,radian1,radian2,radian3};
         return result;
     }
