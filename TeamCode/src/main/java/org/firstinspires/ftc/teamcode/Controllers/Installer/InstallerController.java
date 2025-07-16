@@ -17,7 +17,9 @@ import org.firstinspires.ftc.teamcode.Controllers.RobotStates.INSTALL_RUNMODE;
 @Config
 public class InstallerController{
     public boolean isUpping = false;
-
+    public static double Beam_low = 0.15;//与installer对接
+    public static double Beam_mid = 0.16666666666;//从观察区取clip
+    public static double Beam_high = 0.35;//提起clip，使之脱离观察区樯
 
 
     //todo: find out the correct values for these constants
@@ -74,16 +76,16 @@ public class InstallerController{
     public void BeamSpinner(boolean ifdown){
         if (ifdown) {
             isUpping = false;
-            beamSpinner.setPosition(0.08);
+            beamSpinner.setPosition(Beam_low);
         }
         else {
-             beamSpinner.setPosition(0.3);
+             beamSpinner.setPosition(Beam_high);
              if(!isUpping){
                  UpStartTime = System.currentTimeMillis();
                  isUpping = true;
              }
              if(System.currentTimeMillis() - UpStartTime > 300 && System.currentTimeMillis() - UpStartTime < 1000){
-                 beamSpinner.setPosition(0.10);
+                 beamSpinner.setPosition(Beam_mid);
                  this.CurrentNum = 1;
 
             }

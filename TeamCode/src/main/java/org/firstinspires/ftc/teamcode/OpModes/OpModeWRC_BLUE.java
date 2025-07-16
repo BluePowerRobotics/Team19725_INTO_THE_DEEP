@@ -210,8 +210,14 @@ public class OpModeWRC_BLUE extends LinearOpMode {
         else{
             installerController.SinglePullerControl(0.5);
         }
-        intakeLengthController.SingleMotorControl(gamepad2.left_trigger);
-        intakeLengthController.SingleMotorControl(-gamepad2.right_trigger);
+        if(gamepad2.left_trigger > 0.1){
+            //intakeLengthController.SingleMotorControl(gamepad2.left_trigger);
+            intakeLengthController.SingleMotorControl(1);//放出滑轨
+        }
+        if(gamepad2.right_trigger > 0.1){
+            intakeLengthController.SingleMotorControl(-gamepad2.right_trigger);//收回滑轨
+        }
+
 
 
 
