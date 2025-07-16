@@ -25,8 +25,8 @@ public class ServoValueEasyOutputter {
     private HardwareMap hardwareMap;
     private Servo[] servo = new Servo[6];
 
-    private double[] servoZeroPositionDegree = {0,-55,-56.7, 90, 0, 0};
-    private int[] servoDegree = {315, 255, 255, 255, 255, 170};//舵机总旋转角度
+    private double[] servoZeroPositionDegree = {0,-48,-58.7,18, 0, 0};
+    private int[] servoDegree = {315, 257, 230, 255, 255, 170};//舵机总旋转角度
 
     public ServoValueEasyOutputter(HardwareMap hardwareMap, Telemetry telemetry, ServoRadianEasyCalculator servoRadianCalculator) {
         this.servoRadianCalculator = servoRadianCalculator;
@@ -47,6 +47,7 @@ public class ServoValueEasyOutputter {
     }
 
 
+
     private double[] servoPosition = new double[6];//当前角度
     public void setRadians(double[] Radians,double clipRadian,boolean useAutoCalculator) {//控制机械臂
         for (int i = 0; i <= 3; i++) {
@@ -54,9 +55,14 @@ public class ServoValueEasyOutputter {
             while(Radians[i]>2*Math.PI)Radians[i]-=2*Math.PI;
             while(Radians[i]<0)Radians[i]+=2*Math.PI;
             telemetry.addData("Servo " + i + " Degree", Math.toDegrees(Radians[i]));
+            if(Double.isNaN(servoPosition[i])){
+                servoPosition[i]=0;
+                if(i==1) servoPosition[i]=0- servoZeroPositionDegree[i];
+                if(i==2) servoPosition[i]=180- servoZeroPositionDegree[i];
+                if(i==3) servoPosition[i]=90- servoZeroPositionDegree[i];
+            }
             telemetry.addData("Servo " + i + " Position", servoPosition[i]);
-            telemetry.addData("Servo " + i + " Position",Range.clip((servoPosition[i] / servoDegree[i]),0, 1));
-            if(Double.isNaN(servoPosition[i])) servoPosition[i]=0;
+            telemetry.addData("Servo " + i + " Position",Math.min(1, Math.max(0, servoPosition[i] / servoDegree[i])));
             servo[i].setPosition(Range.clip((servoPosition[i] / servoDegree[i]),0, 1));
         }
         setClipPosition(clipRadian,useAutoCalculator);

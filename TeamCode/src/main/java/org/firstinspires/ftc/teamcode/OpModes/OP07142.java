@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -11,12 +10,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Controllers.ChassisController;
 import org.firstinspires.ftc.teamcode.Controllers.IntakeLength.*;
+import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.ServoValueEasyOutputter;
 import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.SixServoArmEasyController;
 
 @TeleOp
 
-public class OP0714 extends LinearOpMode{
+public class OP07142 extends LinearOpMode{
     IntakeLengthControllerInterface intakeLengthController = MotorLineIntakeLengthController.getInstance();
+    ServoValueEasyOutputter servoValueEasyOutputter;
     SixServoArmEasyController sixServoArmController;
     ChassisController rbmove = new ChassisController();// 构建Move_GYW（）class实例
     static DcMotor armPuller;
@@ -57,6 +58,7 @@ public class OP0714 extends LinearOpMode{
 
     private void inithardware() {
         sixServoArmController=SixServoArmEasyController.getInstance(hardwareMap,telemetry);
+        servoValueEasyOutputter=sixServoArmController.servoValueOutputter;
         // control_Hub = hardwareMap.get(Blinker.class, "Control Hub");
         // expansion_Hub_3 = hardwareMap.get(Blinker.class, "Expansion Hub 3");
 
@@ -186,9 +188,28 @@ public class OP0714 extends LinearOpMode{
         }
     }
     double x=0,y=10;
+    boolean leftstickbuttonhasbeenpressed= false;
+    boolean locked=false;
     public void servocontrol() {
         x+=gamepad2.left_stick_x*0.5;
         y-=gamepad2.left_stick_y*0.5;
         sixServoArmController.setTargetPosition(x,y,Math.PI,0).update();
+        ServoValueEasyOutputter.ClipPosition pos;
+        if(gamepad2.left_stick_button){
+            if(!leftstickbuttonhasbeenpressed){
+                locked=!locked;
+                leftstickbuttonhasbeenpressed=true;
+            }
+        }else{
+            leftstickbuttonhasbeenpressed=false;
+        }
+        if(locked){
+            pos=ServoValueEasyOutputter.ClipPosition.LOCKED;
+        }else{
+            pos=ServoValueEasyOutputter.ClipPosition.UNLOCKED;
+        }
+        if(gamepad2.right_stick_button)
+            pos=ServoValueEasyOutputter.ClipPosition.HALF_LOCKED;
+        servoValueEasyOutputter.setClip(pos);
     }
 }
