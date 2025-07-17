@@ -79,7 +79,7 @@ public class RobotStates {
     INTAKE_RUNMODE INTAKE_MODE;
 
     public enum INSTALL_RUNMODE {
-        WAITING, EATING, INSTALLING,BACKING;
+        WAITING, EATING, INSTALLING,BACKING,RETURNING;
         private static final INSTALL_RUNMODE[] VALUES = values();
 
         public INSTALL_RUNMODE next() {

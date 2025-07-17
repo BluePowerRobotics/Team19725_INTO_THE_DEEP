@@ -21,11 +21,11 @@ public class InstallerController{
     public static double Beam_mid = 0.16666666666;//从观察区取clip
     public static double Beam_high = 0.35;//提起clip，使之脱离观察区樯
 
-
     //todo: find out the correct values for these constants
     public static double Not_Installing = 0;
     public static double Install_Finished = 0.2;
 
+    public double WaitStartTime = 0;
 
     double InstallPos = 233;
     double SixthClipInstallPos = 58;
@@ -106,6 +106,8 @@ public class InstallerController{
 
         beamSpinner.setPosition(position);
     }
+    //todo run（）和setmode（）同步更改！！！！！！！
+    //0right 1left
     public void setMode(INSTALL_RUNMODE installStates) {
         // Set the installation mode to the specified run mode
         this.installStates = installStates;
@@ -136,9 +138,19 @@ public class InstallerController{
             case BACKING:
                 if(disSensor.getDis() > InstallPos + 40) {
                     clipInstallPuller.setPosition(0.5);
+                    WaitStartTime = System.currentTimeMillis();
+                    this.installStates = INSTALL_RUNMODE.RETURNING;
                 }
                 else{
                     clipInstallPuller.setPosition(0);
+                }
+                break;
+            case RETURNING:
+                if(System.currentTimeMillis() - WaitStartTime > 300){
+                    clipInstallPuller.setPosition(1);
+                }
+                if(disSensor.getDis() < InstallPos){
+                    clipInstallPuller.setPosition(0.5);
                     this.installStates = INSTALL_RUNMODE.WAITING;
                 }
                 break;
@@ -172,13 +184,23 @@ public class InstallerController{
             case BACKING:
                 if(disSensor.getDis() > InstallPos + 40) {
                     clipInstallPuller.setPosition(0.5);
-                    this.installStates = INSTALL_RUNMODE.WAITING;
-
+                    WaitStartTime = System.currentTimeMillis();
+                    this.installStates = INSTALL_RUNMODE.RETURNING;
                 }
                 else{
-                    clipInstallPuller.setPosition(0);
+                    clipInstallPuller.setPosition(1);
                 }
                 break;
+            case RETURNING:
+                if(System.currentTimeMillis() - WaitStartTime > 300){
+                    clipInstallPuller.setPosition(0);
+                }
+                if(disSensor.getDis() < InstallPos){
+                    clipInstallPuller.setPosition(0.5);
+                    this.installStates = INSTALL_RUNMODE.WAITING;
+                }
+                break;
+
         }
     }
 

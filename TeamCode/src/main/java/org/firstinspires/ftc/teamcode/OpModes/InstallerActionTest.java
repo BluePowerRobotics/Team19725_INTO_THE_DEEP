@@ -15,39 +15,56 @@ public class InstallerActionTest extends LinearOpMode {
     public static double pos = 0.8;
     public void runOpMode() {
         boolean ifdown = false;
-
-        InstallerController installerController = new InstallerController(hardwareMap, gamepad1, gamepad2, telemetry);
-        installerController.setMode(RobotStates.INSTALL_RUNMODE.WAITING);
+InstallerController tmp = new InstallerController(hardwareMap, gamepad1, gamepad2, telemetry);
+        InstallerAction installerController = new InstallerAction(hardwareMap, gamepad1, gamepad2, telemetry);
         waitForStart();
-//        Actions.runBlocking(
-//
-//                new SequentialAction(
-//                        installerController.clipInstaller(false),
-//                        installerController.installerPuller(),
-//                        installerController.beamSpinner(1)
-//                )
-//        );
+        Actions.runBlocking(
+                new SequentialAction(
+                        //in         stallerController.clipInstaller(false),
+                        installerController.installerPuller()
+                )
+        );
         while(opModeIsActive()){
             if(gamepad1.a){
-                installerController.setMode(RobotStates.INSTALL_RUNMODE.EATING);
+                Actions.runBlocking(
+                        installerController.spitClip()
+                );
+
                 //installerController.SetCurrentNum(1);
             }
-            if(gamepad1.left_bumper){
-                ifdown = false;
-                installerController.BeamSpinner(ifdown);
+            if(gamepad1.b){
+                Actions.runBlocking(
+                        installerController.installerPuller()
+                );
             }
-            if(gamepad1.right_bumper){
+            if(gamepad1.x){
                 ifdown = true;
-                installerController.BeamSpinner(ifdown);
+                Actions.runBlocking(
+                        installerController.beamSpinner(ifdown)
+                );
             }
-                //installerController.SingleInstallerControl(pos);
+            if(gamepad1.y){
+                ifdown = false;
+                Actions.runBlocking(
+                        installerController.beamSpinner(ifdown)
+                );
+            }
+            if(gamepad2.a){
+                tmp.setMode(RobotStates.INSTALL_RUNMODE.BACKING);
+            }
+            if(gamepad2.b){
+                tmp.setMode(RobotStates.INSTALL_RUNMODE.EATING);
+            }
+            tmp.run();
 
-            telemetry.addData("currentnum", installerController.getCurrentNum());
-            telemetry.addData("ifdown", ifdown);
-            telemetry.addData("dis" , installerController.disSensor.getDis());
-            telemetry.addData("InstallerState", installerController.getInstallStates());
-            telemetry.update();
-            installerController.run();
+//                //installerController.SingleInstallerControl(pos);
+//
+//            telemetry.addData("currentnum", installerController.getCurrentNum());
+//            telemetry.addData("ifdown", ifdown);
+//            telemetry.addData("dis" , installerController.disSensor.getDis());
+//            telemetry.addData("InstallerState", installerController.getInstallStates());
+//            telemetry.update();
+//            installerController.run();
 
         }
     }

@@ -91,13 +91,13 @@ public class InstallerAction {
         public boolean run(@NonNull TelemetryPacket packet) {
             double dis = disSensor.getDis();
             if (!initialized) {
-                clipInstallPuller.setPosition(0);
+                clipInstallPuller.setPosition(1);
                 initialized = true;
             }
-            while (CurrentNum <= 6) {
+            if(CurrentNum <= 6) {
                 if (state == 0) {
                     ClipPosition = SixthClipInstallPos + (6 - CurrentNum) * ClipLength;
-                    clipInstallPuller.setPosition(0);
+                    clipInstallPuller.setPosition(1);
                     UpstartTime = System.currentTimeMillis();
                     state = 1;
                     telemetry.addData("Puller", "Moving to clip: " + CurrentNum);
@@ -115,7 +115,7 @@ public class InstallerAction {
                     return true;
                 }
                 if (state == 2) {
-                    clipInstallPuller.setPosition(1);
+                    clipInstallPuller.setPosition(0);
                     if (dis >= InstallPos ||
                             System.currentTimeMillis() - UpstartTime > 2000 * 2) {
 
@@ -136,7 +136,7 @@ public class InstallerAction {
     }
     public class SpitClip implements Action{
         private boolean initialized = false;
-        int state = 0;
+        int state = 3;
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
             double dis = disSensor.getDis();
@@ -144,9 +144,9 @@ public class InstallerAction {
                 clipInstallPuller.setPosition(0);
                 initialized = true;
             }
-            while (CurrentNum <= 6) {
+            if (CurrentNum <= 6) {
                 if (state == 3) {
-                    clipInstallPuller.setPosition(1);
+                    clipInstallPuller.setPosition(0);
                     if (dis >= InstallPos + SpitDis) {
                         clipInstallPuller.setPosition(0.5);
                         WaitStartTime = System.currentTimeMillis();
@@ -159,14 +159,13 @@ public class InstallerAction {
                     clipInstallPuller.setPosition(0.5);
                     if (System.currentTimeMillis() - WaitStartTime > 500){
                         IFstartBacking = true;
-                        clipInstallPuller.setPosition(0);
+                        clipInstallPuller.setPosition(1);
                     }
                     if (dis <= InstallPos && IFstartBacking) {
                         clipInstallPuller.setPosition(0.5);
                         telemetry.addData("Puller", "Final center");
                         CurrentNum++;
                         IFstartBacking = false;
-                        state = 0;
                         return false;
                     }
                     return true;
