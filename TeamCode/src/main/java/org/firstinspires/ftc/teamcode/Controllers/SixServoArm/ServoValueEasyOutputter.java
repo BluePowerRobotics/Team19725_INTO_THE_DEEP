@@ -25,12 +25,11 @@ public class ServoValueEasyOutputter {
     private Telemetry telemetry;
     private HardwareMap hardwareMap;
     private Servo[] servo = new Servo[6];
-    public static double servoZeroPosition0=0;
-    public static double[] servoZeroPositionDegree = {servoZeroPosition0,-48,-58.7,18, 0, 0};
+    public static double[] servoZeroPositionDegree = {-10,-48,-58.7,18, 0, 0};
     public static int[] servoDegree = {315, 257, 230, 255, 255, 170};//舵机总旋转角度
     public static boolean reverse = false;
+
     public ServoValueEasyOutputter(HardwareMap hardwareMap, Telemetry telemetry, ServoRadianEasyCalculator servoRadianCalculator) {
-        servoZeroPositionDegree[0]=servoZeroPosition0;
         this.servoRadianCalculator = servoRadianCalculator;
         this.telemetry = telemetry;
         this.hardwareMap = hardwareMap;
@@ -70,7 +69,7 @@ public class ServoValueEasyOutputter {
             }
             telemetry.addData("Servo " + i + " Position", servoPosition[i]);
             telemetry.addData("Servo " + i + " Position",Math.min(1, Math.max(0, servoPosition[i] / servoDegree[i])));
-            servo[i].setPosition(Range.clip((servoPosition[i] / servoDegree[i]),0, 1));
+            servo[i].setPosition(Math.min(1, Math.max(0, servoPosition[i] / servoDegree[i])));
 
         }
         setClipPosition(clipRadian,useAutoCalculator);

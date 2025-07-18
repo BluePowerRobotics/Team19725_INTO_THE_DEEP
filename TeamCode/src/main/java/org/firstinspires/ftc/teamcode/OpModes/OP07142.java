@@ -191,8 +191,8 @@ public class OP07142 extends LinearOpMode{
     boolean leftstickbuttonhasbeenpressed= false;
     boolean locked=false;
     public void servocontrol() {
-        x+=gamepad2.left_stick_x*0.5;
-        y-=gamepad2.left_stick_y*0.5;
+        x+=gamepad2.left_stick_x*2;
+        y-=gamepad2.left_stick_y*2;
         if(!gamepad2.left_bumper)
             sixServoArmController.setTargetPosition(x,y,Math.PI,0).update();
         else

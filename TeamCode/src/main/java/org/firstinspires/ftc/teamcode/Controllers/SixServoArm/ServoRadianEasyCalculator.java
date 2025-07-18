@@ -44,7 +44,7 @@ public class ServoRadianEasyCalculator {
         double radian1 = Math.acos((Math.pow(a,2)+Math.pow(r,2)-Math.pow(b,2))/(2*a*r));
         //double radian1 = Math.PI/2;
         double radian2 = Math.acos((Math.pow(a,2)+Math.pow(b,2)-Math.pow(r,2))/(2*a*b));
-        double radian3 = Math.acos((Math.pow(b,2)+Math.pow(r,2)-Math.pow(a,2))/(2*b*r))+1.5*Math.PI-clipHeadingRadian;
+        double radian3 = Math.acos((Math.pow(b,2)+Math.pow(r,2)-Math.pow(a,2))/(2*b*r))+0.5*Math.PI-clipHeadingRadian;
         radian1+=Math.atan2(h,r);
         result = new double[]{radian0,radian1,radian2,radian3};
         return result;
