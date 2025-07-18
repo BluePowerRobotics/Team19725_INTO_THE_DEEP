@@ -5,9 +5,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import java.nio.channels.DatagramChannel;
 
-public class MotorLineIntakeLengthController implements IntakeLengthControllerInterface{
+public class MotorLineIntakeLengthController{
     HardwareMap hardwareMap;
-    static IntakeLengthControllerInterface instance;
+    static MotorLineIntakeLengthController instance;
     DcMotor Motor;
     private final double intakeLengthControllerNumberPerCycle = 252, intakeLengthControllerMMPerCycle =30*Math.PI;
     public MotorLineIntakeLengthController(HardwareMap hardwareMap){
@@ -15,35 +15,35 @@ public class MotorLineIntakeLengthController implements IntakeLengthControllerIn
         Motor=hardwareMap.get(DcMotor.class,"IntakeLengthMotor");
         Motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
-    public static synchronized IntakeLengthControllerInterface getInstance(HardwareMap hardwareMap){
-        if(instance==null){
+    public static synchronized MotorLineIntakeLengthController getInstance(HardwareMap hardwareMap){
+        if(instance==null|| instance.hardwareMap != hardwareMap){
             instance = new MotorLineIntakeLengthController(hardwareMap);
         }
         return instance;
     }
-    public static synchronized IntakeLengthControllerInterface getInstance(){
+    public static synchronized MotorLineIntakeLengthController getInstance(){
         return instance;
     }
     double IntakeLengthTargetPosition;
-    @Override
-    public IntakeLengthControllerInterface setIntakeTargetPosition(double inTakeLength) {
+    //@Override
+    public MotorLineIntakeLengthController setIntakeTargetPosition(double inTakeLength) {
         IntakeLengthTargetPosition = inTakeLength;
         Motor.setTargetPosition((int)(inTakeLength*intakeLengthControllerNumberPerCycle/intakeLengthControllerMMPerCycle));
         return instance;
     }
 
-    @Override
-    public IntakeLengthControllerInterface update() {
+    //@Override
+    public MotorLineIntakeLengthController update() {
         Motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         return instance;
     }
 
-    @Override
+    //@Override
     public double getIntakeLengthCurrentPosition() {
         return Motor.getCurrentPosition()*intakeLengthControllerMMPerCycle/intakeLengthControllerNumberPerCycle;
     }
 
-    @Override
+    //@Override
     public double getIntakeLengthTargetPosition() {
         return IntakeLengthTargetPosition;
     }

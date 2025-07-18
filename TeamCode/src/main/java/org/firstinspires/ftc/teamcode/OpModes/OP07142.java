@@ -19,7 +19,7 @@ public class OP07142 extends LinearOpMode{
     IntakeLengthControllerInterface intakeLengthController = MotorLineIntakeLengthController.getInstance();
     ServoValueEasyOutputter servoValueEasyOutputter;
     SixServoArmEasyController sixServoArmController;
-    ChassisController rbmove = new ChassisController();// 构建Move_GYW（）class实例
+    //ChassisController rbmove = new ChassisController();// 构建Move_GYW（）class实例
     static DcMotor armPuller;
     static DcMotor leftFront, leftBack, rightBack, rightFront,intake,output;
     Servo servos3, servos4, servos5;
@@ -187,7 +187,7 @@ public class OP07142 extends LinearOpMode{
             output.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
     }
-    double x=0,y=10;
+    double x=0,y=100;
     boolean leftstickbuttonhasbeenpressed= false;
     boolean locked=false;
     public void servocontrol() {

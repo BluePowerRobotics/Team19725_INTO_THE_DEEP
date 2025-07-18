@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class IntakeLengthAction{
 
     HardwareMap hardwareMap;
-    IntakeLengthControllerInterface intakeLengthController;
+    MotorLineIntakeLengthController intakeLengthController;
     public IntakeLengthAction(HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
         intakeLengthController  = new MotorLineIntakeLengthController(hardwareMap);

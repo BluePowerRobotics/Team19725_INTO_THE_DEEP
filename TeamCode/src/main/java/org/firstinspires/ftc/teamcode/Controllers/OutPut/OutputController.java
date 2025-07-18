@@ -40,14 +40,14 @@ public class OutputController {
 
     public static OutputController instance;
     public static synchronized OutputController getInstance(HardwareMap hardwareMap){
-        if(instance == null){
+        if(instance == null|| instance.hardwareMap != hardwareMap){
             instance = new OutputController(hardwareMap);
         }
         return instance;
     }
-    public static synchronized OutputController getInstance(){
-        return instance;
-    }
+    //public static synchronized OutputController getInstance(){
+    //    return instance;
+    //}
 
     public OutputController setClip(boolean isLocked){
         outputClipController.setPosition(isLocked? outputClipLockPos : outputClipUnlockPos);

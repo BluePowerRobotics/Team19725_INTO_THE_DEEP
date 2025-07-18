@@ -12,7 +12,7 @@ import java.util.Arrays;
 public class SixServoArmEasyController {
     private static SixServoArmEasyController instance;
     public static synchronized SixServoArmEasyController getInstance(HardwareMap hardwareMap, Telemetry telemetry){
-        if(instance == null){
+        if(instance == null|| instance.hardwareMap != hardwareMap || instance.telemetry != telemetry){
             instance = new SixServoArmEasyController(hardwareMap,telemetry);
         }
         return instance;
