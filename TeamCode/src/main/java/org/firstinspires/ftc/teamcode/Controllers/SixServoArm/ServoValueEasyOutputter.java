@@ -2,12 +2,13 @@ package org.firstinspires.ftc.teamcode.Controllers.SixServoArm;
 
 import static java.lang.Double.isNaN;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-
+@Config
 public class ServoValueEasyOutputter {
     private static ServoValueEasyOutputter instance;
     public static synchronized ServoValueEasyOutputter getInstance(HardwareMap hardwareMap, Telemetry telemetry, ServoRadianEasyCalculator servoRadianCalculator) {
@@ -24,11 +25,12 @@ public class ServoValueEasyOutputter {
     private Telemetry telemetry;
     private HardwareMap hardwareMap;
     private Servo[] servo = new Servo[6];
-
-    private double[] servoZeroPositionDegree = {0,-48,-58.7,18, 0, 0};
-    private int[] servoDegree = {315, 257, 230, 255, 255, 170};//舵机总旋转角度
-
+    public static double servoZeroPosition0=0;
+    public static double[] servoZeroPositionDegree = {servoZeroPosition0,-48,-58.7,18, 0, 0};
+    public static int[] servoDegree = {315, 257, 230, 255, 255, 170};//舵机总旋转角度
+    public static boolean reverse = false;
     public ServoValueEasyOutputter(HardwareMap hardwareMap, Telemetry telemetry, ServoRadianEasyCalculator servoRadianCalculator) {
+        servoZeroPositionDegree[0]=servoZeroPosition0;
         this.servoRadianCalculator = servoRadianCalculator;
         this.telemetry = telemetry;
         this.hardwareMap = hardwareMap;
@@ -49,7 +51,9 @@ public class ServoValueEasyOutputter {
 
 
     private double[] servoPosition = new double[6];//当前角度
+    double clipRadian=0;
     public void setRadians(double[] Radians,double clipRadian,boolean useAutoCalculator) {//控制机械臂
+        this.clipRadian = clipRadian;
         for (int i = 0; i <= 3; i++) {
             servoPosition[i] = Math.toDegrees(Radians[i]) - servoZeroPositionDegree[i];
             while(Radians[i]>2*Math.PI)Radians[i]-=2*Math.PI;
@@ -61,9 +65,13 @@ public class ServoValueEasyOutputter {
                 if(i==2) servoPosition[i]=180- servoZeroPositionDegree[i];
                 if(i==3) servoPosition[i]=90- servoZeroPositionDegree[i];
             }
+            if(reverse){
+                servoPosition[i]=1-servoPosition[i];
+            }
             telemetry.addData("Servo " + i + " Position", servoPosition[i]);
             telemetry.addData("Servo " + i + " Position",Math.min(1, Math.max(0, servoPosition[i] / servoDegree[i])));
             servo[i].setPosition(Range.clip((servoPosition[i] / servoDegree[i]),0, 1));
+
         }
         setClipPosition(clipRadian,useAutoCalculator);
     }
@@ -72,16 +80,20 @@ public class ServoValueEasyOutputter {
         UNLOCKED,
         HALF_LOCKED
     }
+    public static double clipLockPos=0.8,clipHalfLockPos=0.69,clipUnlockPos=0.3;
     public void setClip(ClipPosition clipPosition) {
         switch (clipPosition) {
             case LOCKED:
-                servo[5].setPosition(0.8); // Assuming 0 is the locked position
+                servo[5].setPosition(clipLockPos);
+                servoRadianCalculator.setClipHeight(-5);//夹取时高度为-5
                 break;
             case UNLOCKED:
-                servo[5].setPosition(0.3); // Assuming 1 is the unlocked position
+                servo[5].setPosition(clipUnlockPos);
+                servoRadianCalculator.setClipHeight(0);//夹取时高度为0
                 break;
             case HALF_LOCKED:
-                servo[5].setPosition(0.69); // Assuming 0.5 is the half-locked position
+                servo[5].setPosition(clipHalfLockPos);
+                servoRadianCalculator.setClipHeight(0);//半夹取时高度为0
                 break;
         }
         telemetry.addData("Clip Position", clipPosition);
@@ -101,5 +113,20 @@ public class ServoValueEasyOutputter {
     }
     public void SingleServoControl(int servoIndex, double position) {
         servo[servoIndex].setPosition(position);
+    }
+    public void DegreeServoControl(int servoIndex, double degree) {
+        if(isNaN(degree)) degree=0;
+        while(degree>servoDegree[servoIndex]) degree-=servoDegree[servoIndex];
+        while(degree<0) degree+=servoDegree[servoIndex];
+        servo[servoIndex].setPosition(Range.clip((degree / servoDegree[servoIndex]), 0, 1));
+        telemetry.addData("Servo " + servoIndex + " Degree", degree);
+    }
+    public static double servo0leftDegree = 180, servo1leftDegree = 45, servo2leftDegree = 180, servo3leftDegree = 45, servo4leftDegree = 0;
+    public void moveToLeft(){
+        DegreeServoControl(0,servo0leftDegree);
+        DegreeServoControl(1,servo1leftDegree);
+        DegreeServoControl(2,servo2leftDegree);
+        DegreeServoControl(3,servo3leftDegree);
+        DegreeServoControl(4,servo4leftDegree);
     }
 }
