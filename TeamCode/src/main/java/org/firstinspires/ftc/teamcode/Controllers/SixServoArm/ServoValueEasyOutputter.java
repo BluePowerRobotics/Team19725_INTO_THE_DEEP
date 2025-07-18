@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class ServoValueEasyOutputter {
     private static ServoValueEasyOutputter instance;
     public static synchronized ServoValueEasyOutputter getInstance(HardwareMap hardwareMap, Telemetry telemetry, ServoRadianEasyCalculator servoRadianCalculator) {
-        if(instance == null){
+        if(instance == null|| instance.hardwareMap != hardwareMap || instance.telemetry != telemetry || instance.servoRadianCalculator != servoRadianCalculator){
             instance = new ServoValueEasyOutputter(hardwareMap,telemetry,servoRadianCalculator);
         }
         return instance;

@@ -30,7 +30,7 @@ public class OutputAction {
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            return OutputController.getInstance().eatIntake();
+            return OutputController.getInstance(hardwareMap).eatIntake();
         }
     }
     public Action OutputEatIntake(){
@@ -40,7 +40,7 @@ public class OutputAction {
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            return OutputController.getInstance().vomitInstaller();
+            return OutputController.getInstance(hardwareMap).vomitInstaller();
         }
     }
     public Action OutputVomitInstaller(){
@@ -50,7 +50,7 @@ public class OutputAction {
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            return OutputController.getInstance().eatInstaller();
+            return OutputController.getInstance(hardwareMap).eatInstaller();
         }
     }
     public Action OutputEatInstaller(){
@@ -60,7 +60,7 @@ public class OutputAction {
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            return OutputController.getInstance().throwAwaySample();
+            return OutputController.getInstance(hardwareMap).throwAwaySample();
         }
     }
     public Action OutputThrowAwaySample(){
