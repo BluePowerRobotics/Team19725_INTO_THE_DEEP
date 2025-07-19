@@ -25,7 +25,7 @@ public class ServoValueEasyOutputter {
     private Telemetry telemetry;
     private HardwareMap hardwareMap;
     private Servo[] servo = new Servo[6];
-    public static double[] servoZeroPositionDegree = {-10,-48,-58.7,18, 0, 0};
+    public static double[] servoZeroPositionDegree = {-15,-48,-58.7,18, 0, 0};
     public static int[] servoDegree = {315, 257, 230, 255, 255, 170};//舵机总旋转角度
     public static boolean reverse = false;
 
