@@ -29,6 +29,11 @@ public class ServoValueEasyOutputter {
     public static int[] servoDegree = {315, 257, 230, 255, 255, 170};//舵机总旋转角度
     public static boolean reverse = false;
 
+    public double[] servoSetDegree = {0,0,0,0,0,0};
+    public long[] servoSetDegreeTime = {0,0,0,0,0,0};//设置舵机角度的时间
+    public double[] servoNowDegree = {0,0,0,0,0,0};//当前舵机角度
+    public long[] servoNowDegreeTime = {0,0,0,0,0,0};//计算当前舵机角度的时间
+
     public ServoValueEasyOutputter(HardwareMap hardwareMap, Telemetry telemetry, ServoRadianEasyCalculator servoRadianCalculator) {
         this.servoRadianCalculator = servoRadianCalculator;
         this.telemetry = telemetry;
@@ -58,6 +63,8 @@ public class ServoValueEasyOutputter {
             while(Radians[i]>2*Math.PI)Radians[i]-=2*Math.PI;
             while(Radians[i]<0)Radians[i]+=2*Math.PI;
             telemetry.addData("Servo " + i + " Degree", Math.toDegrees(Radians[i]));
+            servoSetDegree[i] = Math.toDegrees(Radians[i]);
+            servoSetDegreeTime[i] = System.currentTimeMillis();
             if(Double.isNaN(servoPosition[i])){
                 servoPosition[i]=0;
                 if(i==1) servoPosition[i]=0- servoZeroPositionDegree[i];
@@ -118,6 +125,8 @@ public class ServoValueEasyOutputter {
         degree-=servoZeroPositionDegree[servoIndex];
         double servoValue = degree/servoDegree[servoIndex];
         servo[servoIndex].setPosition(Range.clip((servoValue), 0, 1));
+        servoSetDegree[servoIndex] = degree;
+        servoSetDegreeTime[servoIndex] = System.currentTimeMillis();
         telemetry.addLine("Servo " + servoIndex + " Degree: " + (degree+ servoZeroPositionDegree[servoIndex]) + " Position: " + servoValue);
     }
     public static double servo0leftDegree = 180, servo1leftDegree = 45, servo2leftDegree = 180, servo3leftDegree = 45, servo4leftDegree = 0;
@@ -127,5 +136,13 @@ public class ServoValueEasyOutputter {
         DegreeServoControl(2,servo2leftDegree);
         DegreeServoControl(3,servo3leftDegree);
         DegreeServoControl(4,servo4leftDegree);
+    }
+    public void dropTheSample(){
+        DegreeServoControl(0, 90);
+        DegreeServoControl(1, 90);
+        DegreeServoControl(2, 90);
+        DegreeServoControl(3, 90);
+        DegreeServoControl(4, 0);
+        setClip(ClipPosition.HALF_LOCKED);
     }
 }
