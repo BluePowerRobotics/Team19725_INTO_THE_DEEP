@@ -38,7 +38,7 @@ public class SixServoArmEasyController {
         setTargetPosition(resetX, resetY, 0 * Math.PI, 0.5 * Math.PI).update();
     }
 
-    final double resetX = 100,resetY = 0,resetZ = 10;
+    final double resetX = 0,resetY = 100,resetZ = 10;
     double targetX = resetX,targetY = resetY,targetZ = resetZ;
     double nowX=resetX,nowY=resetY,nowZ=resetZ;
     double recentX = resetX,recentY = resetY,recentZ = resetZ;
@@ -73,7 +73,12 @@ public class SixServoArmEasyController {
     }
     public boolean update(){
         boolean states;
-        if (System.currentTimeMillis() - setLocationTime >= servoMoveTime * 1000) {
+        if(servoMoveTime <= 0) {
+            nowX = targetX;
+            nowY = targetY;
+            states = false;
+
+        } else if (System.currentTimeMillis() - setLocationTime >= servoMoveTime * 1000) {
             nowX = targetX;
             nowY = targetY;
             states = false;

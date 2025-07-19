@@ -38,7 +38,7 @@ public class SixServoArmController {
         setTargetPosition(resetX, resetY, resetZ, 0 * Math.PI, 0.5 * Math.PI);
     }
 
-    final double resetX = 100,resetY = 0,resetZ = 10;
+    final double resetX = 0,resetY = 100,resetZ = 10;
     double targetX = resetX,targetY = resetY,targetZ = resetZ;
     double nowX=resetX,nowY=resetY,nowZ=resetZ;
     double recentX = resetX,recentY = resetY,recentZ = resetZ;
