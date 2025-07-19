@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.SixServoArmEasyCon
 @TeleOp
 
 public class OP07142 extends LinearOpMode{
-    IntakeLengthControllerInterface intakeLengthController = MotorLineIntakeLengthController.getInstance();
+    MotorLineIntakeLengthController intakeLengthController = MotorLineIntakeLengthController.getInstance();
     ServoValueEasyOutputter servoValueEasyOutputter;
     SixServoArmEasyController sixServoArmController;
     //ChassisController rbmove = new ChassisController();// 构建Move_GYW（）class实例
