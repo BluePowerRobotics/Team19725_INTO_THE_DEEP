@@ -100,10 +100,13 @@ public class InstallerController{
     public void Install() {
         clipInstaller.setPosition(Install_Finished);
     }
+    public void NotInstall() {
+        clipInstaller.setPosition(Not_Installing);
+    }
+
 
     public void SingleBeamSpinnerControl(double position) {
         // Control the clip installation puller servo to the specified speed
-
         beamSpinner.setPosition(position);
     }
     //todo run（）和setmode（）同步更改！！！！！！！

@@ -20,7 +20,6 @@ InstallerController tmp = new InstallerController(hardwareMap, gamepad1, gamepad
         waitForStart();
         Actions.runBlocking(
                 new SequentialAction(
-                        //in         stallerController.clipInstaller(false),
                         installerController.installerPuller()
                 )
         );
@@ -29,8 +28,6 @@ InstallerController tmp = new InstallerController(hardwareMap, gamepad1, gamepad
                 Actions.runBlocking(
                         installerController.spitClip()
                 );
-
-                //installerController.SetCurrentNum(1);
             }
             if(gamepad1.b){
                 Actions.runBlocking(
