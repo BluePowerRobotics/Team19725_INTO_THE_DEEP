@@ -115,10 +115,10 @@ public class ServoValueEasyOutputter {
     }
     public void DegreeServoControl(int servoIndex, double degree) {
         if(isNaN(degree)) degree=0;
-        while(degree>servoDegree[servoIndex]) degree-=servoDegree[servoIndex];
-        while(degree<0) degree+=servoDegree[servoIndex];
-        servo[servoIndex].setPosition(Range.clip((degree / servoDegree[servoIndex]), 0, 1));
-        telemetry.addData("Servo " + servoIndex + " Degree", degree);
+        degree-=servoZeroPositionDegree[servoIndex];
+        double servoValue = degree/servoDegree[servoIndex];
+        servo[servoIndex].setPosition(Range.clip((servoValue), 0, 1));
+        telemetry.addLine("Servo " + servoIndex + " Degree: " + (degree+ servoZeroPositionDegree[servoIndex]) + " Position: " + servoValue);
     }
     public static double servo0leftDegree = 180, servo1leftDegree = 45, servo2leftDegree = 180, servo3leftDegree = 45, servo4leftDegree = 0;
     public void moveToLeft(){
