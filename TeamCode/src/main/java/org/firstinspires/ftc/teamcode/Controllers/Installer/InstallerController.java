@@ -191,12 +191,12 @@ public class InstallerController{
                     this.installStates = INSTALL_RUNMODE.RETURNING;
                 }
                 else{
-                    clipInstallPuller.setPosition(1);
+                    clipInstallPuller.setPosition(0);
                 }
                 break;
             case RETURNING:
                 if(System.currentTimeMillis() - WaitStartTime > 300){
-                    clipInstallPuller.setPosition(0);
+                    clipInstallPuller.setPosition(1);
                 }
                 if(disSensor.getDis() < InstallPos){
                     clipInstallPuller.setPosition(0.5);
