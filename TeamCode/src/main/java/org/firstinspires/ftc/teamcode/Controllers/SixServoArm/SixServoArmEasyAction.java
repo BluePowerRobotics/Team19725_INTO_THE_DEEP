@@ -28,7 +28,7 @@ public class SixServoArmEasyAction {
     public class SixServoArmInit implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet){
-            sixServoArmController.setTargetPosition(-100,1,0.1,0.1);
+            sixServoArmController.setTargetPosition(-170,-18,0.1,0.1);
             return sixServoArmController.update();
         }
     }

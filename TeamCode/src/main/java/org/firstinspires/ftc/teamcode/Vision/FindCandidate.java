@@ -104,13 +104,16 @@ public class FindCandidate{
     int CandidateLength = 0;
 
     Telemetry Mytelemetry;
-    CameraStreamProcessor processor = new CameraStreamProcessor();
+
     ColorBlobLocatorProcessor colorLocator;
     VisionPortal portal;
 
     private OpenCvUndistortion UndistortionTool = new OpenCvUndistortion();
 
     public void init(HardwareMap hardWareMap, Telemetry telerc, int ColorMode) {
+
+        CameraStreamProcessor processor = new CameraStreamProcessor();
+
         Mytelemetry = telerc;
         if(ColorMode == 0) {
             TargetColor = BLUE; // 蓝色
@@ -132,6 +135,7 @@ public class FindCandidate{
                 .setErodeSize(erodeSize)//腐蚀
                 .setDilateSize(dilateSize)//膨胀
                 .build();
+
        portal = new VisionPortal.Builder()
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .addProcessor(colorLocator)
@@ -139,7 +143,7 @@ public class FindCandidate{
                 .setCameraResolution(new Size(resolutionwidth, resolutionheight))
                 .setCamera(hardWareMap.get(WebcamName.class, "Webcam 1"))
                 .build();
-        FtcDashboard.getInstance().startCameraStream(processor, 0);
+        //FtcDashboard.getInstance().startCameraStream(processor, 0);
     }
 
     public static class CameraStreamProcessor implements VisionProcessor, CameraStreamSource {

@@ -16,7 +16,7 @@ public class OutputController {
     private Servo outputPositionController, outputClipController;
     private DcMotor outputLengthController;
     private HardwareMap hardwareMap;
-    private final double outputClipLockPos = 0, outputClipUnlockPos = 0;
+    private final double outputClipLockPos = 0.28, outputClipUnlockPos = 1;
     private final double outputLengthControllerNumberPerCycle =147, outputLengthControllerMMPerCycle =20*Math.PI;
 
     RobotStates.OUTPUT_RUNMODE outputStates = RobotStates.OUTPUT_RUNMODE.WAITING;

@@ -118,7 +118,7 @@ public class InstallerAction {
                     clipInstallPuller.setPosition(0);
                     if (dis >= InstallPos ||
                             System.currentTimeMillis() - UpstartTime > 2000 * 2) {
-
+                        CurrentNum++;
                         state = 3;
                         telemetry.addData("Puller", "Returned to center");
                         return false;
@@ -164,7 +164,6 @@ public class InstallerAction {
                     if (dis <= InstallPos && IFstartBacking) {
                         clipInstallPuller.setPosition(0.5);
                         telemetry.addData("Puller", "Final center");
-                        CurrentNum++;
                         IFstartBacking = false;
                         return false;
                     }
