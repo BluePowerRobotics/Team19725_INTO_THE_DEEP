@@ -75,22 +75,31 @@ public class SixServoArmEasyController {
 
     public boolean update(){
         servoValueOutputter.setRadians(servoRadianCalculator.calculate(targetX, targetY, targetClipRadian), targetClipRadian, true);
-        boolean states=true;
+        boolean states=false;
+        boolean[] servoStates = new boolean[5];
         for(int i=0;i<=4;i++){
             if(servoValueOutputter.servoSetDegree[i]-servoValueOutputter.servoNowDegree[i]>0){
                 servoValueOutputter.servoNowDegree[i] += (60/servoSpeed[i])*((System.currentTimeMillis()-servoValueOutputter.servoNowDegreeTime[i])/1000.0);
                 if(servoValueOutputter.servoNowDegree[i]>servoValueOutputter.servoSetDegree[i]){
                     servoValueOutputter.servoNowDegree[i] = servoValueOutputter.servoSetDegree[i];
-                    states= false;
+                    servoStates[i]= false;
                 }
                 servoValueOutputter.servoNowDegreeTime[i] = System.currentTimeMillis();
             }else{
                 servoValueOutputter.servoNowDegree[i] -= (60/servoSpeed[i])*((System.currentTimeMillis()-servoValueOutputter.servoNowDegreeTime[i])/1000.0);
                 if(servoValueOutputter.servoNowDegree[i]<servoValueOutputter.servoSetDegree[i]){
                     servoValueOutputter.servoNowDegree[i] = servoValueOutputter.servoSetDegree[i];
-                    states= false;
+                    servoStates[i]= false;
                 }
                 servoValueOutputter.servoNowDegreeTime[i] = System.currentTimeMillis();
+            }
+        }
+        //保证所有servoStates为false时states才为false
+        for(int i=0;i<=4;i++){
+            if(servoStates[i]){
+                states = true;
+            }else{
+                states = states || false;
             }
         }
         return states;
