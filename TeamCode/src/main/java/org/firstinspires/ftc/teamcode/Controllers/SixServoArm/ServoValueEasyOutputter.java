@@ -25,8 +25,8 @@ public class ServoValueEasyOutputter {
     private Telemetry telemetry;
     private HardwareMap hardwareMap;
     private Servo[] servo = new Servo[6];
-    public static double[] servoZeroPositionDegree = {-15,-48,-58.7,18, 0, 0};
-    public static int[] servoDegree = {315, 257, 230, 255, 255, 170};//舵机总旋转角度
+    public static double[] servoZeroPositionDegree = {-35,-48,-58.7,18, 0, 0};
+    public static int[] servoDegree = {315, 170, 230, 255, 255, 170};//舵机总旋转角度
     public static boolean reverse = false;
 
     public double[] servoSetDegree = {0,0,0,0,0,0};
@@ -156,7 +156,7 @@ public class ServoValueEasyOutputter {
         double y = InstallerLocationY-98;
         double z = InstallerLocationZ-20;
         intakeLength = Math.sqrt(Math.pow(286,2)-x*x-z*z)-y;
-        double servoe0Degree = 180 + Math.toDegrees(Math.atan2(Math.sqrt(Math.pow(286,2)-x*x-z*z), x));
+        double servoe0Degree = Math.toDegrees(Math.atan2(Math.sqrt(Math.pow(286,2)-x*x-z*z), x));
         double servoe1Degree = 180 - Math.toDegrees(Math.atan2(z,Math.sqrt(Math.pow(286,2)-z*z))-Math.atan2(71.5,277));
         double servoe2Degree = 120;
         double servoe3Degree = 240 + Math.toDegrees(Math.atan2(z,Math.sqrt(Math.pow(286,2)-z*z))-Math.atan2(71.5,277));

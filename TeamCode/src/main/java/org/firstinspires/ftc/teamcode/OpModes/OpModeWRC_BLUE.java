@@ -53,7 +53,7 @@ public class OpModeWRC_BLUE extends LinearOpMode {
     boolean pad2_lstickispressed = false;
     boolean pad2_rstickispressed = false;
     int servo_select = 1;
-    double servo_position = 0.5;
+    double[] servo_position = {0.5,0.5,0.5,0.5,0.5};//伺服位置数组
 
 
 
@@ -330,29 +330,29 @@ public class OpModeWRC_BLUE extends LinearOpMode {
             }
 
             if(gamepad2.left_stick_x > 0.1 && gamepad2.left_stick_x < 0.6) {
-                servo_position += 0.01;
+                servo_position[servo_select] += 0.01;
                 ifGivenCommand = true;
             }
             else if(gamepad2.left_stick_x < -0.1 && gamepad2.left_stick_x > -0.6) {
-                servo_position -= 0.01;
+                servo_position[servo_select] -= 0.01;
                 ifGivenCommand = true;
             }
             if(gamepad2.left_stick_x > 0.6) {
-                servo_position += 0.08;
+                servo_position[servo_select] += 0.08;
                 ifGivenCommand = true;
             }
             else if(gamepad2.left_stick_x <-0.6) {
-                servo_position -= 0.08;
+                servo_position[servo_select] -= 0.08;
                 ifGivenCommand = true;
             }
 
-            if (servo_position > 1)
-                servo_position = 1;
-            if (servo_position < 0)
-                servo_position = 0;
+            if (servo_position[servo_select] > 1)
+                servo_position[servo_select] = 1;
+            if (servo_position[servo_select] < 0)
+                servo_position[servo_select] = 0;
 
             if(ifGivenCommand){
-                ServoValueEasyOutputter.getInstance(hardwareMap, telemetry,ServoRadianEasyCalculator.getInstance()).SingleServoControl(servo_select, servo_position);
+                ServoValueEasyOutputter.getInstance(hardwareMap, telemetry,ServoRadianEasyCalculator.getInstance()).SingleServoControl(servo_select, servo_position[servo_select]);
             }
         }
     }

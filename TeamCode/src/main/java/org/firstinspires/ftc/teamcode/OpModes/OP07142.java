@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.SixServoArmEasyCon
 @TeleOp
 
 public class OP07142 extends LinearOpMode{
-    MotorLineIntakeLengthController intakeLengthController = MotorLineIntakeLengthController.getInstance();
+    MotorLineIntakeLengthController intakeLengthController;
     ServoValueEasyOutputter servoValueEasyOutputter;
     SixServoArmEasyController sixServoArmController;
     //ChassisController rbmove = new ChassisController();// 构建Move_GYW（）class实例
@@ -57,6 +57,7 @@ public class OP07142 extends LinearOpMode{
     //EasyClimb easyClimb = new EasyClimb();
 
     private void inithardware() {
+        intakeLengthController = MotorLineIntakeLengthController.getInstance(hardwareMap);
         sixServoArmController=SixServoArmEasyController.getInstance(hardwareMap,telemetry);
         servoValueEasyOutputter=sixServoArmController.servoValueOutputter;
         // control_Hub = hardwareMap.get(Blinker.class, "Control Hub");
@@ -196,7 +197,7 @@ public class OP07142 extends LinearOpMode{
         if(!gamepad2.left_bumper)
             sixServoArmController.setTargetPosition(x,y,Math.PI,0).update();
         else
-            servoValueEasyOutputter.moveToLeft();
+            servoValueEasyOutputter.giveTheSample();
         ServoValueEasyOutputter.ClipPosition pos;
         if(gamepad2.left_stick_button){
             if(!leftstickbuttonhasbeenpressed){
