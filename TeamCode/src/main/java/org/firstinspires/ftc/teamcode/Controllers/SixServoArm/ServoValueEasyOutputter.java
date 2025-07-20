@@ -156,7 +156,8 @@ public class ServoValueEasyOutputter {
         double y = InstallerLocationY-98;
         double z = InstallerLocationZ-20;
         intakeLength = Math.sqrt(Math.pow(286,2)-x*x-z*z)-y;
-        double servoe0Degree = 180 + Math.toDegrees(Math.atan2(Math.sqrt(Math.pow(286,2)-x*x-z*z), x));
+        //double servoe0Degree = 180 + Math.toDegrees(Math.atan2(Math.sqrt(Math.pow(286,2)-x*x-z*z), x));
+        double servoe0Degree = Math.toDegrees(Math.atan2(Math.sqrt(Math.pow(286,2)-x*x-z*z), x));
         double servoe1Degree = 180 - Math.toDegrees(Math.atan2(z,Math.sqrt(Math.pow(286,2)-z*z))-Math.atan2(71.5,277));
         double servoe2Degree = 120;
         double servoe3Degree = 240 + Math.toDegrees(Math.atan2(z,Math.sqrt(Math.pow(286,2)-z*z))-Math.atan2(71.5,277));

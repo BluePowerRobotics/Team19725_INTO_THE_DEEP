@@ -214,5 +214,11 @@ public class OP07142 extends LinearOpMode{
         if(gamepad2.right_stick_button)
             pos=ServoValueEasyOutputter.ClipPosition.HALF_LOCKED;
         servoValueEasyOutputter.setClip(pos);
+
+
+        if(gamepad2.left_trigger > 0.1){
+            servoValueEasyOutputter.giveTheSample();
+        }
+        intakeLengthController.setIntakeTargetPosition(servoValueEasyOutputter.giveTheSample()).update();
     }
 }

@@ -230,13 +230,16 @@ public class OpModeWRC_BLUE extends LinearOpMode {
                 CurrentClipPosition = ServoValueEasyOutputter.ClipPosition.HALF_LOCKED;
             }
         } else {
-            if (System.currentTimeMillis() - t < 500) {
-                if (CurrentClipPosition == ServoValueEasyOutputter.ClipPosition.LOCKED) {
-                    CurrentClipPosition = ServoValueEasyOutputter.ClipPosition.UNLOCKED;
-                }else {
-                    CurrentClipPosition = ServoValueEasyOutputter.ClipPosition.LOCKED;
+            if(pad2_rbispressed){
+                if (System.currentTimeMillis() - t < 500) {
+                    if (CurrentClipPosition == ServoValueEasyOutputter.ClipPosition.LOCKED) {
+                        CurrentClipPosition = ServoValueEasyOutputter.ClipPosition.UNLOCKED;
+                    }else {
+                        CurrentClipPosition = ServoValueEasyOutputter.ClipPosition.LOCKED;
+                    }
                 }
             }
+
             pad2_rbispressed = false;
         }
         servoValueOutputter.setClip(CurrentClipPosition);
