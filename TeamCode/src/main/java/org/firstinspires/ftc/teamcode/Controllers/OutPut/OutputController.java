@@ -59,7 +59,10 @@ public class OutputController {
         outputLengthController.setTargetPosition(outputLengthControllerValue);
         return instance;
     }
-    public OutputController setArmPosition(double servoValue){
+    //向后为x轴，向上为y轴
+    public static double armPositionControllerZeroPositionDegree=0;
+    public OutputController setArmDegree(double armDegree){
+        double servoValue = (armDegree-armPositionControllerZeroPositionDegree)/255;
         servoValue = Math.max(0.0,Math.min(1.0,servoValue));
         outputPositionController.setPosition(servoValue);
         return instance;
@@ -75,7 +78,7 @@ public class OutputController {
     public boolean eatIntake(){
         if(eatIntakeCheckPointInitialized[0]){
             eatIntakeCheckPointStartTime =System.currentTimeMillis();
-            setArmPosition(0);
+            setArmDegree(0);
             setTargetOutputHeight(0);
             //action 1
 
@@ -93,7 +96,7 @@ public class OutputController {
         }
         if(eatIntakeCheckPointInitialized[1]&&eatIntakeCheckPointPassed[0]){
             eatIntakeCheckPointStartTime =System.currentTimeMillis();
-            setArmPosition(0);
+            setArmDegree(0);
             setTargetOutputHeight(0);
             //action 2
 
@@ -133,7 +136,7 @@ public class OutputController {
     public boolean vomitInstaller(){
         if(vomitInstallerCheckPointInitialized[0]){
             vomitInstallerCheckPointStartTime =System.currentTimeMillis();
-            setArmPosition(0);
+            setArmDegree(0);
             setTargetOutputHeight(0);
             //action 1
 
@@ -152,7 +155,7 @@ public class OutputController {
         }
         if(vomitInstallerCheckPointInitialized[1]&&vomitInstallerCheckPointPassed[0]){
             vomitInstallerCheckPointStartTime =System.currentTimeMillis();
-            setArmPosition(0);
+            setArmDegree(0);
             setTargetOutputHeight(0);
             //action 2
 
@@ -181,6 +184,10 @@ public class OutputController {
         }
         return !allCheckPointPassed;
     }
+
+
+
+
     boolean[] eatInstallerCheckPointInitialized = {false,false};
     long eatInstallerCheckPointStartTime;
     boolean[] eatInstallerCheckPointPassed=eatInstallerCheckPointInitialized;
@@ -188,8 +195,8 @@ public class OutputController {
     public boolean eatInstaller(){
         if(eatInstallerCheckPointInitialized[0]){
             eatInstallerCheckPointStartTime =System.currentTimeMillis();
-            setArmPosition(0);
-            setTargetOutputHeight(0);
+            setArmDegree(0);
+            setTargetOutputHeight(100);
             //action 1
 
 
@@ -205,8 +212,8 @@ public class OutputController {
         }
         if(eatInstallerCheckPointInitialized[1]&&eatInstallerCheckPointPassed[0]){
             eatInstallerCheckPointStartTime =System.currentTimeMillis();
-            setArmPosition(0);
-            setTargetOutputHeight(0);
+            setArmDegree(-45);
+            setTargetOutputHeight(30);
             //action 2
 
 
@@ -240,7 +247,7 @@ public class OutputController {
     public boolean throwAwaySample(){
         if(throwAwaySampleCheckPointInitialized[0]){
             throwAwaySampleCheckPointStartTime =System.currentTimeMillis();
-            setArmPosition(0);
+            setArmDegree(0);
             setTargetOutputHeight(0);
             //action 1
 
@@ -257,7 +264,7 @@ public class OutputController {
         }
         if(throwAwaySampleCheckPointInitialized[1]&&throwAwaySampleCheckPointPassed[0]){
             throwAwaySampleCheckPointStartTime =System.currentTimeMillis();
-            setArmPosition(0);
+            setArmDegree(0);
             setTargetOutputHeight(0);
             //action 2
 
