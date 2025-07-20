@@ -145,4 +145,28 @@ public class ServoValueEasyOutputter {
         DegreeServoControl(4, 0);
         setClip(ClipPosition.HALF_LOCKED);
     }
+    public static double InstallerLocationX=0;
+    public static double InstallerLocationY=273;
+    public static double InstallerLocationZ=154.5;
+
+    //return the intake Length
+    public double giveTheSample(){
+        double intakeLength = 0;
+        double x = InstallerLocationX;
+        double y = InstallerLocationY-98;
+        double z = InstallerLocationZ-20;
+        intakeLength = Math.sqrt(Math.pow(286,2)-x*x-z*z)-y;
+        double servoe0Degree = 180 + Math.toDegrees(Math.atan2(Math.sqrt(Math.pow(286,2)-x*x-z*z), x));
+        double servoe1Degree = 180 - Math.toDegrees(Math.atan2(z,Math.sqrt(Math.pow(286,2)-z*z))-Math.atan2(71.5,277));
+        double servoe2Degree = 120;
+        double servoe3Degree = 240 + Math.toDegrees(Math.atan2(z,Math.sqrt(Math.pow(286,2)-z*z))-Math.atan2(71.5,277));
+        double servoe4Degree = 0;
+        DegreeServoControl(0, servoe0Degree);
+        DegreeServoControl(1, servoe1Degree);
+        DegreeServoControl(2, servoe2Degree);
+        DegreeServoControl(3, servoe3Degree);
+        DegreeServoControl(4, servoe4Degree);
+        setClip(ClipPosition.LOCKED);
+        return intakeLength;
+    }
 }
