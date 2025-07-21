@@ -56,13 +56,13 @@ public class InstallerController{
         disSensor.init(hardwareMap);
 
         // Example initialization code (to be replaced with actual implementation):
-        telemetry.addData("Installer", "Initialization started");
-        telemetry.update();
-        beamSpinner.setPosition(0.08);
+        // telemetry.addData("Installer", "Initialization started");
+        // telemetry.update();
+        beamSpinner.setPosition(Beam_mid);
         // Perform any setup tasks here...
 
-        telemetry.addData("Installer", "Initialization complete");
-        telemetry.update();
+        // telemetry.addData("Installer", "Initialization complete");
+        // telemetry.update();
     }
     long UpStartTime = 0;
     boolean InstallInited = false;
@@ -105,10 +105,10 @@ public class InstallerController{
     }
 
 
-    public void SingleBeamSpinnerControl(double position) {
-        // Control the clip installation puller servo to the specified speed
-        beamSpinner.setPosition(position);
-    }
+    // public void SingleBeamSpinnerControl(double position) {
+    //     // Control the clip installation puller servo to the specified speed
+    //     beamSpinner.setPosition(position);
+    // }
     //todo run（）和setmode（）同步更改！！！！！！！
     //0right 1left
     public void setMode(INSTALL_RUNMODE installStates) {

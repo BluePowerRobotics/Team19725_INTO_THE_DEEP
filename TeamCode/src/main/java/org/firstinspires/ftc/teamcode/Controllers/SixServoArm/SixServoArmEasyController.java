@@ -104,8 +104,8 @@ public class SixServoArmEasyController {
         }
         return states;
     }
-    public boolean[] giveTheSampleCheckPointInited={false,false};
-    public boolean[] giveTheSampleCheckPointPassed={false,false};
+    public boolean[] giveTheSampleCheckPointInited={false,false,false};
+    public boolean[] giveTheSampleCheckPointPassed={false,false,false};
     public long[] giveTheSampleStartTime = {0,0};
     public static int[] giveTheSampleRequireTimeMS={1500,500};
     public static double InstallerRequireErrorX=-30;

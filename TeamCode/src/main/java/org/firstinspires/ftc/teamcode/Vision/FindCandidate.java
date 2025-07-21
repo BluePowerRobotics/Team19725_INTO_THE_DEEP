@@ -58,6 +58,11 @@ import java.util.concurrent.atomic.AtomicReference;
 @Config
 public class FindCandidate{
 
+
+
+    private int FrameCnt = 0;
+    private ArmAction Sum = new ArmAction(0,0,0,0,0);
+
     public static double MMtoPixel = 1.486;
     public static double PixeltoMM = 1 / MMtoPixel;
 
@@ -291,5 +296,29 @@ public class FindCandidate{
             return new ArmAction(InsideCandidates[0].angleDeg, InsideCandidates[0].DisToCamInMM, InsideCandidates[0].centerpoint.x, InsideCandidates[0].centerpoint.y, Suggestion);
         }
         return new ArmAction(-1,-1,-1,-1,-1);
+    }
+    public ArmAction CalculateAverage(FindCandidate cvMoudleRC){
+            FrameCnt++;
+            ArmAction armAction = cvMoudleRC.findCandidate();
+            Sum = new ArmAction(
+                    Sum.ClipAngle += armAction.ClipAngle,
+                    Sum.length += armAction.length,
+                    Sum.GoToX += armAction.GoToX,
+                    Sum.GoToY += armAction.GoToY,
+                    armAction.suggestion
+            );
+            if(FrameCnt > 5){
+                ArmAction averageAction = new ArmAction(
+                        Sum.ClipAngle / FrameCnt,
+                        Sum.length / FrameCnt,
+                        Sum.GoToX / FrameCnt,
+                        Sum.GoToY / FrameCnt,
+                        Sum.suggestion
+                );
+                FrameCnt = 0;
+                Sum = new ArmAction(0,0,0,0,0);
+                return averageAction;
+            }
+            return new ArmAction(0,0,0,0,-2);
     }
 }

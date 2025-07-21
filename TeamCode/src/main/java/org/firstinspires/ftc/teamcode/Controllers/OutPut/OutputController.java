@@ -5,19 +5,21 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Controllers.RobotStates;
+@Config
 
 public class OutputController {
     public OutputController(HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
-        outputPositionController = this.hardwareMap.get(Servo.class,"");
-        outputClipController = this.hardwareMap.get(Servo.class,"");
-        outputLengthController = this.hardwareMap.get(DcMotor.class,"");
+        outputPositionController = this.hardwareMap.get(Servo.class,"servoc5");
+        outputClipController = this.hardwareMap.get(Servo.class,"servoc4");
+        outputLengthController = this.hardwareMap.get(DcMotor.class,"OutputLengthMotor");
     }
     private Servo outputPositionController, outputClipController;
     private DcMotor outputLengthController;
     private HardwareMap hardwareMap;
-    private final double outputClipLockPos = 0.28, outputClipUnlockPos = 1;
-    private final double outputLengthControllerNumberPerCycle =147, outputLengthControllerMMPerCycle =20*Math.PI;
+    public static double ArmUpPos = 1,ArmDownPos = 0.4;
+    public static double outputClipLockPos = 0.25, outputClipUnlockPos = 0.4;
+    public static double outputLengthControllerNumberPerCycle =147, outputLengthControllerMMPerCycle =20*Math.PI;
 
     RobotStates.OUTPUT_RUNMODE outputStates = RobotStates.OUTPUT_RUNMODE.WAITING;
     public void setMode(RobotStates.OUTPUT_RUNMODE outputStates){
@@ -61,12 +63,18 @@ public class OutputController {
     }
     //向后为x轴，向上为y轴
     public static double armPositionControllerZeroPositionDegree=0;
-    public OutputController setArmDegree(double armDegree){
-        double servoValue = (armDegree-armPositionControllerZeroPositionDegree)/255;
-        servoValue = Math.max(0.0,Math.min(1.0,servoValue));
-        outputPositionController.setPosition(servoValue);
+    public OutputController ArmUp(){
+        // double servoValue = (armDegree-armPositionControllerZeroPositionDegree)/255;
+        // servoValue = Math.max(0.0,Math.min(1.0,servoValue));
+        outputPositionController.setPosition(ArmUpPos);
+        return instance;
+    }public OutputController ArmDown(){
+        // double servoValue = (armDegree-armPositionControllerZeroPositionDegree)/255;
+        // servoValue = Math.max(0.0,Math.min(1.0,servoValue));
+        outputPositionController.setPosition(ArmDownPos);
         return instance;
     }
+    
     public boolean update(){
         outputLengthController.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         return !(Math.abs(outputLengthController.getCurrentPosition()- outputLengthControllerValue)<=2);
@@ -81,12 +89,6 @@ public class OutputController {
             setArmDegree(0);
             setTargetOutputHeight(0);
             //action 1
-
-
-
-
-
-
             eatIntakeCheckPointInitialized[0] =true;
         }
         if(!eatIntakeCheckPointPassed[0]){

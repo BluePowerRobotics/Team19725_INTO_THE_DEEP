@@ -24,9 +24,16 @@ import org.firstinspires.ftc.teamcode.Vision.model.ArmAction;
 
 import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 
-
+@Config
 @TeleOp(name = "OpModeWRC_BLUE")
 public class OpModeWRC_BLUE extends LinearOpMode {
+
+
+
+    public static double intakeLengthBackingPos = -100;
+
+
+
 
     //12
     ServoValueEasyOutputter.ClipPosition CurrentClipPosition = ServoValueEasyOutputter.ClipPosition.UNLOCKED;
@@ -35,6 +42,7 @@ public class OpModeWRC_BLUE extends LinearOpMode {
     MecanumDrive drive;
     boolean pad1_lbispressed = false;
     boolean pad1_rbispressed = false;
+    boolean pad1_dpadrightispressed = false;
     long pad2xpressTime = 0;
     boolean pad2_xispressed = false;
     boolean pad2_rbispressed = false;
@@ -78,7 +86,7 @@ public class OpModeWRC_BLUE extends LinearOpMode {
     MotorLineIntakeLengthController intakeLengthController;
     SixServoArmEasyController sixServoArmEasyController;
     ServoValueEasyOutputter servoValueOutputter;
-    //OutputController outputController;
+    OutputController outputController;
     FindCandidate CVModule;
     int FrameCnt = 0;
     ArmAction Sum = new ArmAction(0,0,0,0,0);
@@ -98,7 +106,7 @@ public class OpModeWRC_BLUE extends LinearOpMode {
         intakeLengthController = new MotorLineIntakeLengthController(hardwareMap);
         sixServoArmEasyController = new SixServoArmEasyController(hardwareMap, telemetry);
         servoValueOutputter = new ServoValueEasyOutputter(hardwareMap, telemetry, ServoRadianEasyCalculator.getInstance());
-        //outputController = new OutputController(hardwareMap);
+        outputController = new OutputController(hardwareMap);
         CVModule = new FindCandidate();
         //todo: 这里的颜色需要根据实际情况调整!!!!!!!
         CVModule.init(hardwareMap, telemetry, 0);
@@ -221,6 +229,46 @@ public class OpModeWRC_BLUE extends LinearOpMode {
 
 
 
+
+        //tmp
+        if(gamepad1.left_stick_button){
+            outputController.ArmUp();
+        }
+        if(gamepad1.right_stick_button){
+            outputController.ArmDown();
+        }
+        if(gamepad1.dpad_up){
+            outputController.setClip(false);
+        }
+        if(gamepad1.dpad_down){
+            outputController.setClip(true);
+        }
+        if(gamepad1.dpad_left){
+            sixServoArmEasyController.giveTheSample();
+        }
+        if(gamepad1.dpad_right){
+            if(!pad1_dpadrightispressed){
+                //intakeLengthController.testZeroPosition();
+                GiveMotorPower = !GiveMotorPower;
+                pad1_dpadrightispressed = true;
+            }
+        }
+        else{
+            pad1_dpadrightispressed = false;
+        }
+        if(GiveMotorPower){
+            intakeLengthController.setIntakeTargetPosition(intakeLengthBackingPos);
+        }
+        else{
+            intakeLengthController.setIntakeTargetPosition(0);
+            
+        }            intakeLengthController.update();
+
+        
+        //tmp end
+
+
+
         if (gamepad2.right_bumper) {
             if (!pad2_rbispressed) {
                 t = System.currentTimeMillis();
@@ -245,25 +293,9 @@ public class OpModeWRC_BLUE extends LinearOpMode {
         servoValueOutputter.setClip(CurrentClipPosition);
 
         if(gamepad2.left_bumper && ifSixServoArm){
-            FrameCnt++;
-            ArmAction armAction = CVModule.findCandidate();
-            Sum = new ArmAction(
-                    Sum.ClipAngle += armAction.ClipAngle,
-                    Sum.length += armAction.length,
-                    Sum.GoToX += armAction.GoToX,
-                    Sum.GoToY += armAction.GoToY,
-                    armAction.suggestion
-            );
-            if(FrameCnt > 5){
-                ArmAction averageAction = new ArmAction(
-                        Sum.ClipAngle / FrameCnt,
-                        Sum.length / FrameCnt,
-                        Sum.GoToX / FrameCnt,
-                        Sum.GoToY / FrameCnt,
-                        Sum.suggestion
-                );
-                sixServoArmEasyController.setTargetPosition(averageAction).update();
-                FrameCnt = 0;
+            ArmAction Command = CVModule.CalculateAverage(CVModule);
+            if(Command.suggestion != -2){
+                sixServoArmEasyController.setTargetPosition(Command).update();
             }
 
         }
