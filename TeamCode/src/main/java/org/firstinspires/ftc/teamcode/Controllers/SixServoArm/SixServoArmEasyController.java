@@ -104,7 +104,38 @@ public class SixServoArmEasyController {
         }
         return states;
     }
-
+    public boolean[] giveTheSampleCheckPointInited={false,false};
+    public boolean[] giveTheSampleCheckPointPassed={false,false};
+    public long[] giveTheSampleStartTime = {0,0};
+    public static int[] giveTheSampleRequireTimeMS={1500,500};
+    public static double InstallerRequireErrorX=-30;
+    public boolean giveTheSample(){
+        if(!giveTheSampleCheckPointInited[0]){
+            servoValueEasyOutputter.giveTheSample(servoValueOutputter.InstallerLocationX,servoValueOutputter.InstallerLocationY,servoValueOutputter.InstallerLocationZ);
+            giveTheSampleStartTime[0]=System.currentTimeMillis();
+        }
+        if(!giveTheSampleCheckPointPassed[0]){
+            if(System.currentTimeMillis()-giveTheSampleStartTime[0]>giveTheSampleRequireTimeMS[0]){
+                giveTheSampleCheckPointPassed[0]=true;
+            }
+            return true;
+        }
+        if(!giveTheSampleCheckPointInited[1]){
+            servoValueEasyOutputter.giveTheSample(servoValueOutputter.InstallerLocationX-InstallerRequireErrorX,servoValueOutputter.InstallerLocationY,servoValueOutputter.InstallerLocationZ);
+            giveTheSampleStartTime[1]=System.currentTimeMillis();
+        }
+        if(!giveTheSampleCheckPointPassed[1]){
+            if(System.currentTimeMillis()-giveTheSampleStartTime[1]>giveTheSampleRequireTimeMS[1]){
+                giveTheSampleCheckPointPassed[1]=true;
+            }
+            return true;
+        }
+        for(int i=0;i<=1;i++){
+            giveTheSampleCheckPointInited[i]=false;
+            giveTheSampleCheckPointPassed[i]=false;
+        }
+        return false;
+    }
 
 
 

@@ -26,7 +26,7 @@ public class ServoValueEasyOutputter {
     private HardwareMap hardwareMap;
     private Servo[] servo = new Servo[6];
     public static double[] servoZeroPositionDegree = {-35,-48,-58.7,18, 0, 0};
-    public static int[] servoDegree = {315, 170, 230, 255, 255, 170};//舵机总旋转角度
+    public static int[] servoDegree = {315, 257, 230, 255, 255, 170};//舵机总旋转角度
     public static boolean reverse = false;
 
     public double[] servoSetDegree = {0,0,0,0,0,0};
@@ -150,7 +150,7 @@ public class ServoValueEasyOutputter {
     public static double InstallerLocationZ=154.5;
 
     //return the intake Length
-    public double giveTheSample(){
+    public double giveTheSample(double InstallerLocationX,double InstallerLocationY,double InstallerLocationZ){
         double intakeLength = 0;
         double x = InstallerLocationX;
         double y = InstallerLocationY-98;

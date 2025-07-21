@@ -68,5 +68,7 @@ public class MotorLineIntakeLengthController{
         Motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         Motor.setPower(Power);
     }
-
+    public void setMotorEncoder(int number){
+        Motor.setTargetPosition(number);
+    }
 }

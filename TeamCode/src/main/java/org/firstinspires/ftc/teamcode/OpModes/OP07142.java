@@ -218,8 +218,8 @@ public class OP07142 extends LinearOpMode{
 
 
         if(gamepad2.left_trigger > 0.1){
-            servoValueEasyOutputter.giveTheSample();
+            sixServoArmController.giveTheSample();
         }
-        intakeLengthController.setIntakeTargetPosition(servoValueEasyOutputter.giveTheSample()).update();
+        //intakeLengthController.setIntakeTargetPosition(servoValueEasyOutputter.giveTheSample(servoValueEasyOutputter.InstallerLocationX,servoValueEasyOutputter.InstallerLocationY,servoValueEasyOutputter.InstallerLocationZ)).update();
     }
 }

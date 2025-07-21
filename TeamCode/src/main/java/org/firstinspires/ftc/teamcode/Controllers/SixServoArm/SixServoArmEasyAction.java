@@ -94,4 +94,14 @@ public class SixServoArmEasyAction {
     public Action SixServoArmVomitOutput (){
         return new SixServoArmVomitOutput();
     }
+    public class SixServoArmGiveTheSample implements Action{
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket){
+            return sixServoArmController.giveTheSample();
+        }
+        
+    }
+    public Action SixServoArmGiveTheSample(){
+        return new SixServoArmGiveTheSample();
+    }
 }
