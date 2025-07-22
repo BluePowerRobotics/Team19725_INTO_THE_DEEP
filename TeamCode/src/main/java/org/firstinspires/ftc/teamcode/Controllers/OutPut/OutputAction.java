@@ -2,10 +2,11 @@ package org.firstinspires.ftc.teamcode.Controllers.OutPut;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
+@Config
 public class OutputAction {
     HardwareMap hardwareMap;
     public OutputAction(HardwareMap hardwareMap){
@@ -65,5 +66,81 @@ public class OutputAction {
     }
     public Action OutputThrowAwaySample(){
         return new OutputThrowAwaySample();
+    }
+
+    public static double ArmUpRequireTimeMS=2000;
+    boolean upInited=false;
+    long upInitTime;
+    class OutputArmUp implements Action{
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            if(!upInited) {
+                OutputController.getInstance(hardwareMap).ArmUp();
+                upInitTime=System.currentTimeMillis();
+            }
+            if(System.currentTimeMillis()-upInitTime>ArmUpRequireTimeMS){
+                return false;
+            }
+            return true;
+        }
+    }
+    public Action OutPutArmUp(){
+        return new OutputArmUp();
+    }
+    public static double ArmMidRequireTimeMS=2000;
+    boolean midInited=false;
+    long midInitTime;
+    class OutputArmMid implements Action{
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            if(!upInited) {
+                OutputController.getInstance(hardwareMap).ArmMiddle();
+                upInitTime=System.currentTimeMillis();
+            }
+            if(System.currentTimeMillis()-upInitTime>ArmMidRequireTimeMS){
+                return false;
+            }
+            return true;
+        }
+    }
+    public Action OutPutArmMid(){
+        return new OutputArmMid();
+    }
+    public static double ArmDownRequireTimeMS=2000;
+    boolean downInited=false;
+    long downInitTime;
+    class OutputArmDown implements Action{
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            if(!upInited) {
+                OutputController.getInstance(hardwareMap).ArmDown();
+                upInitTime=System.currentTimeMillis();
+            }
+            if(System.currentTimeMillis()-upInitTime>ArmDownRequireTimeMS){
+                return false;
+            }
+            return true;
+        }
+    }
+    public Action OutPutArmDown(){
+        return new OutputArmDown();
+    }
+
+    class setClip implements Action{
+        boolean clipLock;
+        public setClip(boolean clipLock){
+            this.clipLock=clipLock;
+        }
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket){
+            OutputController.getInstance(hardwareMap).setClip(clipLock);
+            return false;
+        }
+    }
+    public Action setClip(boolean clipLock){
+        return new setClip(clipLock);
     }
 }
