@@ -18,7 +18,7 @@ public class OutputController {
     private Servo outputPositionController, outputClipController;
     private DcMotor outputLengthController;
     private HardwareMap hardwareMap;
-    public static double ArmUpPos = 1,ArmDownPos = 0.4;
+    public static double ArmUpPos = 1,ArmDownPos = 0.4,ArmMid = 0.85;
     public static double outputClipLockPos = 0.25, outputClipUnlockPos = 0.55;
     public static double outputLengthControllerNumberPerCycle =147, outputLengthControllerMMPerCycle =20*Math.PI;
 
@@ -69,7 +69,13 @@ public class OutputController {
         // servoValue = Math.max(0.0,Math.min(1.0,servoValue));
         outputPositionController.setPosition(ArmUpPos);
         return instance;
-    }public OutputController ArmDown(){
+    }
+
+    public OutputController ArmMiddle(){
+        outputPositionController.setPosition(ArmMid);
+        return getInstance(hardwareMap);
+    }
+    public OutputController ArmDown(){
         // double servoValue = (armDegree-armPositionControllerZeroPositionDegree)/255;
         // servoValue = Math.max(0.0,Math.min(1.0,servoValue));
         outputPositionController.setPosition(ArmDownPos);
