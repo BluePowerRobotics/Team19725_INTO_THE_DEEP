@@ -14,18 +14,25 @@ import org.firstinspires.ftc.teamcode.Controllers.RobotStates.INSTALL_RUNMODE;
 
 public class InstallerAction {
     public boolean isUpping = false;
-    public static double Beam_low = 0.15;//与installer对接
+    public static double Beam_low = 0.13;//与installer对接
     public static double Beam_mid = 0.16666666666;//从观察区取clip
     public static double Beam_high = 0.35;//提起clip，使之脱离观察区樯
-    double InstallPos = 233;
-    double SixthClipInstallPos = 58;
-    double ClipLength = 25;
-    double SpitDis = 40;
-    int CurrentNum = 1;
 
+    //todo: find out the correct values for these constants
+    public static double Not_Installing = 0;
+    public static double Install_Finished = 0.7;
+
+    public double WaitStartTime = 0;
+
+
+    double ClipLength = 25;
+    public static double InstallPos = 216;
+    public static double SixthClipInstallPos = 56;
+    int CurrentNum = 1;
+    double SpitDis = 40;
 
     boolean IFstartBacking = false;
-    double WaitStartTime = 0;
+    //double WaitStartTime = 0;
     HardwareMap hardwareMap;
     Gamepad gamepad1;
     Gamepad gamepad2;
@@ -71,11 +78,11 @@ public class InstallerAction {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
             if (install) {
-                clipInstaller.setPosition(0.8);
+                clipInstaller.setPosition(Install_Finished);
             } else {
-                clipInstaller.setPosition(0);
+                clipInstaller.setPosition(Not_Installing);
             }
-            telemetry.addData("Clip Installer", clipInstaller.getPosition());
+            //telemetry.addData("Clip Installer", clipInstaller.getPosition());
             return false;
         }
     }
@@ -98,6 +105,7 @@ public class InstallerAction {
                 if (state == 0) {
                     ClipPosition = SixthClipInstallPos + (6 - CurrentNum) * ClipLength;
                     clipInstallPuller.setPosition(1);
+                    clipInstaller.setPosition(Not_Installing);
                     UpstartTime = System.currentTimeMillis();
                     state = 1;
                     telemetry.addData("Puller", "Moving to clip: " + CurrentNum);
