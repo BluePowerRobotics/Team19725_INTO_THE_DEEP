@@ -27,10 +27,10 @@ public class ServoValueEasyOutputter {
     private Servo[] servo = new Servo[6];
     public static double[] servoZeroPositionDegree = {-31.4444444,-55.5,-73.9354,43.8421 , 0, 0};
     public static double[] servoDegree = {322.222222222222222, 250, 241.93548387, 257.8947, 255, 170};//舵机总旋转角度
-    public static double[] x1 ={0.11,0.41,0.69,0.21,0.3};
-    public static double[] y1 ={4,47,93,98,0};
-    public static double[] x2 ={0.47,0.77,1,0.97,0.89};
-    public static double[] y2 ={120,137,168,294,155};
+//    public static double[] x1 ={0.11,0.41,0.69,0.21,0.3};
+//    public static double[] y1 ={4,47,93,98,0};
+//    public static double[] x2 ={0.47,0.77,1,0.97,0.89};
+//    public static double[] y2 ={120,137,168,294,155};
     public static boolean reverse = false;
 
     public double[] servoSetDegree = {0,0,0,0,0,0};
@@ -63,14 +63,14 @@ public class ServoValueEasyOutputter {
     public void setRadians(double[] Radians,double clipRadian,boolean useAutoCalculator) {//控制机械臂
         this.clipRadian = clipRadian;
         for (int i = 0; i <= 3; i++) {
-            if(x1[i]!=0&& x2[i]!=0) {
-                servoDegree[i] = (y1[i] - y2[i]) / (x1[i] - x2[i]);
-                servoZeroPositionDegree[i]=y1[i] - servoDegree[i] * x1[i];
-            }
+//            if(x1[i]!=0&& x2[i]!=0) {
+//                servoDegree[i] = (y1[i] - y2[i]) / (x1[i] - x2[i]);
+//                servoZeroPositionDegree[i]=y1[i] - servoDegree[i] * x1[i];
+//            }
 
             servoPosition[i] = Math.toDegrees(Radians[i]) - servoZeroPositionDegree[i];
-            while(servoPosition[i]>2*Math.PI)servoPosition[i]-=2*Math.PI;
-            while(servoPosition[i]<0)servoPosition[i]+=2*Math.PI;
+            while(servoPosition[i]>2*Math.PI)servoPosition[i]-=360;
+            while(servoPosition[i]<0)servoPosition[i]+=360;
             telemetry.addData("Servo " + i + " Degree", Math.toDegrees(Radians[i]));
             servoSetDegree[i] = Math.toDegrees(Radians[i]);
             servoSetDegreeTime[i] = System.currentTimeMillis();

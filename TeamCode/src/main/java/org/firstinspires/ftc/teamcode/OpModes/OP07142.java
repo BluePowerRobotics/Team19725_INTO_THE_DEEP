@@ -110,7 +110,7 @@ public class OP07142 extends LinearOpMode{
         telemetry.addData("move_y_l+move_y_r/前-后+", move_y_l + move_y_r);
         telemetry.addData("move_x_r/左-右+", move_x_r);
         telemetry.addData("degree", degree);
-
+        telemetry.addData("clipRadian",clipRadian);
         telemetry.addData("x",x);
         telemetry.addData("y",y);
         telemetry.addData("intake",intake.getCurrentPosition());
@@ -207,8 +207,8 @@ public class OP07142 extends LinearOpMode{
             output.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
     }
-    double x=0,y=100;
-    double clipRadian = 0;
+    double x=-109.4778,y=149.6528;
+    double clipRadian = 1.473;
     boolean leftstickbuttonhasbeenpressed= false;
     boolean locked=false;
     public static double kx=2;
