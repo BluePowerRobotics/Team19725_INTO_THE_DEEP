@@ -120,7 +120,7 @@ public class InstallerController{
         this.installStates = installStates;
         switch (this.installStates) {
             case WAITING:
-                clipInstaller.setPosition(Not_Installing);
+                //clipInstaller.setPosition(Not_Installing);
                 if(disSensor.getDis() > InstallPos){
                     clipInstallPuller.setPosition(0.5);
                 }
@@ -155,8 +155,8 @@ public class InstallerController{
                 }
                 break;
             case RETURNING:
-                clipInstaller.setPosition(Not_Installing);
-                if(System.currentTimeMillis() - WaitStartTime > 300){
+                //clipInstaller.setPosition(Not_Installing);
+                if(System.currentTimeMillis() - WaitStartTime > 500){
                     clipInstallPuller.setPosition(1);
                 }
                 if(disSensor.getDis() < InstallPos){
@@ -169,7 +169,7 @@ public class InstallerController{
     public void run() {
         switch (this.installStates) {
             case WAITING:
-                clipInstaller.setPosition(Not_Installing);
+                //clipInstaller.setPosition(Not_Installing);
 
                 if(disSensor.getDis() > InstallPos){
                     clipInstallPuller.setPosition(0.5);
@@ -204,8 +204,8 @@ public class InstallerController{
                 }
                 break;
             case RETURNING:
-                clipInstaller.setPosition(Not_Installing);
-                if(System.currentTimeMillis() - WaitStartTime > 300){
+                //clipInstaller.setPosition(Not_Installing);
+                if(System.currentTimeMillis() - WaitStartTime > 500){
                     clipInstallPuller.setPosition(1);
                 }
                 if(disSensor.getDis() < InstallPos){
