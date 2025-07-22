@@ -38,8 +38,44 @@ public class SixServoArmEasyController {
         SixServoArmEasyController.getInstance(hardwareMap,telemetry);
         //todo:fixthis
         //setTargetPosition(resetX, resetY, 0 * Math.PI, 0.5 * Math.PI).update();
-        setTargetPosition(resetX, resetY, Math.PI, 0.5 * Math.PI).update();
+        servoValueOutputter.DegreeServoControl(0,90);
+        servoValueOutputter.DegreeServoControl(1,140);
+        servoValueOutputter.DegreeServoControl(2,80);
+        servoValueOutputter.DegreeServoControl(3,50);
+        servoValueOutputter.DegreeServoControl(4,0);
+        servoValueOutputter.setClip(ServoValueEasyOutputter.ClipPosition.UNLOCKED);
     }
+    long PFTStartTime;
+    boolean PFTinited=false;
+    public void prepareForTaking(){
+        if(PFTinited)
+        servoValueOutputter.DegreeServoControl(0,90);
+        servoValueOutputter.DegreeServoControl(1,45);
+        servoValueOutputter.DegreeServoControl(2,135);
+        servoValueOutputter.DegreeServoControl(3,90);
+        servoValueOutputter.SingleServoControl(4,1);
+        servoValueOutputter.setClip(ServoValueEasyOutputter.ClipPosition.UNLOCKED);
+    }
+
+    //todo finish the following void
+    public void testIfTheSampleIsEaten(){
+        servoValueOutputter.DegreeServoControl(0, 90);
+        servoValueOutputter.DegreeServoControl(1, 90);
+        servoValueOutputter.DegreeServoControl(2, 90);
+        servoValueOutputter.DegreeServoControl(3, 180);
+        servoValueOutputter.SingleServoControl(4, 1);
+        servoValueOutputter.setClip(ServoValueEasyOutputter.ClipPosition.HALF_LOCKED);
+    }
+
+    public void dropTheSample(){
+        servoValueOutputter.DegreeServoControl(0, 90);
+        servoValueOutputter.DegreeServoControl(1, 90);
+        servoValueOutputter.DegreeServoControl(2, 90);
+        servoValueOutputter.DegreeServoControl(3, 90);
+        servoValueOutputter.SingleServoControl(4, 1);
+        servoValueOutputter.setClip(ServoValueEasyOutputter.ClipPosition.HALF_LOCKED);
+    }
+
 
     final double resetX = 0,resetY = 100,resetZ = 10;
     double targetX = resetX,targetY = resetY,targetZ = resetZ;
@@ -113,6 +149,36 @@ public class SixServoArmEasyController {
         }
         return states;
     }
+    public boolean checkIfFinished(){
+        boolean states=false;
+        boolean[] servoStates = new boolean[5];
+        for(int i=0;i<=4;i++){
+            if(servoValueOutputter.servoSetDegree[i]-servoValueOutputter.servoNowDegree[i]>0){
+                servoValueOutputter.servoNowDegree[i] += (60/servoSpeed[i])*((System.currentTimeMillis()-servoValueOutputter.servoNowDegreeTime[i])/1000.0);
+                if(servoValueOutputter.servoNowDegree[i]>servoValueOutputter.servoSetDegree[i]){
+                    servoValueOutputter.servoNowDegree[i] = servoValueOutputter.servoSetDegree[i];
+                    servoStates[i]= false;
+                }
+                servoValueOutputter.servoNowDegreeTime[i] = System.currentTimeMillis();
+            }else{
+                servoValueOutputter.servoNowDegree[i] -= (60/servoSpeed[i])*((System.currentTimeMillis()-servoValueOutputter.servoNowDegreeTime[i])/1000.0);
+                if(servoValueOutputter.servoNowDegree[i]<servoValueOutputter.servoSetDegree[i]){
+                    servoValueOutputter.servoNowDegree[i] = servoValueOutputter.servoSetDegree[i];
+                    servoStates[i]= false;
+                }
+                servoValueOutputter.servoNowDegreeTime[i] = System.currentTimeMillis();
+            }
+        }
+        //保证所有servoStates为false时states才为false
+        for(int i=0;i<=4;i++){
+            if(servoStates[i]){
+                states = true;
+            }else{
+                states = states || false;
+            }
+        }
+        return states;
+    }
     public boolean[] giveTheSampleCheckPointInited={false,false,false};
     public boolean[] giveTheSampleCheckPointPassed={false,false,false};
     public long[] giveTheSampleStartTime = {0,0};
@@ -122,6 +188,7 @@ public class SixServoArmEasyController {
         if(!giveTheSampleCheckPointInited[0]){
             servoValueOutputter.giveTheSample(servoValueOutputter.InstallerLocationX,servoValueOutputter.InstallerLocationY,servoValueOutputter.InstallerLocationZ);
             giveTheSampleStartTime[0]=System.currentTimeMillis();
+            giveTheSampleCheckPointInited[0]=true;
         }
         if(!giveTheSampleCheckPointPassed[0]){
             if(System.currentTimeMillis()-giveTheSampleStartTime[0]>giveTheSampleRequireTimeMS[0]){
@@ -132,6 +199,7 @@ public class SixServoArmEasyController {
         if(!giveTheSampleCheckPointInited[1]){
             servoValueOutputter.giveTheSample(servoValueOutputter.InstallerLocationX-InstallerRequireErrorX,servoValueOutputter.InstallerLocationY,servoValueOutputter.InstallerLocationZ);
             giveTheSampleStartTime[1]=System.currentTimeMillis();
+            giveTheSampleCheckPointInited[1]=true;
         }
         if(!giveTheSampleCheckPointPassed[1]){
             if(System.currentTimeMillis()-giveTheSampleStartTime[1]>giveTheSampleRequireTimeMS[1]){
@@ -139,10 +207,7 @@ public class SixServoArmEasyController {
             }
             return true;
         }
-        for(int i=0;i<=1;i++){
-            giveTheSampleCheckPointInited[i]=false;
-            giveTheSampleCheckPointPassed[i]=false;
-        }
+
         return false;
     }
 
