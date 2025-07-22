@@ -128,6 +128,10 @@ public class ServoValueEasyOutputter {
     }
     public void SingleServoControl(int servoIndex, double position) {
         servo[servoIndex].setPosition(position);
+        servoSetDegree[servoIndex]=position*servoDegree[servoIndex]+servoZeroPositionDegree[servoIndex];
+    }
+    public double getServoPosition(int servoIndex){
+        return (servoSetDegree[servoIndex]-servoZeroPositionDegree[servoIndex])/servoDegree[servoIndex];
     }
     public void DegreeServoControl(int servoIndex, double degree) {
         if(isNaN(degree)) degree=0;
@@ -146,35 +150,24 @@ public class ServoValueEasyOutputter {
         DegreeServoControl(3,servo3leftDegree);
         DegreeServoControl(4,servo4leftDegree);
     }
-    public void dropTheSample(){
-        DegreeServoControl(0, 90);
-        DegreeServoControl(1, 90);
-        DegreeServoControl(2, 90);
-        DegreeServoControl(3, 90);
-        DegreeServoControl(4, 0);
-        setClip(ClipPosition.HALF_LOCKED);
-    }
+
     public static double InstallerLocationX=0;
     public static double InstallerLocationY=273;
     public static double InstallerLocationZ=154.5;
 
     //return the intake Length
+    public static double pos_0 = 0.37;
+    public static double pos_1 = 1;
+    public static double pos_2 = 0.74;
+    public static double pos_3 = 0.93;
+    public static double pos_4 = 0.33;
     public double giveTheSample(double InstallerLocationX,double InstallerLocationY,double InstallerLocationZ){
         double intakeLength = 0;
-        double x = InstallerLocationX;
-        double y = InstallerLocationY-98;
-        double z = InstallerLocationZ-20;
-        intakeLength = Math.sqrt(Math.pow(286,2)-x*x-z*z)-y;
-        double servoe0Degree = Math.toDegrees(Math.atan2(Math.sqrt(Math.pow(286,2)-x*x-z*z), x));
-        double servoe1Degree = 180 - Math.toDegrees(Math.atan2(z,Math.sqrt(Math.pow(286,2)-z*z))-Math.atan2(71.5,277));
-        double servoe2Degree = 120;
-        double servoe3Degree = 240 + Math.toDegrees(Math.atan2(z,Math.sqrt(Math.pow(286,2)-z*z))-Math.atan2(71.5,277));
-        double servoe4Degree = 0;
-        DegreeServoControl(0, servoe0Degree);
-        DegreeServoControl(1, servoe1Degree);
-        DegreeServoControl(2, servoe2Degree);
-        DegreeServoControl(3, servoe3Degree);
-        DegreeServoControl(4, servoe4Degree);
+        SingleServoControl(0, pos_0);
+        SingleServoControl(1, pos_1);
+        SingleServoControl(2, pos_2);
+        SingleServoControl(3, pos_3);
+        SingleServoControl(4, pos_4);
         setClip(ClipPosition.LOCKED);
         return intakeLength;
     }
