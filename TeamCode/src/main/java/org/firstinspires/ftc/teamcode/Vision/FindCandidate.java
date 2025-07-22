@@ -248,7 +248,7 @@ public class FindCandidate{
             //按距离和面积递增
 
         Mytelemetry.addData("length:", CandidateLength);
-        for(int j = 0; j < CandidateLength; j++){
+        for(int j = 0; j < CandidateLength && candidates[j].centerpoint != null; j++){
             candidates[j].centerpoint = UndistortionTool.openCvUndistortion(candidates[j].centerpoint.x - MidX, candidates[j].centerpoint.y - MidY);
             candidates[j].centerpoint = new Point(candidates[j].centerpoint.x * PixeltoMM, candidates[j].centerpoint.y * PixeltoMM);
             int Status = CubeProcessor.ProcessCube(candidates[j]);

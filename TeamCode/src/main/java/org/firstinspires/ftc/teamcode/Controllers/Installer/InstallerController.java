@@ -23,12 +23,12 @@ public class InstallerController{
 
     //todo: find out the correct values for these constants
     public static double Not_Installing = 0;
-    public static double Install_Finished = 0.2;
+    public static double Install_Finished = 0.7;
 
     public double WaitStartTime = 0;
 
-    double InstallPos = 233;
-    double SixthClipInstallPos = 58;
+    public static double InstallPos = 216;
+    public static double SixthClipInstallPos = 56;
     double ClipLength = 25;
     int CurrentNum = 1;
     HardwareMap hardwareMap;
@@ -72,6 +72,10 @@ public class InstallerController{
         return CurrentNum;
     }
     public RobotStates.INSTALL_RUNMODE getInstallStates(){return this.installStates;}
+    public double getdis(){
+        return disSensor.getDis();
+    }
+
 
     public void BeamSpinner(boolean ifdown){
         if (ifdown) {
@@ -125,6 +129,7 @@ public class InstallerController{
                 }
                 break;
             case EATING:
+                clipInstaller.setPosition(Not_Installing);
                 clipInstallPuller.setPosition(1);
                 if(disSensor.getDis() < SixthClipInstallPos + (6 - CurrentNum) * ClipLength) {
                     this.CurrentNum++;
@@ -139,6 +144,7 @@ public class InstallerController{
                 clipInstaller.setPosition(Install_Finished);
                 break;
             case BACKING:
+                clipInstaller.setPosition(Install_Finished);
                 if(disSensor.getDis() > InstallPos + 40) {
                     clipInstallPuller.setPosition(0.5);
                     WaitStartTime = System.currentTimeMillis();
@@ -149,6 +155,7 @@ public class InstallerController{
                 }
                 break;
             case RETURNING:
+                clipInstaller.setPosition(Not_Installing);
                 if(System.currentTimeMillis() - WaitStartTime > 300){
                     clipInstallPuller.setPosition(1);
                 }
@@ -172,6 +179,7 @@ public class InstallerController{
                 }
                 break;
             case EATING:
+                clipInstaller.setPosition(Not_Installing);
                 clipInstallPuller.setPosition(1);
                 if(disSensor.getDis() < SixthClipInstallPos + (6 - CurrentNum) * ClipLength) {
                     this.CurrentNum++;
@@ -185,6 +193,7 @@ public class InstallerController{
                 clipInstaller.setPosition(Install_Finished);
                 break;
             case BACKING:
+                clipInstaller.setPosition(Install_Finished);
                 if(disSensor.getDis() > InstallPos + 40) {
                     clipInstallPuller.setPosition(0.5);
                     WaitStartTime = System.currentTimeMillis();
@@ -195,6 +204,7 @@ public class InstallerController{
                 }
                 break;
             case RETURNING:
+                clipInstaller.setPosition(Not_Installing);
                 if(System.currentTimeMillis() - WaitStartTime > 300){
                     clipInstallPuller.setPosition(1);
                 }
@@ -206,5 +216,4 @@ public class InstallerController{
 
         }
     }
-
 }

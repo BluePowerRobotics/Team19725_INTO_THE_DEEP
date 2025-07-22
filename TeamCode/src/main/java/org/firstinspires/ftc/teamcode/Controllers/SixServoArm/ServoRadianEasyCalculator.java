@@ -39,12 +39,12 @@ public class ServoRadianEasyCalculator {
         if(radian0<0){
             radian0+=2*Math.PI;
         }
-        double fake_r = Math.sqrt(Math.pow(x,2)+Math.pow(y,2))+10.15;
-        double r=fake_r+18*Math.pow(Math.E,(-Math.pow((0.012*fake_r-1.67),2)))+5;
+        double fake_r = Math.sqrt(Math.pow(x,2)+Math.pow(y,2));//+10.15;
+        double r=fake_r;//+18*Math.pow(Math.E,(-Math.pow((0.012*fake_r-1.67),2)))+5;
         double radian1 = Math.acos((Math.pow(a,2)+Math.pow(r,2)-Math.pow(b,2))/(2*a*r));
         //double radian1 = Math.PI/2;
         double radian2 = Math.acos((Math.pow(a,2)+Math.pow(b,2)-Math.pow(r,2))/(2*a*b));
-        double radian3 = Math.acos((Math.pow(b,2)+Math.pow(r,2)-Math.pow(a,2))/(2*b*r))+0.5*Math.PI-clipHeadingRadian;
+        double radian3 = Math.acos((Math.pow(b,2)+Math.pow(r,2)-Math.pow(a,2))/(2*b*r))-clipHeadingRadian+0.5*Math.PI;
         radian1+=Math.atan2(h,r);
         result = new double[]{radian0,radian1,radian2,radian3};
         return result;

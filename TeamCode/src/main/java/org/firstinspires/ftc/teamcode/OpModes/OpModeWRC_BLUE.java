@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
@@ -11,6 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Autonomous.WRCAutoRightBlue;
 import org.firstinspires.ftc.teamcode.Controllers.Installer.InstallerController;
+import org.firstinspires.ftc.teamcode.Controllers.OutPut.OutputController;
 import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.ServoValueEasyOutputter;
 import org.firstinspires.ftc.teamcode.RoadRunner.Drawing;
 import org.firstinspires.ftc.teamcode.RoadRunner.GoBildaPinpointDriver;
@@ -46,7 +48,9 @@ public class OpModeWRC_BLUE extends LinearOpMode {
     long pad2xpressTime = 0;
     boolean pad2_xispressed = false;
     boolean pad2_rbispressed = false;
+    boolean GiveMotorPower = false;
     boolean isIntaking = false;
+    boolean HasSetArmPos = false;
     boolean ifslow = false;
     boolean ifRoadRunner = true;//是否使用roadrunner控制底盘移动
     boolean ifSixServoArm = true;//是否使用六伺服臂
@@ -70,9 +74,9 @@ public class OpModeWRC_BLUE extends LinearOpMode {
     double kpad;
     public double t = 0;//当前时间
 
-
-
-
+    public double OutputstartTime = 0;
+    public static double OutputTime = 300;
+    boolean outputInited = false;
 
     public double move_x_l;
     public double move_y_l;
@@ -104,8 +108,8 @@ public class OpModeWRC_BLUE extends LinearOpMode {
 
 
         intakeLengthController = new MotorLineIntakeLengthController(hardwareMap);
-        sixServoArmEasyController = new SixServoArmEasyController(hardwareMap, telemetry);
-        servoValueOutputter = new ServoValueEasyOutputter(hardwareMap, telemetry, ServoRadianEasyCalculator.getInstance());
+        sixServoArmEasyController = SixServoArmEasyController.getInstance(hardwareMap, telemetry);
+        servoValueOutputter = sixServoArmEasyController.servoValueOutputter;
         outputController = new OutputController(hardwareMap);
         CVModule = new FindCandidate();
         //todo: 这里的颜色需要根据实际情况调整!!!!!!!
@@ -174,12 +178,13 @@ public class OpModeWRC_BLUE extends LinearOpMode {
         nowtime = System.currentTimeMillis();
         telemetry.addData("ifSlow", ifslow);
         telemetry.addData("ifRoadRunner", ifRoadRunner);
+        telemetry.addData("MotorPower", GiveMotorPower);
         if(ifSixServoArm){
             telemetry.addData("ServoSelected(0-5)", -1);
         }
         else{
             telemetry.addData("ServoSelected(0-5)", servo_select);
-            telemetry.addData("ServoPosition", servo_position);
+            telemetry.addData("ServoPosition", servo_position[servo_select]);
         }
 
         telemetry.addData("xpad(实际上是y轴)", -gamepad1.left_stick_y * kpad);
@@ -196,10 +201,10 @@ public class OpModeWRC_BLUE extends LinearOpMode {
 //        Pose2D vel = odo.getVelocity();
 //        String velocity = String.format(Locale.US,"{XVel: %.3f, YVel: %.3f, HVel: %.3f}", vel.getX(DistanceUnit.MM), vel.getY(DistanceUnit.MM), vel.getHeading(AngleUnit.DEGREES));
 //        telemetry.addData("Velocity", velocity);
-        telemetry.addLine();
+        telemetry.addData("dis", installerController.getdis());
         telemetry.addData("InstallerState", installerController.getInstallStates());
         telemetry.update();
-
+        //sleep(50);
         TelemetryPacket packet = new TelemetryPacket();
 
         packet.fieldOverlay().setStroke("#3F51B5");
@@ -220,7 +225,7 @@ public class OpModeWRC_BLUE extends LinearOpMode {
         }
         if(gamepad2.left_trigger > 0.1){
             //intakeLengthController.SingleMotorControl(gamepad2.left_trigger);
-            intakeLengthController.SingleMotorControl(1);//放出滑轨
+            intakeLengthController.SingleMotorControl(gamepad2.left_trigger);//放出滑轨
         }
         if(gamepad2.right_trigger > 0.1){
             intakeLengthController.SingleMotorControl(-gamepad2.right_trigger);//收回滑轨
@@ -258,11 +263,13 @@ public class OpModeWRC_BLUE extends LinearOpMode {
         }
         if(GiveMotorPower){
             intakeLengthController.setIntakeTargetPosition(intakeLengthBackingPos);
+            intakeLengthController.update();
         }
         else{
             intakeLengthController.setIntakeTargetPosition(0);
             
-        }            intakeLengthController.update();
+        }
+
 
         
         //tmp end
@@ -294,8 +301,9 @@ public class OpModeWRC_BLUE extends LinearOpMode {
 
         if(gamepad2.left_bumper && ifSixServoArm){
             ArmAction Command = CVModule.CalculateAverage(CVModule);
-            if(Command.suggestion != -2){
+            if(Command.suggestion != -2 && !HasSetArmPos){
                 sixServoArmEasyController.setTargetPosition(Command).update();
+                HasSetArmPos = true;
             }
 
         }
@@ -305,16 +313,31 @@ public class OpModeWRC_BLUE extends LinearOpMode {
         if (gamepad1.a) {
             installerController.BeamSpinner(true);
         }
+
+
+        if(gamepad2.dpad_down){
+            sixServoArmEasyController.giveTheSample();
+        }
         if(gamepad2.a){
             installerController.setMode(RobotStates.INSTALL_RUNMODE.EATING);
         }
         if(gamepad2.y){
+            outputInited = false;
             installerController.Install();
         }
         installerController.run();
 
         if(gamepad2.b){
             installerController.setMode(RobotStates.INSTALL_RUNMODE.BACKING);
+            if(!outputInited){
+                OutputstartTime = System.currentTimeMillis();
+                outputInited = false;
+            }
+
+            if(System.currentTimeMillis() - OutputstartTime > OutputTime){
+                CurrentClipPosition = ServoValueEasyOutputter.ClipPosition.UNLOCKED;
+                outputController.ArmUp();
+            }
             //outputController.setTargetOutputHeight(100);
         }
     }

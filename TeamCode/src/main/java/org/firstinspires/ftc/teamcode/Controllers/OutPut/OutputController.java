@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Controllers.OutPut;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -18,7 +19,7 @@ public class OutputController {
     private DcMotor outputLengthController;
     private HardwareMap hardwareMap;
     public static double ArmUpPos = 1,ArmDownPos = 0.4;
-    public static double outputClipLockPos = 0.25, outputClipUnlockPos = 0.4;
+    public static double outputClipLockPos = 0.25, outputClipUnlockPos = 0.55;
     public static double outputLengthControllerNumberPerCycle =147, outputLengthControllerMMPerCycle =20*Math.PI;
 
     RobotStates.OUTPUT_RUNMODE outputStates = RobotStates.OUTPUT_RUNMODE.WAITING;
@@ -86,7 +87,7 @@ public class OutputController {
     public boolean eatIntake(){
         if(eatIntakeCheckPointInitialized[0]){
             eatIntakeCheckPointStartTime =System.currentTimeMillis();
-            setArmDegree(0);
+
             setTargetOutputHeight(0);
             //action 1
             eatIntakeCheckPointInitialized[0] =true;
@@ -98,7 +99,7 @@ public class OutputController {
         }
         if(eatIntakeCheckPointInitialized[1]&&eatIntakeCheckPointPassed[0]){
             eatIntakeCheckPointStartTime =System.currentTimeMillis();
-            setArmDegree(0);
+            ArmUp();
             setTargetOutputHeight(0);
             //action 2
 
@@ -138,7 +139,7 @@ public class OutputController {
     public boolean vomitInstaller(){
         if(vomitInstallerCheckPointInitialized[0]){
             vomitInstallerCheckPointStartTime =System.currentTimeMillis();
-            setArmDegree(0);
+            ArmUp();
             setTargetOutputHeight(0);
             //action 1
 
@@ -157,7 +158,7 @@ public class OutputController {
         }
         if(vomitInstallerCheckPointInitialized[1]&&vomitInstallerCheckPointPassed[0]){
             vomitInstallerCheckPointStartTime =System.currentTimeMillis();
-            setArmDegree(0);
+            ArmUp();
             setTargetOutputHeight(0);
             //action 2
 
@@ -197,7 +198,7 @@ public class OutputController {
     public boolean eatInstaller(){
         if(eatInstallerCheckPointInitialized[0]){
             eatInstallerCheckPointStartTime =System.currentTimeMillis();
-            setArmDegree(0);
+            ArmUp();
             setTargetOutputHeight(100);
             //action 1
 
@@ -214,7 +215,7 @@ public class OutputController {
         }
         if(eatInstallerCheckPointInitialized[1]&&eatInstallerCheckPointPassed[0]){
             eatInstallerCheckPointStartTime =System.currentTimeMillis();
-            setArmDegree(-45);
+            ArmUp();
             setTargetOutputHeight(30);
             //action 2
 
@@ -249,7 +250,7 @@ public class OutputController {
     public boolean throwAwaySample(){
         if(throwAwaySampleCheckPointInitialized[0]){
             throwAwaySampleCheckPointStartTime =System.currentTimeMillis();
-            setArmDegree(0);
+            ArmUp();
             setTargetOutputHeight(0);
             //action 1
 
@@ -266,7 +267,7 @@ public class OutputController {
         }
         if(throwAwaySampleCheckPointInitialized[1]&&throwAwaySampleCheckPointPassed[0]){
             throwAwaySampleCheckPointStartTime =System.currentTimeMillis();
-            setArmDegree(0);
+            ArmUp();
             setTargetOutputHeight(0);
             //action 2
 

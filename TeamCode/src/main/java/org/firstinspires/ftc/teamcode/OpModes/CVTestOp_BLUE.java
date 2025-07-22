@@ -11,23 +11,28 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.ServoValueOutputter;
-import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.SixServoArmAction;
+import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.ServoRadianEasyCalculator;
+import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.ServoValueEasyOutputter;
+import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.SixServoArmEasyAction;
+import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.SixServoArmEasyController;
 import org.firstinspires.ftc.teamcode.RoadRunner.*;
 import org.firstinspires.ftc.teamcode.Vision.*;
+import org.firstinspires.ftc.teamcode.Vision.model.ArmAction;
 
 @TeleOp
 public class CVTestOp_BLUE extends LinearOpMode {
 
-    ServoValueOutputter.ClipPosition CurrentClipPosition = ServoValueOutputter.ClipPosition.UNLOCKED;
+    ServoValueEasyOutputter.ClipPosition CurrentClipPosition = ServoValueEasyOutputter.ClipPosition.UNLOCKED;
     MecanumDrive drive;
-    SixServoArmAction sixServoArmController;
+    SixServoArmEasyController sixServoArmController;
+    ServoValueEasyOutputter sixServoValueEasyOutputter;
     FindCandidate CVModule = new FindCandidate();
     private DcMotor armMotor;
     @Override
     public void runOpMode() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        sixServoArmController = new SixServoArmAction(hardwareMap, telemetry,gamepad2);
+        sixServoArmController = new SixServoArmEasyController(hardwareMap, telemetry);
+        sixServoValueEasyOutputter = new ServoValueEasyOutputter(hardwareMap,telemetry, ServoRadianEasyCalculator.getInstance());
 //        armMotor = hardwareMap.get(DcMotor.class, "armMotor");
 //        armMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 //        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -36,70 +41,65 @@ public class CVTestOp_BLUE extends LinearOpMode {
         // Initialize the camera and other components here
         //***   0:Blue, 1:Red, 2:Yellow
         //todo: 这里的颜色需要根据实际情况调整!!!!!!!
-        CVModule.init(hardwareMap, telemetry, 0);
+        CVModule.init(hardwareMap, telemetry, 1);
         drive = new MecanumDrive(hardwareMap, new Pose2d(0,0,0));
 
         double t = System.currentTimeMillis(); // 获取当前时间
 
-
+        ArmAction Command = new ArmAction(0,0,0,0,-1);
 
 
 
         //waitForStart();
         boolean rbispressed = false;
         boolean isIntaking = false;
-        while (opModeIsActive() || opModeInInit()) {
+        boolean hasIntaked = true;
+        
+        waitForStart();
+        
+        
+        while (opModeIsActive()) {
             if(System.currentTimeMillis() - t > 1000){
-                CurrentClipPosition = ServoValueOutputter.ClipPosition.HALF_LOCKED;
+                CurrentClipPosition = ServoValueEasyOutputter.ClipPosition.HALF_LOCKED;
             }
-
-            if(gamepad1.right_bumper){
+            if(gamepad2.left_bumper){
+                isIntaking = true;
+            }
+            else{
+                isIntaking = false;
+            }
+            if(gamepad2.right_bumper){
                 if(!rbispressed) {
                     t = System.currentTimeMillis();
                     rbispressed = true;
                 }
             }else{
                 if(System.currentTimeMillis() - t < 500){
-                    if(CurrentClipPosition == ServoValueOutputter.ClipPosition.LOCKED){
-                        CurrentClipPosition = ServoValueOutputter.ClipPosition.UNLOCKED;
+                    if(CurrentClipPosition == ServoValueEasyOutputter.ClipPosition.LOCKED){
+                        CurrentClipPosition = ServoValueEasyOutputter.ClipPosition.UNLOCKED;
                     }
-                    else if(CurrentClipPosition == ServoValueOutputter.ClipPosition.UNLOCKED){
-                        CurrentClipPosition = ServoValueOutputter.ClipPosition.LOCKED;
+                    else if(CurrentClipPosition == ServoValueEasyOutputter.ClipPosition.UNLOCKED){
+                        CurrentClipPosition = ServoValueEasyOutputter.ClipPosition.LOCKED;
                     }
                     else{
-                        CurrentClipPosition = ServoValueOutputter.ClipPosition.LOCKED;
+                        CurrentClipPosition = ServoValueEasyOutputter.ClipPosition.LOCKED;
                     }
                 }
             }
-            Actions.runBlocking(
-                    new SequentialAction(
-                            sixServoArmController.SixServoArmSetClip(CurrentClipPosition)
-                    )
+            sixServoValueEasyOutputter.setClip(CurrentClipPosition);
 
-            );
             if(isIntaking){
-                Actions.runBlocking(
-                        new SequentialAction(
-                                sixServoArmController.SixServoArmRunToPosition(CVModule.findCandidate()),
-                                sixServoArmController.SixServoArmSetClip(ServoValueOutputter.ClipPosition.LOCKED)
-                        )
-
-                );            }
+                Command = CVModule.CalculateAverage(CVModule);
+                if(isIntaking && Command.suggestion != -2 && !hasIntaked){
+                    sixServoArmController.setTargetPosition(CVModule.findCandidate()).update();
+                    hasIntaked = true;
+                }
+            }
+            
             // Process camera frames and detect colors
-            telemetry.addData("running toX", CVModule.findCandidate().GoToX);
-            telemetry.addData("running toY", CVModule.findCandidate().GoToY);
-            if(CVModule.findCandidate().suggestion == 1) {
-                telemetry.addData("suggestion", "需要车辆左移");
-            }
-            else if(CVModule.findCandidate().suggestion == 2) {
-                telemetry.addData("suggestion", "需要车辆右移");
-            }
-            else if(CVModule.findCandidate().suggestion == 3) {
-                telemetry.addData("suggestion", "需要滑轨前移");
-            }
-            else {
-                telemetry.addData("suggestion", "不需要移动");
-            }
+            telemetry.addData("running toX", Command.GoToX);
+            telemetry.addData("running toY", Command.GoToY);
+            telemetry.addData("suggestion", Command.suggestion);
 //            double armPower = 0;
 //            if (gamepad2.right_trigger > 0.1) {
 //                armPower = gamepad2.right_trigger;

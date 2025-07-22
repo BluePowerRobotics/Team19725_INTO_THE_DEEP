@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -12,9 +13,11 @@ import org.firstinspires.ftc.teamcode.Controllers.ChassisController;
 import org.firstinspires.ftc.teamcode.Controllers.IntakeLength.*;
 import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.ServoValueEasyOutputter;
 import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.SixServoArmEasyController;
+import org.firstinspires.ftc.teamcode.Vision.FindCandidate;
+import org.firstinspires.ftc.teamcode.Vision.model.ArmAction;
 
 @TeleOp
-
+@Config
 public class OP07142 extends LinearOpMode{
     MotorLineIntakeLengthController intakeLengthController;
     ServoValueEasyOutputter servoValueEasyOutputter;
@@ -30,7 +33,7 @@ public class OP07142 extends LinearOpMode{
     int usbFacingDirectionPosition = 2;
     boolean orientationIsValid = true;
     YawPitchRollAngles orientation;
-
+    boolean HasSetArmPos = false;
     public double angletime = 0;
 
     public double t = 0;// 当前时间
@@ -54,9 +57,12 @@ public class OP07142 extends LinearOpMode{
     // servos5:0.86~1
     //ArmDirectController armDirectController = new ArmDirectController();
     ChassisController chassisController = new ChassisController();
+    FindCandidate CVModule = new FindCandidate();
     //EasyClimb easyClimb = new EasyClimb();
 
     private void inithardware() {
+
+        CVModule.init(hardwareMap, telemetry , 0);
         intakeLengthController = MotorLineIntakeLengthController.getInstance(hardwareMap);
         sixServoArmController=SixServoArmEasyController.getInstance(hardwareMap,telemetry);
         servoValueEasyOutputter=sixServoArmController.servoValueOutputter;
@@ -150,6 +156,19 @@ public class OP07142 extends LinearOpMode{
             degree = 0.0036984 * orientation.getYaw(AngleUnit.DEGREES) + 0.499286;
             motorcontrol();
             servocontrol();
+
+            if(gamepad1.left_bumper){
+                ArmAction Command = CVModule.CalculateAverage(CVModule);
+                if(Command.suggestion != -2 && !HasSetArmPos){
+                    x=Command.GoToX-94;
+                    y=-Command.GoToY+44;
+                    clipRadian = Command.ClipAngle;
+                    HasSetArmPos = true;
+                }
+
+            }
+
+
             /*
             if(gamepad1.x){
                 armPuller.setPower(0.1);
@@ -189,15 +208,18 @@ public class OP07142 extends LinearOpMode{
         }
     }
     double x=0,y=100;
+    double clipRadian = 0;
     boolean leftstickbuttonhasbeenpressed= false;
     boolean locked=false;
+    public static double kx=2;
+    public static double ky=2;
     public void servocontrol() {
-        x+=gamepad2.left_stick_x*2;
-        y-=gamepad2.left_stick_y*2;
+        x+=gamepad2.left_stick_x*kx;
+        y-=gamepad2.left_stick_y*ky;
         if(!gamepad2.left_bumper)
-            sixServoArmController.setTargetPosition(x,y,Math.PI,0).update();
-        else
-            servoValueEasyOutputter.giveTheSample();
+            sixServoArmController.setTargetPosition(x,y,Math.PI,clipRadian).update();
+//        else
+//            servoValueEasyOutputter.giveTheSample();
         ServoValueEasyOutputter.ClipPosition pos;
         if(gamepad2.left_stick_button){
             if(!leftstickbuttonhasbeenpressed){

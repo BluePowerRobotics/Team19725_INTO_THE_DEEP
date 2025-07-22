@@ -12,7 +12,7 @@ public class OpenCvUndistortion{
 
     public OpenCvUndistortion(){
         // 1. 定义相机内参矩阵 (3x3)
-        Mat cameraMatrix = new Mat(3, 3, CvType.CV_64F);
+        cameraMatrix = new Mat(3, 3, CvType.CV_64F);
         cameraMatrix.put(0, 0, 367); // fx
         cameraMatrix.put(0, 1, 0);
         cameraMatrix.put(0, 2, 400); // cx
@@ -24,7 +24,7 @@ public class OpenCvUndistortion{
         cameraMatrix.put(2, 2, 1);
 
         // 2. 定义畸变系数 [k1, k2, p1, p2, k3]
-        Mat distCoeffs = new Mat(1, 5, CvType.CV_64F);
+        distCoeffs = new Mat(1, 5, CvType.CV_64F);
         distCoeffs.put(0, 0, -0.0864112);  // k1
         distCoeffs.put(0, 1, 0.09922028);   // k2
         distCoeffs.put(0, 2, 0);      // p1 (切向畸变)

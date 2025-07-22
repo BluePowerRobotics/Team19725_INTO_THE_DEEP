@@ -25,14 +25,6 @@ public class DisSensor {
 
     public double getDis() {
         double tmpDis = sensorDistance.getDistance(DistanceUnit.MM);
-        sumDis += tmpDis;
-        //基础滤波
-        if(frameCnt == 4){
-            finalDis = sumDis / frameCnt;
-            sumDis = 0;
-            frameCnt = 0;
-        }
-        frameCnt++;
-        return finalDis;
+        return tmpDis;
     }
 }

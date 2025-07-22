@@ -10,7 +10,7 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.Controllers.ArmController;
+//import org.firstinspires.ftc.teamcode.Controllers.ArmController;
 import org.firstinspires.ftc.teamcode.RoadRunner.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 
@@ -90,7 +90,7 @@ public class WRCAutoLeftRed extends LinearOpMode {
 
 
 
-            ArmController armController1 = new ArmController(hardwareMap,telemetry);
+            //ArmController armController1 = new ArmController(hardwareMap,telemetry);
 
 
 
@@ -111,7 +111,7 @@ public class WRCAutoLeftRed extends LinearOpMode {
 
             // actions that need to happen on init; for instance, a claw tightening.
             //todo 初始化机器
-            armController1.initArm();
+            //armController1.initArm();
 
             waitForStart();
 

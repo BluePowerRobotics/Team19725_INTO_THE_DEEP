@@ -2,13 +2,14 @@ package org.firstinspires.ftc.teamcode.Controllers.SixServoArm;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Vision.model.ArmAction;
 
 import java.util.Arrays;
-
+@Config
 public class SixServoArmEasyController {
     private static SixServoArmEasyController instance;
     public static synchronized SixServoArmEasyController getInstance(HardwareMap hardwareMap, Telemetry telemetry){
@@ -35,7 +36,9 @@ public class SixServoArmEasyController {
     }
     public void initArm(){
         SixServoArmEasyController.getInstance(hardwareMap,telemetry);
-        setTargetPosition(resetX, resetY, 0 * Math.PI, 0.5 * Math.PI).update();
+        //todo:fixthis
+        //setTargetPosition(resetX, resetY, 0 * Math.PI, 0.5 * Math.PI).update();
+        setTargetPosition(resetX, resetY, Math.PI, 0.5 * Math.PI).update();
     }
 
     final double resetX = 0,resetY = 100,resetZ = 10;
@@ -50,8 +53,14 @@ public class SixServoArmEasyController {
     //D为顺时针
     double targetClipRadian = 0.5 * Math.PI;
 
+
+    public static double deltax = 94;
+    public static double deltay = -44;
     public SixServoArmEasyController setTargetPosition(@NonNull ArmAction armAction){
-        setTargetPosition(armAction.GoToX,armAction.GoToY,Math.PI, armAction.ClipAngle);
+        telemetry.addData("ArmActionX", armAction.GoToX - deltax);
+        telemetry.addData("ArmActionY",-armAction.GoToY - deltay);
+        telemetry.addData("Angle", armAction.ClipAngle);
+        setTargetPosition(armAction.GoToX - deltax,-armAction.GoToY - deltay,Math.PI, armAction.ClipAngle);
         return getInstance(hardwareMap,telemetry);
     }
     public SixServoArmEasyController setTargetPosition(double X,double Y,double alpha4,double clipRadian) {
@@ -111,7 +120,7 @@ public class SixServoArmEasyController {
     public static double InstallerRequireErrorX=-30;
     public boolean giveTheSample(){
         if(!giveTheSampleCheckPointInited[0]){
-            servoValueEasyOutputter.giveTheSample(servoValueOutputter.InstallerLocationX,servoValueOutputter.InstallerLocationY,servoValueOutputter.InstallerLocationZ);
+            servoValueOutputter.giveTheSample(servoValueOutputter.InstallerLocationX,servoValueOutputter.InstallerLocationY,servoValueOutputter.InstallerLocationZ);
             giveTheSampleStartTime[0]=System.currentTimeMillis();
         }
         if(!giveTheSampleCheckPointPassed[0]){
@@ -121,7 +130,7 @@ public class SixServoArmEasyController {
             return true;
         }
         if(!giveTheSampleCheckPointInited[1]){
-            servoValueEasyOutputter.giveTheSample(servoValueOutputter.InstallerLocationX-InstallerRequireErrorX,servoValueOutputter.InstallerLocationY,servoValueOutputter.InstallerLocationZ);
+            servoValueOutputter.giveTheSample(servoValueOutputter.InstallerLocationX-InstallerRequireErrorX,servoValueOutputter.InstallerLocationY,servoValueOutputter.InstallerLocationZ);
             giveTheSampleStartTime[1]=System.currentTimeMillis();
         }
         if(!giveTheSampleCheckPointPassed[1]){
@@ -137,31 +146,4 @@ public class SixServoArmEasyController {
         return false;
     }
 
-
-
-
-
-
-
-    public boolean update_mini(){
-        boolean states;
-        if(servoMoveTime <= 0) {
-            nowX = targetX;
-            nowY = targetY;
-            states = false;
-
-        } else if (System.currentTimeMillis() - setLocationTime >= servoMoveTime * 1000) {
-            nowX = targetX;
-            nowY = targetY;
-            states = false;
-        } else {
-            double ratio = (System.currentTimeMillis() - setLocationTime) / (servoMoveTime * 1000);
-            nowX = recentX + (targetX - recentX) * ratio;
-            nowY = recentY + (targetY - recentY) * ratio;
-            states = true;
-        }
-        servoValueOutputter.setRadians(servoRadianCalculator.calculate(targetX, targetY, targetClipRadian), targetClipRadian, true);
-
-        return states;//ifRequireRepeat
-    }
 }

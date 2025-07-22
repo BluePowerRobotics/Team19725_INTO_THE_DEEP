@@ -15,6 +15,8 @@ dependencies {
     implementation 'org.firstinspires.ftc:Vision:10.2.0'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.github.mik3y:usb-serial-for-android:3.9.0' // USB 串口库
+    implementation 'org.tensorflow:tensorflow-lite:2.17.0'
+    implementation 'org.tensorflow:tensorflow-lite-gpu:2.17.0'
     //implementation 'com.google.code.gson:gson:2.8.9' // JSON 解析
 //    implementation 'com.acmerobotics.dashboard:dashboard:0.4.16'
 }

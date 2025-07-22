@@ -22,6 +22,9 @@ public class TestGmaepad extends LinearOpMode {
             telemetry.addData("X Button", gamepad1.x);
             telemetry.addData("Y Button", gamepad1.y);
             telemetry.addData("Dpad_down",gamepad1.dpad_down);
+            telemetry.addData("Dpad_down", gamepad1.dpad_up);
+            telemetry.addData("Dpad_left", gamepad1.dpad_left);
+            telemetry.addData("Dpad_right", gamepad1.dpad_right);
             telemetry.update();
         }
     }

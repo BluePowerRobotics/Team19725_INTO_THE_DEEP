@@ -13,8 +13,10 @@ import org.opencv.core.Point;
 
 public class TEST extends LinearOpMode {
     public static  double X = 100;
-    public static  double Y = -10000;
+    public static  double Y = -100
+            ;
     Point Center = new Point(X,Y);
+    OpenCvUndistortion UN = new OpenCvUndistortion();
     CubeInfo a = new CubeInfo(1, Center, 1,1,1,1,1);
 
 
@@ -27,6 +29,7 @@ public class TEST extends LinearOpMode {
             telemetry.addData("info", a.centerpoint.x);
             telemetry.addData("info", a.centerpoint.y);
             telemetry.addData("info", CubeProcessor.ProcessCube(a));
+            telemetry.addData("111", UN.openCvUndistortion(X,Y));
             telemetry.update();
         }
     }

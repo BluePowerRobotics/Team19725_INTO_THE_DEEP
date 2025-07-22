@@ -70,6 +70,7 @@ public class MotorLineIntakeLengthController{
     }
     public MotorLineIntakeLengthController setMotorEncoder(int number){
         Motor.setTargetPosition(number);
+        return instance;
     }
     
 }
