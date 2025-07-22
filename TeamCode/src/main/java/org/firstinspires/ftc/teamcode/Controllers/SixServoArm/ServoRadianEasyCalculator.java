@@ -14,7 +14,7 @@ public class ServoRadianEasyCalculator {
     double c = 125;//useless
     private double[] result = {0,0,0,0};
     //去除z轴方向控制，保持为0
-    public double h=0;
+    public double h=5;
     public ServoRadianEasyCalculator setClipHeight(double height){
         h = height;
         return getInstance();
@@ -40,7 +40,7 @@ public class ServoRadianEasyCalculator {
         if(radian0<0){
             radian0+=2*Math.PI;
         }
-        double fake_r = Math.sqrt(Math.pow(x,2)+Math.pow(y,2));//+10.15;
+        double fake_r = Math.sqrt(Math.pow(x,2)+Math.pow(y,2))+10.15;
         double r=fake_r;//+18*Math.pow(Math.E,(-Math.pow((0.012*fake_r-1.67),2)))+5;
         double radian1 = Math.acos((Math.pow(a,2)+Math.pow(r,2)-Math.pow(b,2))/(2*a*r));
         //double radian1 = Math.PI/2;
