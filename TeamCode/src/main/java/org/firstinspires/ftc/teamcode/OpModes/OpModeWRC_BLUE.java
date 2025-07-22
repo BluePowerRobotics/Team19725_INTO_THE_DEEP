@@ -117,6 +117,7 @@ public class OpModeWRC_BLUE extends LinearOpMode {
         //Actions.runBlocking(sixServoArmEasyController.SixServoArmInit());
         double t = System.currentTimeMillis(); // 获取当前时间
         //硬件初始化
+        sixServoArmEasyController.initArm();
     }
 
     private void move(){
@@ -164,10 +165,10 @@ public class OpModeWRC_BLUE extends LinearOpMode {
             ));
         }
         else{
-            move_x_l = gamepad1.left_stick_x + gamepad2.left_stick_x;
-            move_y_l = gamepad1.left_stick_y + gamepad2.left_stick_y;
-            move_x_r = gamepad1.right_stick_x + gamepad2.right_stick_x;
-            move_y_r = gamepad1.right_stick_y + gamepad2.right_stick_y;
+            move_x_l = gamepad1.left_stick_x;// + gamepad2.left_stick_x;
+            move_y_l = gamepad1.left_stick_y;// + gamepad2.left_stick_y;
+            move_x_r = gamepad1.right_stick_x;// + gamepad2.right_stick_x;
+            move_y_r = gamepad1.right_stick_y;// + gamepad2.right_stick_y;
             chassisController.chassisController(move_x_l, -move_x_r, move_y_l + move_y_r, kpad);
         }
         drive.updatePoseEstimate();
@@ -212,8 +213,23 @@ public class OpModeWRC_BLUE extends LinearOpMode {
         FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
     private  void controllers() {
-
-
+        if(gamepad2.dpad_left){
+            sixServoArmEasyController.prepareForTaking();
+        }
+        if(gamepad2.dpad_up){
+            sixServoArmEasyController.testIfTheSampleIsEaten();
+        }
+        if(gamepad2.dpad_right){
+            sixServoArmEasyController.dropTheSample();
+        }
+        if(gamepad2.dpad_down){
+            sixServoArmEasyController.giveTheSample();
+        }else{
+            for(int i=0;i<=1;i++){
+                sixServoArmEasyController.giveTheSampleCheckPointInited[i]=false;
+                sixServoArmEasyController.giveTheSampleCheckPointPassed[i]=false;
+            }
+        }
         if(gamepad1.left_trigger > 0.1){
             installerController.SinglePullerControl(0.5 - gamepad1.left_trigger*0.5);
         }
@@ -250,6 +266,11 @@ public class OpModeWRC_BLUE extends LinearOpMode {
         }
         if(gamepad1.dpad_left){
             sixServoArmEasyController.giveTheSample();
+        }else{
+            for(int i=0;i<=1;i++){
+                sixServoArmEasyController.giveTheSampleCheckPointInited[i]=false;
+                sixServoArmEasyController.giveTheSampleCheckPointPassed[i]=false;
+            }
         }
         if(gamepad1.dpad_right){
             if(!pad1_dpadrightispressed){
@@ -315,9 +336,7 @@ public class OpModeWRC_BLUE extends LinearOpMode {
         }
 
 
-        if(gamepad2.dpad_down){
-            sixServoArmEasyController.giveTheSample();
-        }
+
         if(gamepad2.a){
             installerController.setMode(RobotStates.INSTALL_RUNMODE.EATING);
         }
