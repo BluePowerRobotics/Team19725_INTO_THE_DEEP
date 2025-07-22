@@ -66,7 +66,7 @@ public class SixServoArmEasyController {
     public SixServoArmEasyController setTargetPosition(double X,double Y,double alpha4,double clipRadian) {
         targetX = X;
         targetY = Y;
-        targetClipRadian = clipRadian;
+        targetClipRadian = -clipRadian;
         setLocationTime = System.currentTimeMillis();
         Distance = Math.sqrt((X-nowX)*(X-nowX)+(Y-nowY)*(Y-nowY));
         double[] targetPosition = servoRadianCalculator.calculate(targetX, targetY, alpha4);
