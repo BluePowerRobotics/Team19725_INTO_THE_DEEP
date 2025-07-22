@@ -32,7 +32,6 @@ package org.firstinspires.ftc.teamcode.Controllers;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.SixServoArmEasyController;
 import org.firstinspires.ftc.teamcode.RoadRunner.GoBildaPinpointDriver;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -167,7 +166,7 @@ public class ChassisController {
     public boolean USE_NO_HEAD_MODE = false;
     public boolean yhasbeenpressed = false;
     public boolean thitalock = false;
-    public boolean xhasbeenpressed = false;
+    public boolean lbhasbeenpressed = false;
     public double thita = 0;
     public double angletime = 0;
 
@@ -195,6 +194,7 @@ public class ChassisController {
         rightBack.setDirection(DcMotor.Direction.REVERSE);
         leftBack.setDirection(DcMotor.Direction.FORWARD);
         freshThita();
+        lock_thita = orientation.getYaw(AngleUnit.DEGREES);
     }
 
     void updateOrientation() {
@@ -379,13 +379,13 @@ public class ChassisController {
 
     public void chassisController(double r, double y, double x){
         double receiveSpeed = 1;
-        if (gamepad1.x) {
-            if (!xhasbeenpressed) {
+        if (gamepad1.left_bumper) {
+            if (!lbhasbeenpressed) {
                 USE_SLOW_MODE = !USE_SLOW_MODE;
             }
-            xhasbeenpressed = true;
+            lbhasbeenpressed = true;
         } else {
-            xhasbeenpressed = false;
+            lbhasbeenpressed = false;
         }
         if(USE_SLOW_MODE) receiveSpeed = 0.6;
         chassisController(r,y,x,receiveSpeed);
@@ -409,17 +409,6 @@ public class ChassisController {
                 yhasbeenpressed = false;
             }
 
-            if (gamepad1.x) {
-                if (!xhasbeenpressed) {
-                    thitalock=!thitalock;
-                    xhasbeenpressed = true;
-                } else {
-                    xhasbeenpressed = true;
-                }
-                lock_thita = thita;
-            } else {
-                xhasbeenpressed = false;
-            }
 
             getthita = thita;
 
