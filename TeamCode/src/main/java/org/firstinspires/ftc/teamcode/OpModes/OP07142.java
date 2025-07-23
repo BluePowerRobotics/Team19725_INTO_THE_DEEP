@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Controllers.ChassisController;
 import org.firstinspires.ftc.teamcode.Controllers.Installer.InstallerController;
 import org.firstinspires.ftc.teamcode.Controllers.IntakeLength.*;
@@ -98,10 +97,7 @@ public class OP07142 extends LinearOpMode{
 
         imu = hardwareMap.get(IMU.class, "imu");
         logoFacingDirectionPosition = 0; // Up
-        usbFacingDirectionPosition = 2; // Forward
-        orientation = imu.getRobotYawPitchRollAngles();
-        imu.resetYaw();
-        updateOrientation();
+        usbFacingDirectionPosition = 2; // Forward.0
         sixServoArmController.initArm();
 
     }
@@ -110,8 +106,6 @@ public class OP07142 extends LinearOpMode{
 
 
         telemetry.addData("fps", 1000 / (System.currentTimeMillis() - t));// fps
-
-        telemetry.addData("thita", orientation.getYaw(AngleUnit.DEGREES));
         telemetry.addData("move_x_l/旋转--逆-顺+", move_x_l);
         telemetry.addData("move_y_l+move_y_r/前-后+", move_y_l + move_y_r);
         telemetry.addData("move_x_r/左-右+", move_x_r);
@@ -126,29 +120,13 @@ public class OP07142 extends LinearOpMode{
         t = System.currentTimeMillis();// 获取当前时间
     }
 
-    void updateOrientation() {
 
-        /*
-         * try {
-         * RevHubOrientationOnRobot orientationOnRobot = new
-         * RevHubOrientationOnRobot(logo, usb);
-         * imu.initialize(new IMU.Parameters(orientationOnRobot));
-         * orientationIsValid = true;
-         * } catch (IllegalArgumentException e) {
-         * orientationIsValid = false;
-         * }
-         */
-        orientation = imu.getRobotYawPitchRollAngles();
-    }
 
     public void runOpMode() {
         inithardware();
         chassisController.initChassis(hardwareMap,gamepad1,gamepad2,telemetry);
         waitForStart();
         while (opModeIsActive()) {
-            updateOrientation();
-            thita = orientation.getYaw(AngleUnit.DEGREES);
-
             move_x_l = gamepad1.left_stick_x;
             move_y_l = gamepad1.left_stick_y;
             move_x_r = gamepad1.right_stick_x;
@@ -158,8 +136,6 @@ public class OP07142 extends LinearOpMode{
             // moveselect(move_x_l,-move_x_r,move_y_l+move_y_r);
             // moveselect(move_x_l,-move_y_l-move_y_r,-move_x_r);
             fps_and_tele();
-
-            degree = 0.0036984 * orientation.getYaw(AngleUnit.DEGREES) + 0.499286;
             motorControl();
             servoControl();
             outputAndInstallerControl();
@@ -238,13 +214,14 @@ public class OP07142 extends LinearOpMode{
                     if (Command.suggestion != -2 && !HasSetArmPos) {
                         x = Command.GoToX - 94;
                         y = -Command.GoToY + 44;
+
                         clipRadian = Command.ClipAngle;
                         HasSetArmPos = true;
                     }
                 }
             }
             if (gamepad2.dpad_left) {
-                sixServoArmController.prepareForTaking();
+                sixServoArmController.scanTheSample();
             }
             if (gamepad2.dpad_up) {
                 sixServoArmController.testIfTheSampleIsEaten();//todo 实现该功能
@@ -254,6 +231,7 @@ public class OP07142 extends LinearOpMode{
             }
             if (gamepad2.dpad_down) {
                 sixServoArmController.giveTheSample();
+                HasSetArmPos = false;
             }else{
                 for(int i=0;i<=1;i++){
                     sixServoArmController.giveTheSampleCheckPointInited[i]=false;
@@ -377,7 +355,28 @@ public class OP07142 extends LinearOpMode{
     boolean outputInited = false;
     public double OutputstartTime = 0;
     public static double OutputTime = 300;
+    boolean gp1Xpressed=false;
     public void outputAndInstallerControl() {
+        if(gamepad1.x){
+            if(!gp1Xpressed){
+                outputController.setMode(outputController.outputStates.next());
+                gp1Xpressed=true;
+            }
+        }else{
+            gp1Xpressed=false;
+        }
+        if(gamepad1.left_stick_button){
+            outputController.ArmUp();
+        }
+        if(gamepad1.right_stick_button){
+            outputController.ArmDown();
+        }
+        if(gamepad1.dpad_up){
+            outputController.setClip(false);
+        }
+        if(gamepad1.dpad_down){
+            outputController.setClip(true);
+        }
         if (gamepad1.b) {
             installerController.BeamSpinner(false);
         }

@@ -120,9 +120,10 @@ public class WRCAutoRightBlue extends LinearOpMode {
 
             waitForStart();
 
-            if (isStopRequested()) return;
+            //if (isStopRequested()) return;
             Actions.runBlocking(
                     new SequentialAction(
+                            outputAction.setClip(true),
                             outputAction.OutPutArmMid(),
                             ActionOutPut1,
                             outputAction.OutPutArmUp(),
@@ -130,45 +131,45 @@ public class WRCAutoRightBlue extends LinearOpMode {
                             //output Action
                             //ActionOutPutBack,
                             new SequentialAction(
-                                    drive.actionBuilder(drive.localizer.getPose()).lineToY(-40).build(),
-                                    outputAction.setClip(false),
-                                    drive.actionBuilder(drive.localizer.getPose()).lineToY(-35).build()
+                                    drive.actionBuilder(drive.localizer.getPose()).waitSeconds(2).strafeTo(new Vector2d(0,Dive_Y - 5)).build(),
+                                    outputAction.setClip(false)
+                                    //drive.actionBuilder(drive.localizer.getPose()).lineToY(-35).build()
                             ),
-                            step1.addTele(),
-                            ActionIntake1,
-                            sixServoArmAction.SixServoArmRunToPosition(CVModule.CalculateAverage(CVModule)),
+//                            step1.addTele(),
+//                            ActionIntake1,
+//                            sixServoArmAction.SixServoArmRunToPosition(CVModule.CalculateAverage(CVModule)),
 
 
-                            step2.addTele(),
-                            new ParallelAction(
+//                            step2.addTele(),
+//                            new ParallelAction(
                                     new SequentialAction(
                                             ActionGetClip,
                                             ActionGetClipFinish
-                                    ),
-                                    sixServoArmAction.SixServoArmGiveTheSample(),
-                                    installerAction.installerPuller()
-                            ),
+                                    )
+//                                    sixServoArmAction.SixServoArmGiveTheSample(),
+//                                    installerAction.installerPuller()
+//                            ),
 
-                            step3.addTele(),
-
-
-
-                            outputAction.OutPutArmDown(),
-                            outputAction.setClip(true),
-                            installerAction.clipInstaller(true),
-
-                            step4.addTele(),
-                            //sixServoArmAction.
-                            installerAction.spitClip(),
-                            outputAction.OutPutArmUp(),
-                            step5.addTele(),
-                            ActionOutput2,
-                            outputAction.OutPutArmDown(),
-                            new SequentialAction(
-                                    drive.actionBuilder(drive.localizer.getPose()).lineToY(-40).build(),
-                                    outputAction.setClip(false),
-                                    drive.actionBuilder(drive.localizer.getPose()).lineToY(-35).build()
-                            )
+//                            step3.addTele(),
+//
+//
+//
+//                            outputAction.OutPutArmDown(),
+//                            outputAction.setClip(true),
+//                            installerAction.clipInstaller(true),
+//
+//                            step4.addTele(),
+//                            //sixServoArmAction.
+//                            installerAction.spitClip(),
+//                            outputAction.OutPutArmUp(),
+//                            step5.addTele(),
+//                            ActionOutput2,
+//                            outputAction.OutPutArmDown(),
+//                            new SequentialAction(
+//                                    drive.actionBuilder(drive.localizer.getPose()).lineToY(-40).build(),
+//                                    outputAction.setClip(false),
+//                                    drive.actionBuilder(drive.localizer.getPose()).lineToY(-35).build()
+//                            )
                     )
             );
 
@@ -176,33 +177,33 @@ public class WRCAutoRightBlue extends LinearOpMode {
 
 
             //第一场注释掉
-            while(drive.localizer.getPose().position.x < 7){
-                ArmAction armAction = CVModule.CalculateAverage(CVModule);
-                if(armAction.suggestion != -2){
-                    if(armAction.suggestion == -1){
-                        drive.setDrivePowers(
-                                new PoseVelocity2d(
-                                        new Vector2d(0, -0.2),
-                                        0
-                                )
-                        );
-                    }
-                    else{
-                        drive.setDrivePowers(
-                                new PoseVelocity2d(
-                                        new Vector2d(0, 0),
-                                        0
-                                )
-                        );
-                        Actions.runBlocking(
-                                sixServoArmAction.SixServoArmRunToPosition(armAction)
-                        );
-                    }
-                }
-            }
-            if(startTime - System.currentTimeMillis() > 28000){
-                servoValueEasyOutputter.setClip(ServoValueEasyOutputter.ClipPosition.LOCKED);
-            }
+//            while(drive.localizer.getPose().position.x < 7){
+//                ArmAction armAction = CVModule.CalculateAverage(CVModule);
+//                if(armAction.suggestion != -2){
+//                    if(armAction.suggestion == -1){
+//                        drive.setDrivePowers(
+//                                new PoseVelocity2d(
+//                                        new Vector2d(0, -0.2),
+//                                        0
+//                                )
+//                        );
+//                    }
+//                    else{
+//                        drive.setDrivePowers(
+//                                new PoseVelocity2d(
+//                                        new Vector2d(0, 0),
+//                                        0
+//                                )
+//                        );
+//                        Actions.runBlocking(
+//                                sixServoArmAction.SixServoArmRunToPosition(armAction)
+//                        );
+//                    }
+//                }
+//            }
+//            if(startTime - System.currentTimeMillis() > 28000){
+//                servoValueEasyOutputter.setClip(ServoValueEasyOutputter.ClipPosition.LOCKED);
+//            }
             EndPose = drive.localizer.getPose();
         }
     }

@@ -78,6 +78,8 @@ public class OutputAction {
             if(!upInited) {
                 OutputController.getInstance(hardwareMap).ArmUp();
                 upInitTime=System.currentTimeMillis();
+                return false;
+//                upInited = false;
             }
             if(System.currentTimeMillis()-upInitTime>ArmUpRequireTimeMS){
                 return false;
@@ -95,11 +97,13 @@ public class OutputAction {
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            if(!upInited) {
+            if(!midInited) {
                 OutputController.getInstance(hardwareMap).ArmMiddle();
-                upInitTime=System.currentTimeMillis();
+                return false;
+//                midInitTime=System.currentTimeMillis();
+//                midInited = false;
             }
-            if(System.currentTimeMillis()-upInitTime>ArmMidRequireTimeMS){
+            if(System.currentTimeMillis()-midInitTime>ArmMidRequireTimeMS){
                 return false;
             }
             return true;
@@ -115,11 +119,13 @@ public class OutputAction {
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            if(!upInited) {
+            if(!downInited) {
                 OutputController.getInstance(hardwareMap).ArmDown();
-                upInitTime=System.currentTimeMillis();
+                downInitTime=System.currentTimeMillis();
+                return false;
+//                downInited = false;
             }
-            if(System.currentTimeMillis()-upInitTime>ArmDownRequireTimeMS){
+            if(System.currentTimeMillis()-downInitTime>ArmDownRequireTimeMS){
                 return false;
             }
             return true;

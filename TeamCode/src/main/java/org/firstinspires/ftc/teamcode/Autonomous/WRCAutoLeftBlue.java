@@ -41,7 +41,7 @@ public class WRCAutoLeftBlue extends LinearOpMode {
             double OutPutHeading = Math.toRadians(135);
             double IntakeHeading = 3.1415926;   //todo  why not Math.PI
             double Intake3Heading = Math.toRadians(228.81);
-            Vector2d OutPutPos = new Vector2d(-53.9,-53.9);
+            Vector2d OutPutPos = new Vector2d(-30,-20);
             Pose2d OutPutFinishPos = new Pose2d(-53.9,-53.9, OutPutHeading);
             Vector2d IntakePos1 = new Vector2d(-49.18,-43.67);
             Pose2d IntakeFinish1 = new Pose2d(-49.18,-43.67, IntakeHeading);
@@ -60,7 +60,6 @@ public class WRCAutoLeftBlue extends LinearOpMode {
 
 
             TrajectoryActionBuilder OutPut0 = drive.actionBuilder(initialPoseLeft)
-                    .turnTo(OutPutHeading)
                     .strafeTo(OutPutPos);
 
             Action ActionOutPut0 = OutPut0.build();
@@ -120,8 +119,7 @@ public class WRCAutoLeftBlue extends LinearOpMode {
             Actions.runBlocking(
 
                     new SequentialAction(
-                            Actionclimb2,
-                            CloseOutclimb2
+                            ActionOutPut0
                     )
             );
 

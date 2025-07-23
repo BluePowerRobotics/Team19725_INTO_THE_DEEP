@@ -17,12 +17,14 @@ import org.firstinspires.ftc.teamcode.Controllers.RobotStates.INSTALL_RUNMODE;
 @Config
 public class InstallerController{
     public boolean isUpping = false;
-    public static double Beam_low = 0.13;//与installer对接
-    public static double Beam_mid = 0.25;//从观察区取clip
+    public static double Beam_low = 0.15;//与installer对接
+    public static double Beam_mid = 0.21;//从观察区取clip
     public static double Beam_high = 0.35;//提起clip，使之脱离观察区樯
 
     //todo: find out the correct values for these constants
     public static double Not_Installing = 0;
+    public static double PrepareInstall = 0.18;
+    //0.62
     public static double Install_Finished = 0.7;
 
     public double WaitStartTime = 0;
@@ -107,6 +109,7 @@ public class InstallerController{
     public void NotInstall() {
         clipInstaller.setPosition(Not_Installing);
     }
+    public void PrePareInstall(){clipInstaller.setPosition((PrepareInstall));}
 
 
     // public void SingleBeamSpinnerControl(double position) {

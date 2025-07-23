@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Controllers.ArmColorSensor;
 import org.firstinspires.ftc.teamcode.Vision.model.ArmAction;
 
 import java.util.Arrays;
@@ -46,14 +47,18 @@ public class SixServoArmEasyController {
         servoValueOutputter.setClip(ServoValueEasyOutputter.ClipPosition.LOCKED);
     }
     long PFTStartTime;
-    boolean PFTinited=false;
-    public void prepareForTaking(){
+    public boolean PFTinited=false;
+    public void scanTheSample(){
         if(PFTinited){
             servoValueOutputter.DegreeServoControl(2, 30);
+            servoValueOutputter.DegreeServoControl(0,90);
+            servoValueOutputter.DegreeServoControl(1,45);
+            servoValueOutputter.DegreeServoControl(3,90);
+            servoValueOutputter.SingleServoControl(4,1);
             PFTStartTime = System.currentTimeMillis();
             PFTinited = true;
         }
-        if (System.currentTimeMillis() - PFTStartTime > 500) {
+        if (System.currentTimeMillis() - PFTStartTime > 3000) {
             servoValueOutputter.DegreeServoControl(0,90);
             servoValueOutputter.DegreeServoControl(1,45);
             servoValueOutputter.DegreeServoControl(2,135);
@@ -65,13 +70,14 @@ public class SixServoArmEasyController {
     }
 
     //todo finish the following void
-    public void testIfTheSampleIsEaten(){
+    public boolean testIfTheSampleIsEaten(){
         servoValueOutputter.DegreeServoControl(0, 90);
         servoValueOutputter.DegreeServoControl(1, 90);
         servoValueOutputter.DegreeServoControl(2, 90);
         servoValueOutputter.DegreeServoControl(3, 180);
         servoValueOutputter.SingleServoControl(4, 1);
         servoValueOutputter.setClip(ServoValueEasyOutputter.ClipPosition.HALF_LOCKED);
+        return new ArmColorSensor(hardwareMap).ifheld();
     }
 
     public void dropTheSample(){
@@ -191,31 +197,39 @@ public class SixServoArmEasyController {
     public long[] giveTheSampleStartTime = {0,0};
     public static int[] giveTheSampleRequireTimeMS={1500,500};
     public static double InstallerRequireErrorX=-30;
+    public static double[] giveTheSample={90,190,100,260};
     public boolean giveTheSample(){
-        if(!giveTheSampleCheckPointInited[0]){
-            servoValueOutputter.giveTheSample(servoValueOutputter.InstallerLocationX,servoValueOutputter.InstallerLocationY,servoValueOutputter.InstallerLocationZ);
-            giveTheSampleStartTime[0]=System.currentTimeMillis();
-            giveTheSampleCheckPointInited[0]=true;
-        }
-        if(!giveTheSampleCheckPointPassed[0]){
-            if(System.currentTimeMillis()-giveTheSampleStartTime[0]>giveTheSampleRequireTimeMS[0]){
-                giveTheSampleCheckPointPassed[0]=true;
-            }
-            return true;
-        }
-        if(!giveTheSampleCheckPointInited[1]){
-            servoValueOutputter.giveTheSample(servoValueOutputter.InstallerLocationX-InstallerRequireErrorX,servoValueOutputter.InstallerLocationY,servoValueOutputter.InstallerLocationZ);
-            giveTheSampleStartTime[1]=System.currentTimeMillis();
-            giveTheSampleCheckPointInited[1]=true;
-        }
-        if(!giveTheSampleCheckPointPassed[1]){
-            if(System.currentTimeMillis()-giveTheSampleStartTime[1]>giveTheSampleRequireTimeMS[1]){
-                giveTheSampleCheckPointPassed[1]=true;
-            }
-            return true;
-        }
+        servoValueOutputter.DegreeServoControl(0,giveTheSample[0]);
+        servoValueOutputter.DegreeServoControl(1,giveTheSample[1]);
+        servoValueOutputter.DegreeServoControl(2,giveTheSample[2]);
+        servoValueOutputter.DegreeServoControl(3,giveTheSample[3]);
+        servoValueOutputter.SingleServoControl(4,1);
 
         return false;
+//        if(!giveTheSampleCheckPointInited[0]){
+//            servoValueOutputter.giveTheSample(servoValueOutputter.InstallerLocationX,servoValueOutputter.InstallerLocationY,servoValueOutputter.InstallerLocationZ);
+//            giveTheSampleStartTime[0]=System.currentTimeMillis();
+//            giveTheSampleCheckPointInited[0]=true;
+//        }
+//        if(!giveTheSampleCheckPointPassed[0]){
+//            if(System.currentTimeMillis()-giveTheSampleStartTime[0]>giveTheSampleRequireTimeMS[0]){
+//                giveTheSampleCheckPointPassed[0]=true;
+//            }
+//            return true;
+//        }
+//        if(!giveTheSampleCheckPointInited[1]){
+//            servoValueOutputter.giveTheSample(servoValueOutputter.InstallerLocationX-InstallerRequireErrorX,servoValueOutputter.InstallerLocationY,servoValueOutputter.InstallerLocationZ);
+//            giveTheSampleStartTime[1]=System.currentTimeMillis();
+//            giveTheSampleCheckPointInited[1]=true;
+//        }
+//        if(!giveTheSampleCheckPointPassed[1]){
+//            if(System.currentTimeMillis()-giveTheSampleStartTime[1]>giveTheSampleRequireTimeMS[1]){
+//                giveTheSampleCheckPointPassed[1]=true;
+//            }
+//            return true;
+//        }
+//
+//        return false;
     }
 
 }

@@ -295,7 +295,7 @@ public class FindCandidate{
         if(!(InsideCandidates[0] == null)){
             return new ArmAction(InsideCandidates[0].angleDeg, InsideCandidates[0].DisToCamInMM, InsideCandidates[0].centerpoint.x, InsideCandidates[0].centerpoint.y, Suggestion);
         }
-        return new ArmAction(-1,-1,-1,-1,-1);
+        return new ArmAction(0,-1,0,150,-1);
     }
     public ArmAction CalculateAverage(FindCandidate cvMoudleRC){
             FrameCnt++;

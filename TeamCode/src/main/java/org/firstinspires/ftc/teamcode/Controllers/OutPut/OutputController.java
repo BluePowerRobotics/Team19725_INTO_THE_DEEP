@@ -14,6 +14,7 @@ public class OutputController {
         outputPositionController = this.hardwareMap.get(Servo.class,"servoc5");
         outputClipController = this.hardwareMap.get(Servo.class,"servoc4");
         outputLengthController = this.hardwareMap.get(DcMotor.class,"OutputLengthMotor");
+        outputLengthController.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
     private Servo outputPositionController, outputClipController;
     private DcMotor outputLengthController;
@@ -22,19 +23,29 @@ public class OutputController {
     public static double outputClipLockPos = 0.25, outputClipUnlockPos = 0.55;
     public static double outputLengthControllerNumberPerCycle =147, outputLengthControllerMMPerCycle =20*Math.PI;
 
-    RobotStates.OUTPUT_RUNMODE outputStates = RobotStates.OUTPUT_RUNMODE.WAITING;
+    public RobotStates.OUTPUT_RUNMODE outputStates = RobotStates.OUTPUT_RUNMODE.WAITING;
     public void setMode(RobotStates.OUTPUT_RUNMODE outputStates){
         this.outputStates = outputStates;
         switch (this.outputStates){
             case WAITING:
+                ArmMiddle();
+                setClip(false);
                 break;
             case DOWNING:
+                ArmDown();
+                setClip(false);
                 break;
             case TAKING:
+                ArmDown();
+                setClip(true);
                 break;
             case UPPING:
+                ArmUp();
+                setClip(true);
                 break;
             case PUTTING:
+                ArmUp();
+                setClip(false);
                 break;
         }
     }

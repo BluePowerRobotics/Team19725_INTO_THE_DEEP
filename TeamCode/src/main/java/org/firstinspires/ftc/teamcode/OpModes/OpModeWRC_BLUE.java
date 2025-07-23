@@ -118,7 +118,7 @@ public class OpModeWRC_BLUE extends LinearOpMode {
         double t = System.currentTimeMillis(); // 获取当前时间
         //硬件初始化
         servoValueOutputter.setClip(ServoValueEasyOutputter.ClipPosition.LOCKED);
-        sixServoArmEasyController.prepareForTaking();
+        sixServoArmEasyController.scanTheSample();
     }
 
     private void move(){
@@ -178,6 +178,7 @@ public class OpModeWRC_BLUE extends LinearOpMode {
     private void teleprint(){
         telemetry.addData("simpleFPS", 1000/(System.currentTimeMillis() - nowtime));
         nowtime = System.currentTimeMillis();
+        telemetry.addData("HasPressed", HasSetArmPos);
         telemetry.addData("ifSlow", ifslow);
         telemetry.addData("ifRoadRunner", ifRoadRunner);
         telemetry.addData("MotorPower", GiveMotorPower);
@@ -215,12 +216,13 @@ public class OpModeWRC_BLUE extends LinearOpMode {
     }
     private  void controllers() {
         if(gamepad2.dpad_left){
-            sixServoArmEasyController.prepareForTaking();
+            sixServoArmEasyController.scanTheSample();
+        }else{
+            sixServoArmEasyController.PFTinited = false;
         }
-        if(gamepad2.dpad_up){
-            sixServoArmEasyController.testIfTheSampleIsEaten();
-        }
+
         if(gamepad2.dpad_right){
+            HasSetArmPos = false;
             sixServoArmEasyController.dropTheSample();
         }
         if(gamepad2.dpad_down){
@@ -329,6 +331,9 @@ public class OpModeWRC_BLUE extends LinearOpMode {
             }
 
         }
+        if(gamepad2.start){
+            servoValueOutputter.SingleServoControl(1, servoValueOutputter.getServoPosition(1) - 0.1);
+        }
         if (gamepad1.b) {
             installerController.BeamSpinner(false);
         }
@@ -341,9 +346,18 @@ public class OpModeWRC_BLUE extends LinearOpMode {
         if(gamepad2.a){
             installerController.setMode(RobotStates.INSTALL_RUNMODE.EATING);
         }
+
+
         if(gamepad2.y){
             outputInited = false;
             installerController.Install();
+        }
+        if (gamepad2.dpad_up){
+            //sixServoArmEasyController.testIfTheSampleIsEaten();
+            installerController.NotInstall();
+        }
+        if(gamepad1.x){
+            installerController.PrePareInstall();
         }
         installerController.run();
 
