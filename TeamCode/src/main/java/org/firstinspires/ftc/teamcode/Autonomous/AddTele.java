@@ -29,6 +29,8 @@
 
 package org.firstinspires.ftc.teamcode.Autonomous;
 
+import static java.lang.Thread.sleep;
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -48,11 +50,13 @@ public class AddTele{
         this.num = num;
     }
     public class addTele implements Action{
+        private long startTime = System.currentTimeMillis();
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            if(System.currentTimeMillis() - startTime > 500){return false;}
             tele.addData(message, num);
             tele.update();
-            return false;
+            return true;
         }
     }
     public Action addTele() {

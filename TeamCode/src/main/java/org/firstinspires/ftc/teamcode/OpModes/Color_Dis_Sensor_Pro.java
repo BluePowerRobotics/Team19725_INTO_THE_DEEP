@@ -36,6 +36,7 @@ import android.view.View;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.SwitchableLight;
@@ -108,7 +109,7 @@ public class Color_Dis_Sensor_Pro extends LinearOpMode {
       }
   }
 
-  protected void runSample() {
+  public void runSample() {
     // You can give the sensor a gain value, will be multiplied by the sensor's raw value before the
     // normalized color values are calculated. Color sensors (especially the REV Color Sensor V3)
     // can give very low values (depending on the lighting conditions), which only use a small part
@@ -211,12 +212,13 @@ public class Color_Dis_Sensor_Pro extends LinearOpMode {
         if (dis < 5.5) {ifheld = true;}
         telemetry.addData("ifheld", ifheld);
       }
-      
+
+
       double h = hsvValues[0];
       double s = hsvValues[1];
       double v = hsvValues[2];
       int color = 999999;
-      
+
       // 处理灰色条件：低饱和度、极暗或极亮
       if (s <= 0.35 || v <= 0.1 || v >= 0.7) {
         color = 0; //grey
@@ -228,7 +230,7 @@ public class Color_Dis_Sensor_Pro extends LinearOpMode {
       } else if (h >= 280 || h < 20) {
         color = 1; //red
       }
-        
+
       telemetry.addData("Color:", color);
       telemetry.update();
 
@@ -239,5 +241,25 @@ public class Color_Dis_Sensor_Pro extends LinearOpMode {
         }
       });
     }
+  }
+  public boolean ifheld(HardwareMap hardwareMap) {
+    colorSensor = hardwareMap.get(NormalizedColorSensor.class, "sensor_color");
+    if (colorSensor instanceof SwitchableLight) {
+      ((SwitchableLight)colorSensor).enableLight(true);
+    }
+    boolean ifheld = false;
+    if (colorSensor instanceof DistanceSensor) {
+      double dis = ((DistanceSensor) colorSensor).getDistance(DistanceUnit.CM);
+      telemetry.addData("Distance (cm)", dis);
+      ifheld = false;
+      if (dis < 5.5) {
+        ifheld = true;
+      }
+      telemetry.addData("ifheld", ifheld);
+    }
+
+
+
+    return ifheld;
   }
 }

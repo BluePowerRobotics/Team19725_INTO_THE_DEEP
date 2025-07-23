@@ -15,9 +15,9 @@ public class SixServoArmEasyAction {
     HardwareMap hardwareMap;
     Telemetry telemetry;
     Gamepad gamepad2;
-    ServoRadianEasyCalculator servoRadianCalculator;
-    ServoValueEasyOutputter servoValueOutputter;
-    SixServoArmEasyController sixServoArmController;
+    public ServoRadianEasyCalculator servoRadianCalculator;
+    public ServoValueEasyOutputter servoValueOutputter;
+    public SixServoArmEasyController sixServoArmController;
     public SixServoArmEasyAction(HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad2){
         this.hardwareMap= hardwareMap;
         this.telemetry= telemetry;

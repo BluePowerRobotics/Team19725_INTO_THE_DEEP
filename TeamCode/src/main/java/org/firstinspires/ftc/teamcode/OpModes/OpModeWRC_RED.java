@@ -7,28 +7,29 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Autonomous.WRCAutoRightBlue;
+import org.firstinspires.ftc.teamcode.Controllers.ChassisController;
 import org.firstinspires.ftc.teamcode.Controllers.Installer.InstallerController;
+import org.firstinspires.ftc.teamcode.Controllers.IntakeLength.MotorLineIntakeLengthController;
 import org.firstinspires.ftc.teamcode.Controllers.OutPut.OutputController;
+import org.firstinspires.ftc.teamcode.Controllers.RobotStates;
+import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.ServoRadianEasyCalculator;
 import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.ServoValueEasyOutputter;
+import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.SixServoArmEasyController;
 import org.firstinspires.ftc.teamcode.RoadRunner.Drawing;
 import org.firstinspires.ftc.teamcode.RoadRunner.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.RoadRunner.tuning.TuningOpModes;
-import org.firstinspires.ftc.teamcode.Controllers.*;
-import org.firstinspires.ftc.teamcode.Controllers.IntakeLength.*;
-import org.firstinspires.ftc.teamcode.Controllers.SixServoArm.*;
 import org.firstinspires.ftc.teamcode.Vision.FindCandidate;
 import org.firstinspires.ftc.teamcode.Vision.model.ArmAction;
 
-import com.acmerobotics.roadrunner.ftc.FlightRecorder;
-
 @Config
-@TeleOp(name = "OpModeWRC_BLUE")
-public class OpModeWRC_BLUE extends LinearOpMode {
+@TeleOp(name = "OpModeWRC_RED")
+public class OpModeWRC_RED extends LinearOpMode {
 
 
 
@@ -113,7 +114,7 @@ public class OpModeWRC_BLUE extends LinearOpMode {
         outputController = new OutputController(hardwareMap);
         CVModule = new FindCandidate();
         //todo: 这里的颜色需要根据实际情况调整!!!!!!!
-        CVModule.init(hardwareMap, telemetry, 0);
+        CVModule.init(hardwareMap, telemetry, 1  );
         //Actions.runBlocking(sixServoArmEasyController.SixServoArmInit());
         double t = System.currentTimeMillis(); // 获取当前时间
         //硬件初始化

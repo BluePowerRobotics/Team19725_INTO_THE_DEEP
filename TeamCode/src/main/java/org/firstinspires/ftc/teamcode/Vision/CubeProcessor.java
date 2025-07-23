@@ -12,18 +12,22 @@ public class CubeProcessor {
 
 
     //todo 视摄像头方向调整这里和下面的正负、大于小于
-    static int ellipseX = 264; // 不可夹取区椭圆中心点X坐标
-    static int ellipseY = 149; // 不可夹取区椭圆中心点Y坐标
+    //static int ellipseX = 264; // 不可夹取区椭圆中心点X坐标
+    //static int ellipseY = 149; // 不可夹取区椭圆中心点Y坐标
+
+
+    static int ellipseX = 500; // 不
+    static int ellipseY = 400; // 不可夹取区椭圆中心点Y坐标
     static int ellipseA = 194; // 不可夹取区椭圆半长轴
     static int ellipseB = 134; // 不可夹取区椭圆半短轴
 
-    static int XTolerance = 264; // 可夹取区X轴max
-    static int YTolerance = 149; // 可夹取区Y轴max
+    static int XTolerance = 300; // 可夹取区X轴max
+    static int YTolerance = 200; // 可夹取区Y轴max
 
     boolean ifInArea = false;
 
 
-
+    //-2:还在算平均值
     //return:     -1  不符合要求
     //            0: 在可夹取区内
     //            1: 需要车辆左移
@@ -33,7 +37,7 @@ public class CubeProcessor {
     public static int ProcessCube(CubeInfo cubeInfo) {
         double X = cubeInfo.centerpoint.x;
         double Y = cubeInfo.centerpoint.y;
-        if(Y >= 10){
+        if(Y >= 10 || X > 250){
             return -1;
         }
         double m1 = (Math.abs(X) - ellipseX) * (Math.abs(X) - ellipseX) / (ellipseA * ellipseA);

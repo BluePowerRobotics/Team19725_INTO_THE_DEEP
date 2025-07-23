@@ -43,18 +43,25 @@ public class SixServoArmEasyController {
         servoValueOutputter.DegreeServoControl(2,80);
         servoValueOutputter.DegreeServoControl(3,50);
         servoValueOutputter.DegreeServoControl(4,0);
-        servoValueOutputter.setClip(ServoValueEasyOutputter.ClipPosition.UNLOCKED);
+        servoValueOutputter.setClip(ServoValueEasyOutputter.ClipPosition.LOCKED);
     }
     long PFTStartTime;
     boolean PFTinited=false;
     public void prepareForTaking(){
-        if(PFTinited)
-        servoValueOutputter.DegreeServoControl(0,90);
-        servoValueOutputter.DegreeServoControl(1,45);
-        servoValueOutputter.DegreeServoControl(2,135);
-        servoValueOutputter.DegreeServoControl(3,90);
-        servoValueOutputter.SingleServoControl(4,1);
-        servoValueOutputter.setClip(ServoValueEasyOutputter.ClipPosition.UNLOCKED);
+        if(PFTinited){
+            servoValueOutputter.DegreeServoControl(2, 30);
+            PFTStartTime = System.currentTimeMillis();
+            PFTinited = true;
+        }
+        if (System.currentTimeMillis() - PFTStartTime > 500) {
+            servoValueOutputter.DegreeServoControl(0,90);
+            servoValueOutputter.DegreeServoControl(1,45);
+            servoValueOutputter.DegreeServoControl(2,135);
+            servoValueOutputter.DegreeServoControl(3,90);
+            servoValueOutputter.SingleServoControl(4,1);
+            servoValueOutputter.setClip(ServoValueEasyOutputter.ClipPosition.UNLOCKED);
+        }
+
     }
 
     //todo finish the following void

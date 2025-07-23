@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.Controllers.RobotStates.INSTALL_RUNMODE;
 public class InstallerController{
     public boolean isUpping = false;
     public static double Beam_low = 0.13;//与installer对接
-    public static double Beam_mid = 0.16666666666;//从观察区取clip
+    public static double Beam_mid = 0.25;//从观察区取clip
     public static double Beam_high = 0.35;//提起clip，使之脱离观察区樯
 
     //todo: find out the correct values for these constants
