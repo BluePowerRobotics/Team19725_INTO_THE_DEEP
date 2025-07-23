@@ -25,8 +25,8 @@ public class ServoValueEasyOutputter {
     private Telemetry telemetry;
     private HardwareMap hardwareMap;
     private Servo[] servo = new Servo[6];
-    public static double[] servoZeroPositionDegree = {-31.4444444,-65.5,-88.3354,63.8421 , 0, 0};
-    public static double[] servoDegree = {322.222222222222222, 250, 241.93548387, 257.8947, 255, 170};//舵机总旋转角度
+    public static double[] servoZeroPositionDegree = {-28.92857,-63.529411,-43.71428,55.5882 , -77.83783783783785, 0};
+    public static double[] servoDegree = {321.42857, 264.70588, 257.142847142857142857, 264.70588, 243.24324324324328, 170};//舵机总旋转角度
     public static double[] x1 ={0.09,0.24,0.87,0.47,0.32};
     public static double[] y1 ={0,0,180,180,0};
     public static double[] x2 ={0.37,0.58,0.52,0.13,0.69};
@@ -129,6 +129,7 @@ public class ServoValueEasyOutputter {
         }
     }
     public void SingleServoControl(int servoIndex, double position) {
+        position = Range.clip(position,0,1);
         servo[servoIndex].setPosition(position);
         servoSetDegree[servoIndex]=position*servoDegree[servoIndex]+servoZeroPositionDegree[servoIndex];
     }

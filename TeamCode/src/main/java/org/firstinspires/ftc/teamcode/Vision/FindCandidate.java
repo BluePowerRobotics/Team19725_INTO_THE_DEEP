@@ -63,7 +63,7 @@ public class FindCandidate{
     private int FrameCnt = 0;
     private ArmAction Sum = new ArmAction(0,0,0,0,0);
 
-    public static double MMtoPixel = 1.486;
+    public static double MMtoPixel = 1.486 / 206 * 296;
     public static double PixeltoMM = 1 / MMtoPixel;
 
     public static int MidX = 400;
@@ -75,7 +75,7 @@ public class FindCandidate{
     public static int resolutionheight= 600;
 
     public static  int minarea = 2000;
-    public static  int maxarea = 20000;
+    public static  int maxarea = 200000;
     public static  int BR = 51;
     public static  int BG = 35;
     public static  int BB = 190;
@@ -262,6 +262,7 @@ public class FindCandidate{
                         candidates[j].index,
                         candidates[j].size, candidates[j].density, candidates[j].angleDeg,
                         candidates[j].centerpoint.x, candidates[j].centerpoint.y, candidates[j].DisToCamInMM);
+                //int a = 1/0;
             }
             else if(Status == 1){
                 LeftCandidates[j] = candidates[j];

@@ -165,7 +165,7 @@ public class SixServoArmEasyAction {
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket){
             if(!titsieInited) {
-                sixServoArmController.scanTheSample();
+                sixServoArmController.inToTheDeep();
                 titsieInited =true;
                 startTime=System.currentTimeMillis();
             }

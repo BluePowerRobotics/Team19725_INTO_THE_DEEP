@@ -19,7 +19,7 @@ public class OutputController {
     private Servo outputPositionController, outputClipController;
     private DcMotor outputLengthController;
     private HardwareMap hardwareMap;
-    public static double ArmUpPos = 1,ArmDownPos = 0.4,ArmMid = 0.85;
+    public static double ArmUpPos = 0.5,ArmDownPos = 0.68,ArmMid = 0.3;
     public static double outputClipLockPos = 0.25, outputClipUnlockPos = 0.55;
     public static double outputLengthControllerNumberPerCycle =147, outputLengthControllerMMPerCycle =20*Math.PI;
 

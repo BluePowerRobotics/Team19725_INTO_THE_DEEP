@@ -177,33 +177,33 @@ public class WRCAutoRightBlue extends LinearOpMode {
 
 
             //第一场注释掉
-//            while(drive.localizer.getPose().position.x < 7){
-//                ArmAction armAction = CVModule.CalculateAverage(CVModule);
-//                if(armAction.suggestion != -2){
-//                    if(armAction.suggestion == -1){
-//                        drive.setDrivePowers(
-//                                new PoseVelocity2d(
-//                                        new Vector2d(0, -0.2),
-//                                        0
-//                                )
-//                        );
-//                    }
-//                    else{
-//                        drive.setDrivePowers(
-//                                new PoseVelocity2d(
-//                                        new Vector2d(0, 0),
-//                                        0
-//                                )
-//                        );
-//                        Actions.runBlocking(
-//                                sixServoArmAction.SixServoArmRunToPosition(armAction)
-//                        );
-//                    }
-//                }
-//            }
-//            if(startTime - System.currentTimeMillis() > 28000){
-//                servoValueEasyOutputter.setClip(ServoValueEasyOutputter.ClipPosition.LOCKED);
-//            }
+            while(drive.localizer.getPose().position.x < 7){
+                ArmAction armAction = CVModule.CalculateAverage(CVModule);
+                if(armAction.suggestion != -2){
+                    if(armAction.suggestion == -1){
+                        drive.setDrivePowers(
+                                new PoseVelocity2d(
+                                        new Vector2d(0, -0.2),
+                                        0
+                                )
+                        );
+                    }
+                    else{
+                        drive.setDrivePowers(
+                                new PoseVelocity2d(
+                                        new Vector2d(0, 0),
+                                        0
+                                )
+                        );
+                        Actions.runBlocking(
+                                sixServoArmAction.SixServoArmRunToPosition(armAction)
+                        );
+                    }
+                }
+            }
+            if(startTime - System.currentTimeMillis() > 28000){
+                servoValueEasyOutputter.setClip(ServoValueEasyOutputter.ClipPosition.LOCKED);
+            }
             EndPose = drive.localizer.getPose();
         }
     }

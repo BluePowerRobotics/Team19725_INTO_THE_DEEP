@@ -48,25 +48,24 @@ public class SixServoArmEasyController {
     }
     long PFTStartTime;
     public boolean PFTinited=false;
-    public void scanTheSample(){
-        if(PFTinited){
-            servoValueOutputter.DegreeServoControl(2, 30);
-            servoValueOutputter.DegreeServoControl(0,90);
-            servoValueOutputter.DegreeServoControl(1,45);
-            servoValueOutputter.DegreeServoControl(3,90);
-            servoValueOutputter.SingleServoControl(4,1);
-            PFTStartTime = System.currentTimeMillis();
-            PFTinited = true;
-        }
-        if (System.currentTimeMillis() - PFTStartTime > 3000) {
+    public void inToTheDeep(){
+
             servoValueOutputter.DegreeServoControl(0,90);
             servoValueOutputter.DegreeServoControl(1,45);
             servoValueOutputter.DegreeServoControl(2,135);
             servoValueOutputter.DegreeServoControl(3,90);
-            servoValueOutputter.SingleServoControl(4,1);
+            servoValueOutputter.DegreeServoControl(4,0);
             servoValueOutputter.setClip(ServoValueEasyOutputter.ClipPosition.UNLOCKED);
-        }
 
+
+    }
+    public void scanTheSample(){
+        servoValueOutputter.DegreeServoControl(0,90);
+        servoValueOutputter.DegreeServoControl(1,45);
+        servoValueOutputter.DegreeServoControl(2,170);
+        servoValueOutputter.DegreeServoControl(3,45);
+        servoValueOutputter.DegreeServoControl(4,0);
+        servoValueOutputter.setClip(ServoValueEasyOutputter.ClipPosition.UNLOCKED);
     }
 
     //todo finish the following void
@@ -79,7 +78,14 @@ public class SixServoArmEasyController {
         servoValueOutputter.setClip(ServoValueEasyOutputter.ClipPosition.HALF_LOCKED);
         return new ArmColorSensor(hardwareMap).ifheld();
     }
-
+    public void eatHuman(){
+        servoValueOutputter.DegreeServoControl(0,90);
+        servoValueOutputter.DegreeServoControl(1,45);
+        servoValueOutputter.DegreeServoControl(2,150);
+        servoValueOutputter.DegreeServoControl(3,180);
+        servoValueOutputter.DegreeServoControl(4,180);
+        servoValueOutputter.setClip(ServoValueEasyOutputter.ClipPosition.UNLOCKED);
+    }
     public void dropTheSample(){
         servoValueOutputter.DegreeServoControl(0, 90);
         servoValueOutputter.DegreeServoControl(1, 90);
@@ -103,8 +109,8 @@ public class SixServoArmEasyController {
     double targetClipRadian = 0.5 * Math.PI;
 
 
-    public static double deltax = 94;
-    public static double deltay = -44;
+    public static double deltax = 5;
+    public static double deltay = -260;
     public SixServoArmEasyController setTargetPosition(@NonNull ArmAction armAction){
         telemetry.addData("ArmActionX", armAction.GoToX - deltax);
         telemetry.addData("ArmActionY",-armAction.GoToY - deltay);
@@ -197,13 +203,13 @@ public class SixServoArmEasyController {
     public long[] giveTheSampleStartTime = {0,0};
     public static int[] giveTheSampleRequireTimeMS={1500,500};
     public static double InstallerRequireErrorX=-30;
-    public static double[] giveTheSample={90,190,100,260};
+    public static double[] giveTheSample={70,90,90,260};
     public boolean giveTheSample(){
         servoValueOutputter.DegreeServoControl(0,giveTheSample[0]);
         servoValueOutputter.DegreeServoControl(1,giveTheSample[1]);
         servoValueOutputter.DegreeServoControl(2,giveTheSample[2]);
         servoValueOutputter.DegreeServoControl(3,giveTheSample[3]);
-        servoValueOutputter.SingleServoControl(4,1);
+        servoValueOutputter.DegreeServoControl(4,0);
 
         return false;
 //        if(!giveTheSampleCheckPointInited[0]){

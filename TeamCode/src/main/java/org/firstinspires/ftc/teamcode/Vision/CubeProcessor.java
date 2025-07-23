@@ -16,13 +16,13 @@ public class CubeProcessor {
     //static int ellipseY = 149; // 不可夹取区椭圆中心点Y坐标
 
 
-    static int ellipseX = 500; // 不
-    static int ellipseY = 400; // 不可夹取区椭圆中心点Y坐标
-    static int ellipseA = 194; // 不可夹取区椭圆半长轴
-    static int ellipseB = 134; // 不可夹取区椭圆半短轴
+    static int ellipseX = 0; // 不
+    static int ellipseY = 0; // 不可夹取区椭圆中心点Y坐标
+    static int ellipseA = 500; // 不可夹取区椭圆半长轴
+    static int ellipseB = 400; // 不可夹取区椭圆半短轴
 
-    static int XTolerance = 300; // 可夹取区X轴max
-    static int YTolerance = 200; // 可夹取区Y轴max
+    static int XTolerance = 400; // 可夹取区X轴max
+    static int YTolerance = 300; // 可夹取区Y轴max
 
     boolean ifInArea = false;
 
@@ -35,24 +35,25 @@ public class CubeProcessor {
     //            3: 需要滑轨前移
 
     public static int ProcessCube(CubeInfo cubeInfo) {
-        double X = cubeInfo.centerpoint.x;
-        double Y = cubeInfo.centerpoint.y;
-        if(Y >= 10 || X > 250){
-            return -1;
-        }
-        double m1 = (Math.abs(X) - ellipseX) * (Math.abs(X) - ellipseX) / (ellipseA * ellipseA);
-        double m2 = (Math.abs(Y) - ellipseY) * (Math.abs(Y) - ellipseY) / (ellipseB * ellipseB);
-        if (m1 + m2 > 1 && Math.abs(X) < XTolerance && Math.abs(Y) < YTolerance) {
-            // 在可夹取区内
-            boolean ifInArea = true;
-            return 0;
-        }
-        if(X < 0){
-            return 1; // 需要车辆左移
-        }
-        else{
-            return 2; // 需要车辆右移
-        }
+        return 0;
+//        double X = cubeInfo.centerpoint.x;
+//        double Y = cubeInfo.centerpoint.y;
+//        if(Y >= 10 || X > 250){
+//            return -1;
+//        }
+//        double m1 = (Math.abs(X) - ellipseX) * (Math.abs(X) - ellipseX) / (ellipseA * ellipseA);
+//        double m2 = (Math.abs(Y) - ellipseY) * (Math.abs(Y) - ellipseY) / (ellipseB * ellipseB);
+//        if (m1 + m2 <= 1 && Math.abs(X) < XTolerance && Math.abs(Y) < YTolerance) {
+//            // 在可夹取区内
+//            boolean ifInArea = true;
+//            return 0;
+//        }
+//        if(X < 0){
+//            return 1; // 需要车辆左移
+//        }
+//        else{
+//            return 2; // 需要车辆右移
+//        }
     }
 
     public static double CalculateRadians(Point[] points) {

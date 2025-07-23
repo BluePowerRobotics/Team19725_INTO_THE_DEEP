@@ -221,7 +221,7 @@ public class OP07142 extends LinearOpMode{
                 }
             }
             if (gamepad2.dpad_left) {
-                sixServoArmController.scanTheSample();
+                sixServoArmController.inToTheDeep();
             }
             if (gamepad2.dpad_up) {
                 sixServoArmController.testIfTheSampleIsEaten();//todo 实现该功能

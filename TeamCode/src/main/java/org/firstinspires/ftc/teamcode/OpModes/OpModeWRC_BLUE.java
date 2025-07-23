@@ -118,7 +118,7 @@ public class OpModeWRC_BLUE extends LinearOpMode {
         double t = System.currentTimeMillis(); // 获取当前时间
         //硬件初始化
         servoValueOutputter.setClip(ServoValueEasyOutputter.ClipPosition.LOCKED);
-        sixServoArmEasyController.scanTheSample();
+        sixServoArmEasyController.inToTheDeep();
     }
 
     private void move(){
@@ -216,7 +216,7 @@ public class OpModeWRC_BLUE extends LinearOpMode {
     }
     private  void controllers() {
         if(gamepad2.dpad_left){
-            sixServoArmEasyController.scanTheSample();
+            sixServoArmEasyController.inToTheDeep();
         }else{
             sixServoArmEasyController.PFTinited = false;
         }
