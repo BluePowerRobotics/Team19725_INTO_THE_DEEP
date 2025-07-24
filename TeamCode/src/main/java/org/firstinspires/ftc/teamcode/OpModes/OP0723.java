@@ -44,6 +44,8 @@ public class OP0723 extends LinearOpMode {
             outputControl();
             intakeAndOutputControl();
             intakeLengthControl();
+            intakeAndOutputControl_2();
+            intakeLengthControl_2();
         }
     }
     public double intakeStartLength;
@@ -69,14 +71,14 @@ public class OP0723 extends LinearOpMode {
     }
     public static double kpad = 1;
     public void controlChassis(){
-        double realx = -gamepad1.left_stick_y * kpad;
-        double realy = -gamepad1.left_stick_x * kpad;//*****已经转换过X,Y轴，并写过负号
+        double realx = -(gamepad1.left_stick_y+gamepad2.left_stick_y) * kpad;
+        double realy = -(gamepad1.left_stick_x+gamepad2.left_stick_x) * kpad;//*****已经转换过X,Y轴，并写过负号
         drive.setDrivePowers(new PoseVelocity2d(
                 new Vector2d(
                         realx,
                         realy
                 ),
-                -gamepad1.right_stick_x * kpad
+                -(gamepad1.right_stick_x+gamepad2.right_stick_x) * kpad
         ));
     }
     void teleprint(){
@@ -112,10 +114,109 @@ public class OP0723 extends LinearOpMode {
     long startT = 0;
     boolean ifinited = false;
     boolean HasSetArmPos=false;
+    boolean gp1FirstPressed =false;
+    boolean gp1FirstReleased =false;
+    boolean gp1SecondPressed =false;
+    void intakeAndOutputControl(){
+        if(gamepad1.dpad_left){
+            gp1FirstPressed =true;
+            if(!gp1FirstReleased){
+                sixServoArmEasyController.inToTheDeep();
+                outputController.ArmMiddle();
+            }else{
+                sixServoArmEasyController.scanTheSample();
+                outputController.ArmMiddle();
+                HasSetArmPos=false;
+            }
+        }else{
+            sixServoArmEasyController.PFTinited = false;
+            if(gp1FirstPressed) gp1FirstReleased =true;
+            if(gp1SecondPressed) {
+                gp1FirstReleased = false;
+                gp1SecondPressed = false;
+                gp1FirstPressed = false;
+            }
+        }
+
+        //todo 清除空值
+        if(gamepad1.dpad_up){
+            //ArmAction Command = CVModule.CalculateAverage(CVModule);
+            ArmAction Command = CVModule.findCandidate();
+            if(Command.suggestion != -2 && !HasSetArmPos){
+                sixServoArmEasyController.setTargetPosition(Command).update();
+                HasSetArmPos = true;
+            }
+        }
+        if(gamepad1.dpad_right){
+            if(!ifinited){
+                HasSetArmPos = false;
+                ifinited = true;
+                startT = System.currentTimeMillis();
+                servoValueOutputter.SingleServoControl(1, servoValueOutputter.getServoPosition(1) - 0.1);
+            }
+
+            if(System.currentTimeMillis() - startT > 100){
+                servoValueOutputter.setClip(ServoValueEasyOutputter.ClipPosition.LOCKED);
+            }
+            if(System.currentTimeMillis()-startT>400){
+                servoValueOutputter.DegreeServoControl(0,90);
+                servoValueOutputter.DegreeServoControl(1,45);
+                servoValueOutputter.DegreeServoControl(2,135);
+                servoValueOutputter.DegreeServoControl(3,90);
+                servoValueOutputter.DegreeServoControl(4,0);
+            }
+        }
+        else{
+            ifinited = false;
+        }
+        if(gamepad1.dpad_down){
+            servoValueOutputter.setClip(ServoValueEasyOutputter.ClipPosition.UNLOCKED);
+        }
+
+        if(gamepad1.x){
+            sixServoArmEasyController.eatHuman();
+        }
+        if(gamepad1.y){
+            servoValueOutputter.setClip(ServoValueEasyOutputter.ClipPosition.LOCKED);
+            outputController.ArmDown();
+            outputController.setClip(false);
+        }
+        if(gamepad1.b){
+            sixServoArmEasyController.giveTheSample();
+        }
+        if(gamepad1.a){
+            outputController.setClip(true);
+        }
+        if(gamepad1.left_bumper){
+            servoValueOutputter.setClip(ServoValueEasyOutputter.ClipPosition.UNLOCKED);
+            outputController.ArmUp();
+        }
+        if(gamepad1.right_bumper){
+            outputController.setClip(false);
+            outputController.ArmDown();
+        }
+    }
+    boolean lengthAdded=false;
+    void intakeLengthControl(){
+        if(gamepad1.x){
+            if(!lengthAdded){
+                intakeLengthController.setIntakeTargetPosition(intakeStartLength+intakeLengthAdd);
+                lengthAdded=true;
+            }
+        }
+        if(lengthAdded)
+            intakeLengthController.update();
+        if(gamepad1.left_trigger > 0.1){
+            intakeLengthController.SingleMotorControl(gamepad1.left_trigger);//放出滑轨
+        }
+        if(gamepad1.right_trigger > 0.1){
+            intakeLengthController.SingleMotorControl(-gamepad1.right_trigger);//收回滑轨
+        }
+    }
     boolean gp2FirstPressed=false;
     boolean gp2FirstReleased=false;
     boolean gp2SecondPressed=false;
-    void intakeAndOutputControl(){
+    void intakeAndOutputControl_2(){
         if(gamepad2.dpad_left){
             gp2FirstPressed=true;
             if(!gp2FirstReleased){
@@ -147,6 +248,7 @@ public class OP0723 extends LinearOpMode {
         }
         if(gamepad2.dpad_right){
             if(!ifinited){
+                HasSetArmPos = false;
                 ifinited = true;
                 startT = System.currentTimeMillis();
                 servoValueOutputter.SingleServoControl(1, servoValueOutputter.getServoPosition(1) - 0.1);
@@ -193,9 +295,8 @@ public class OP0723 extends LinearOpMode {
             outputController.ArmDown();
         }
     }
-    boolean lengthAdded=false;
-    void intakeLengthControl(){
-        if(gamepad1.x){
+    void intakeLengthControl_2(){
+        if(gamepad2.x){
             if(!lengthAdded){
                 intakeLengthController.setIntakeTargetPosition(intakeStartLength+intakeLengthAdd);
                 lengthAdded=true;
@@ -203,5 +304,11 @@ public class OP0723 extends LinearOpMode {
         }
         if(lengthAdded)
             intakeLengthController.update();
+        if(gamepad2.left_trigger > 0.1){
+            intakeLengthController.SingleMotorControl(gamepad2.left_trigger);//放出滑轨
+        }
+        if(gamepad2.right_trigger > 0.1){
+            intakeLengthController.SingleMotorControl(-gamepad2.right_trigger);//收回滑轨
+        }
     }
 }

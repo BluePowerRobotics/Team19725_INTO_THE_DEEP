@@ -63,6 +63,10 @@ public class FindCandidate{
     private int FrameCnt = 0;
     private ArmAction Sum = new ArmAction(0,0,0,0,0);
 
+
+
+
+    //todo
     public static double MMtoPixel = 1.486 / 206 * 296;
     public static double PixeltoMM = 1 / MMtoPixel;
 
@@ -262,7 +266,6 @@ public class FindCandidate{
                         candidates[j].index,
                         candidates[j].size, candidates[j].density, candidates[j].angleDeg,
                         candidates[j].centerpoint.x, candidates[j].centerpoint.y, candidates[j].DisToCamInMM);
-                //int a = 1/0;
             }
             else if(Status == 1){
                 LeftCandidates[j] = candidates[j];

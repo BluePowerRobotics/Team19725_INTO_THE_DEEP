@@ -129,6 +129,9 @@ public class ServoValueEasyOutputter {
         }
     }
     public void SingleServoControl(int servoIndex, double position) {
+        if(isNaN(position)){
+            return;
+        }
         position = Range.clip(position,0,1);
         servo[servoIndex].setPosition(position);
         servoSetDegree[servoIndex]=position*servoDegree[servoIndex]+servoZeroPositionDegree[servoIndex];

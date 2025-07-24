@@ -68,7 +68,9 @@ public class WRCAutoLeftBlue extends LinearOpMode {
             Action ActionIntake2 = Intake2.build();
 
 
-
+            TrajectoryActionBuilder sleep = Intake1.endTrajectory().fresh()
+                    .waitSeconds(1);
+            Action Sleep = sleep.build();
 
 
 
@@ -77,7 +79,7 @@ public class WRCAutoLeftBlue extends LinearOpMode {
             //todo 初始化机器
            //armController1.initArm();
             Actions.runBlocking(
-                    sixServoArmEasyAction.SixServoArmprepareForTaking()
+                    sixServoArmEasyAction.SixServoArmInit()
             );
 
             waitForStart();
@@ -88,7 +90,8 @@ public class WRCAutoLeftBlue extends LinearOpMode {
 
                     new SequentialAction(
                             ActionIntake1,
-                            ActionIntake2
+                            ActionIntake2,
+                            sixServoArmEasyAction.SixServoArmprepareForTaking()
                     )
             );
             while(drive.localizer.getPose().position.y < 10){
@@ -110,9 +113,13 @@ public class WRCAutoLeftBlue extends LinearOpMode {
                                         0
                                 )
                         );
-//                        Actions.runBlocking(
-//                                sixServoArmEasyAction.SixServoArmRunToPosition(armAction)
-//                        );
+                        Actions.runBlocking(
+                                new SequentialAction(
+                                        sixServoArmEasyAction.SixServoArmRunToPosition(armAction),
+                                        Sleep,
+                                        sixServoArmEasyAction.SixServoArmprepareForTaking()
+                                )
+                        );
                     }
                 }
             }

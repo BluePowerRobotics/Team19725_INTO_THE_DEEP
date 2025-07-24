@@ -209,7 +209,7 @@ public class SixServoArmEasyController {
         servoValueOutputter.DegreeServoControl(1,giveTheSample[1]);
         servoValueOutputter.DegreeServoControl(2,giveTheSample[2]);
         servoValueOutputter.DegreeServoControl(3,giveTheSample[3]);
-        servoValueOutputter.DegreeServoControl(4,0);
+        servoValueOutputter.DegreeServoControl(4,-20);
 
         return false;
 //        if(!giveTheSampleCheckPointInited[0]){
